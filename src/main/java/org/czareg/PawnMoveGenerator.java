@@ -9,39 +9,47 @@ import java.util.Set;
 class PawnMoveGenerator implements MoveGenerator {
 
     @Override
-    public Set<LegalMove> generate(Board board, Piece movingPiece, Position currentPosition) {
+    public Set<LegalMove> generate(Game game, Board board, Piece movingPiece, ClassicPosition currentClassicPosition) {
         Set<LegalMove> legalMoves = new HashSet<>();
-        Set<Move> potentialMoves = movingPiece.getPotentialMoves(currentPosition);
+        Set<Move> potentialMoves = movingPiece.getPotentialMoves();
 
         for (Move move : potentialMoves) {
-            //deal with check state
+            if (move instanceof PawnCaptureLeftMove ||
+                    move instanceof PawnCaptureRightMove ||
+                    move instanceof PawnEnPassantLeftMove ||
+                    move instanceof PawnEnPassantRightMove ||
+                    move instanceof PawnPromotionMove
 
-            IndexPosition indexPosition = move.getIndexPosition();
-            if (!board.isValid(indexPosition)) {
-                log.debug("Rejecting move:{} because it end position is not valid on the board", move);
+            ) {
+                // TODO implement
                 continue;
             }
-            Position endPosition = board.getPositionOrThrow(indexPosition);
-            if (board.hasPiece(endPosition)) {
-                Piece targetPositionPiece = board.getPieceOrThrow(endPosition);
-                Player targetPiecePlayer = targetPositionPiece.getPlayer();
-                if (targetPiecePlayer == movingPiece.getPlayer()) {
-                    log.debug("Rejecting move:{} because it end position:{} is occupied by friendly piece", move,endPosition);
+            if (move instanceof PawnDoubleForwardMove) {
+                if (game.hasPieceMovedBefore(movingPiece)) {
+                    log.debug("Rejecting move: {} because the pawn was already moved", move);
                     continue;
                 }
-                //deal with capture logic
-                if (move.canCapture()) {
-
+                // TODO check if something is on the way
+            }
+            IndexChange indexChange = move.getIndexChange();
+            IndexPosition indexPosition = currentClassicPosition.toIndexPosition(indexChange);
+            if (!ClassicPosition.isValid(indexPosition)) {
+                log.debug("Rejecting move: {} because it end position is not valid on the board", move);
+                continue;
+            }
+            ClassicPosition endClassicPosition = indexPosition.toPosition();
+            if (board.hasPiece(endClassicPosition)) {
+                Piece targetPositionPiece = board.getPiece(endClassicPosition);
+                Player targetPiecePlayer = targetPositionPiece.getPlayer();
+                if (targetPiecePlayer == movingPiece.getPlayer()) {
+                    log.debug("Rejecting move: {} because it end position: {} is occupied by friendly piece", move, endClassicPosition);
+                    continue;
                 }
+                //TODO deal with capture logic, Pawn forward and double forward cannot capture
             }
-            //deal with pieces in between
-            if (move.canJump()) {
+            // TODO check if something is on the way
 
-            }
-            //board.getPositionsBetween(currentPosition, endPosition); ????
-
-            //all checks done
-            legalMoves.add(new LegalMove(movingPiece, currentPosition, endPosition));
+            legalMoves.add(new LegalMove(movingPiece, currentClassicPosition, endClassicPosition));
         }
 
         return legalMoves;

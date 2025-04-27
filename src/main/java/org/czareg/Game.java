@@ -5,7 +5,7 @@ import java.util.Map;
 
 interface Game {
 
+    boolean hasPieceMovedBefore(Piece piece);
     Map<Player,List<LegalMove>> getPlayerMoves();
-    List<Player> getPlayerOrder();
-    Board getBoard();
+    void makeMove(LegalMove legalMove);
 }

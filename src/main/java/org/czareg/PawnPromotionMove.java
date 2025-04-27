@@ -3,13 +3,9 @@ package org.czareg;
 import lombok.Value;
 
 @Value
-class PawnForwardMove implements Move {
+class PawnPromotionMove implements Move {
 
     Player player;
-
-    PawnForwardMove(Player player) {
-        this.player = player;
-    }
 
     @Override
     public IndexChange getIndexChange() {

@@ -1,56 +1,79 @@
 package org.czareg;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
+
+@Slf4j
 class ClassicBoard implements Board {
 
     private static final int RANKS = 8;
     private static final int FILES = 8;
-
-    private Piece[][] board;
+    private final Piece[][] board;
 
     ClassicBoard() {
         this.board = new Piece[RANKS][FILES];
     }
 
     @Override
-    public boolean isValid(IndexPosition indexPosition) {
-        int rankIndex = indexPosition.rankIndex();
-        int fileIndex = indexPosition.fileIndex();
-        return rankIndex >= 0 && fileIndex >= 0 && rankIndex < RANKS && fileIndex < FILES;
+    public boolean hasPiece(ClassicPosition classicPosition) {
+        return get(classicPosition) != null;
     }
 
     @Override
-    public Position getPositionOrThrow(IndexPosition indexPosition) {
-        int rankIndex = indexPosition.rankIndex();
-        int fileIndex = indexPosition.fileIndex();
-        return new Position(Rank.fromIndex(rankIndex), File.fromIndex(fileIndex));
-    }
-
-    @Override
-    public boolean hasPiece(Position position) {
-        int rankIndex = position.rank().getIndex();
-        int fileIndex = position.file().getIndex();
-        return board[rankIndex][fileIndex] != null;
-    }
-
-    @Override
-    public Piece getPieceOrThrow(Position position) {
-        if (!hasPiece(position)) {
-            throw new IllegalArgumentException("No piece at position: " + position);
+    public Piece getPiece(ClassicPosition classicPosition) {
+        if (!hasPiece(classicPosition)) {
+            throw new IllegalArgumentException("No piece at position: " + classicPosition);
         }
-        int rankIndex = position.rank().getIndex();
-        int fileIndex = position.file().getIndex();
-        return board[rankIndex][fileIndex];
+        return get(classicPosition);
     }
 
     @Override
-    public void placePiece(Piece piece, Position position) {
-        int rankIndex = position.rank().getIndex();
-        int fileIndex = position.file().getIndex();
-        board[rankIndex][fileIndex] = piece;
+    public void placePiece(ClassicPosition startPosition, Piece piece) {
+        if (hasPiece(startPosition)) {
+            String message = "Position: %s already occupied by different piece".formatted(startPosition);
+            throw new IllegalArgumentException(message);
+        }
+        find(piece).ifPresent(classicPosition -> {
+            String message = "Piece is already on board at position: %s".formatted(classicPosition);
+            throw new IllegalStateException(message);
+        });
+        set(piece, startPosition);
     }
 
     @Override
-    public void removeAllPieces() {
-        this.board = new Piece[RANKS][FILES];
+    public Piece removePiece(ClassicPosition classicPosition) {
+        Piece piece = getPiece(classicPosition);
+        set(null, classicPosition);
+        return piece;
+    }
+
+    @Override
+    public void movePiece(ClassicPosition startClassicPosition, ClassicPosition endClassicPosition) {
+        Piece piece = removePiece(startClassicPosition);
+        placePiece(endClassicPosition, piece);
+    }
+
+    private Piece get(ClassicPosition classicPosition) {
+        IndexPosition indexPosition = classicPosition.toIndexPosition();
+        return board[indexPosition.rankIndex()][indexPosition.fileIndex()];
+    }
+
+    private void set(Piece piece, ClassicPosition classicPosition) {
+        IndexPosition indexPosition = classicPosition.toIndexPosition();
+        board[indexPosition.rankIndex()][indexPosition.fileIndex()] = piece;
+    }
+
+    private Optional<ClassicPosition> find(Piece piece) {
+        for (int ranks = 0; ranks < RANKS; ranks++) {
+            for (int files = 0; files < FILES; files++) {
+                Piece foundPiece = board[ranks][files];
+                if (piece == foundPiece) {
+                    ClassicPosition position = new IndexPosition(ranks, files).toPosition();
+                    return Optional.of(position);
+                }
+            }
+        }
+        return Optional.empty();
     }
 }

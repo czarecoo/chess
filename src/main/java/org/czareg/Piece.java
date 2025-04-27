@@ -2,9 +2,9 @@ package org.czareg;
 
 import java.util.Set;
 
-interface Piece {
+sealed interface Piece permits Pawn {
 
     Player getPlayer();
 
-    Set<Move> getPotentialMoves(Position currentPosition);
+    Set<Move> getPotentialMoves();
 }

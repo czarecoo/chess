@@ -1,26 +1,14 @@
 package org.czareg;
 
-import java.util.Optional;
-
 interface Board {
 
-    boolean isValid(IndexPosition indexPosition);
+    boolean hasPiece(ClassicPosition classicPosition);
 
-    Position getPositionOrThrow(IndexPosition indexPosition);
+    Piece getPiece(ClassicPosition classicPosition);
 
-    default Optional<Position> getPosition(IndexPosition indexPosition) {
-        return isValid(indexPosition) ? Optional.of(getPositionOrThrow(indexPosition)) : Optional.empty();
-    }
+    void placePiece(ClassicPosition startPosition, Piece piece);
 
-    boolean hasPiece(Position position);
+    void movePiece(ClassicPosition startClassicPosition, ClassicPosition endClassicPosition);
 
-    Piece getPieceOrThrow(Position position);
-
-    default Optional<Piece> getPiece(Position position) {
-        return hasPiece(position) ? Optional.of(getPieceOrThrow(position)) : Optional.empty();
-    }
-
-    void placePiece(Piece piece, Position position);
-
-    void removeAllPieces();
+    Piece removePiece(ClassicPosition classicPosition);
 }
