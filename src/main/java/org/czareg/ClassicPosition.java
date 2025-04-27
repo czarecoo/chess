@@ -8,7 +8,8 @@ class ClassicPosition implements Position {
     ClassicRank rank;
     ClassicFile file;
 
-    IndexPosition toIndexPosition() {
+    @Override
+    public IndexPosition toIndexPosition() {
         return new IndexPosition(getRank().getIndex(), getFile().getIndex());
     }
 

@@ -20,7 +20,8 @@ class ClassicFile implements File {
         this.value = value;
     }
 
-    int getIndex(){
+    @Override
+    public int getIndex() {
         return ALLOWED_VALUES.indexOf(value);
     }
 

@@ -20,7 +20,8 @@ class ClassicRank implements Rank {
         this.value = value;
     }
 
-    int getIndex() {
+    @Override
+    public int getIndex() {
         return value - 1;
     }
 
