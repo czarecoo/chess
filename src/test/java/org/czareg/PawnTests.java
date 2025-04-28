@@ -1,5 +1,7 @@
 package org.czareg;
 
+import org.czareg.position.Position;
+import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -12,9 +14,10 @@ class PawnTests {
     @Test
     void givenWhitePawnDidNotMoveYet_whenGettingPossibleMoves_thenCanMoveByOneOrTwoRows() {
         // Given
-        Board board = new ClassicBoard();
+        Board board = new ClassicBoard(8, 8);
         Game game = new ClassicGame(board);
-        ClassicPosition start = ClassicPosition.from(2,"A");
+        PositionFactory positionFactory = board.getPositionFactory();
+        Position start = positionFactory.create(2, "A");
         Pawn pawn = new Pawn(WHITE);
         board.placePiece(start, pawn);
 
@@ -24,8 +27,8 @@ class PawnTests {
 
         // Then
         Set<LegalMove> expectedLegalMoves = Set.of(
-                new LegalMove(pawn, start, ClassicPosition.from(3,"A")),
-                new LegalMove(pawn, start, ClassicPosition.from(4,"A"))
+                new LegalMove(pawn, start, positionFactory.create(3, "A")),
+                new LegalMove(pawn, start, positionFactory.create(4, "A"))
         );
         assertEquals(expectedLegalMoves, actualLegalMoves);
     }
@@ -33,19 +36,20 @@ class PawnTests {
     @Test
     void givenWhitePawnDidMoveBefore_whenGettingPossibleMoves_thenCanMoveByOneRow() {
         // Given
-        Board board = new ClassicBoard();
+        Board board = new ClassicBoard(8, 8);
+        PositionFactory positionFactory = board.getPositionFactory();
         Game game = new ClassicGame(board);
         Pawn pawn = new Pawn(WHITE);
-        board.placePiece(ClassicPosition.from(2,"D"), pawn);
-        game.makeMove(new LegalMove(pawn, ClassicPosition.from(2,"D"), ClassicPosition.from(3,"D")));
+        board.placePiece(positionFactory.create(2, "D"), pawn);
+        game.makeMove(new LegalMove(pawn, positionFactory.create(2, "D"), positionFactory.create(3, "D")));
 
         // When
         MoveGenerator moveGenerator = new PawnMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, ClassicPosition.from(3,"D"));
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, positionFactory.create(3, "D"));
 
         // Then
         Set<LegalMove> expectedLegalMoves = Set.of(
-                new LegalMove(pawn, ClassicPosition.from(3,"D"), ClassicPosition.from(4,"D"))
+                new LegalMove(pawn, positionFactory.create(3, "D"), positionFactory.create(4, "D"))
         );
         assertEquals(expectedLegalMoves, actualLegalMoves);
     }
@@ -53,14 +57,15 @@ class PawnTests {
     @Test
     void givenWhitePawnOnLastRank_whenGettingPossibleMoves_thenNoLegalMoves() {
         // Given
-        Board board = new ClassicBoard();
+        Board board = new ClassicBoard(8, 8);
+        PositionFactory positionFactory = board.getPositionFactory();
         Game game = new ClassicGame(board);
         Pawn pawn = new Pawn(WHITE);
-        board.placePiece(ClassicPosition.from(8,"H"), pawn);
+        board.placePiece(positionFactory.create(8, "H"), pawn);
 
         // When
         MoveGenerator moveGenerator = new PawnMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, ClassicPosition.from(8,"H"));
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, positionFactory.create(8, "H"));
 
         // Then
         assertEquals(Set.of(), actualLegalMoves);

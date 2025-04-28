@@ -1,6 +1,7 @@
 package org.czareg;
 
 import lombok.Value;
+import org.czareg.position.IndexChange;
 
 @Value
 class PawnPromotionMove implements Move {

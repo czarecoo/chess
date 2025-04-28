@@ -1,11 +1,17 @@
 package org.czareg;
 
-import java.util.*;
+import lombok.Getter;
 
-import static org.czareg.Player.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.czareg.Player.values;
 
 class ClassicGame implements Game {
 
+    @Getter
     private final Board board;
     private final Map<Player, List<LegalMove>> history;
 

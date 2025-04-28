@@ -1,14 +1,19 @@
 package org.czareg;
 
+import org.czareg.position.Position;
+import org.czareg.position.PositionFactory;
+
 interface Board {
 
-    boolean hasPiece(ClassicPosition classicPosition);
+    PositionFactory getPositionFactory();
 
-    Piece getPiece(ClassicPosition classicPosition);
+    boolean hasPiece(Position position);
 
-    void placePiece(ClassicPosition startPosition, Piece piece);
+    Piece getPiece(Position position);
 
-    void movePiece(ClassicPosition startClassicPosition, ClassicPosition endClassicPosition);
+    void placePiece(Position startPosition, Piece piece);
 
-    Piece removePiece(ClassicPosition classicPosition);
+    void movePiece(Position startPosition, Position endPosition);
+
+    Piece removePiece(Position position);
 }
