@@ -22,7 +22,7 @@ class PawnTests {
         board.placePiece(start, pawn);
 
         // When
-        MoveGenerator moveGenerator = new PawnMoveGenerator();
+        MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, start);
 
         // Then
@@ -44,7 +44,7 @@ class PawnTests {
         game.makeMove(new LegalMove(pawn, positionFactory.create(2, "D"), positionFactory.create(3, "D")));
 
         // When
-        MoveGenerator moveGenerator = new PawnMoveGenerator();
+        MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, positionFactory.create(3, "D"));
 
         // Then
@@ -64,7 +64,7 @@ class PawnTests {
         board.placePiece(positionFactory.create(8, "H"), pawn);
 
         // When
-        MoveGenerator moveGenerator = new PawnMoveGenerator();
+        MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, positionFactory.create(8, "H"));
 
         // Then

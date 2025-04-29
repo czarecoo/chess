@@ -8,14 +8,17 @@ class ClassicGame implements Game {
     private final Board board;
     @Getter
     private final History history;
+    @Getter
+    private final MoveGenerator moveGenerator;
 
     ClassicGame() {
-        this(new ClassicBoard(8, 8), new ClassicHistory());
+        this(new ClassicBoard(8, 8), new ClassicHistory(), new ClassicMoveGenerator());
     }
 
-    ClassicGame(Board board, History history) {
+    ClassicGame(Board board, History history, MoveGenerator moveGenerator) {
         this.board = board;
         this.history = history;
+        this.moveGenerator = moveGenerator;
     }
 
     @Override

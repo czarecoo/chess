@@ -7,4 +7,6 @@ interface Game {
     History getHistory();
 
     void makeMove(LegalMove legalMove);
+
+    MoveGenerator getMoveGenerator();
 }
