@@ -70,4 +70,24 @@ class PawnTests {
         // Then
         assertEquals(Set.of(), actualLegalMoves);
     }
+
+    @Test
+    void givenWhitePawnOnSeventhRank_whenGettingPossibleMoves_thenOneLegalMovesByOneRank() {
+        // Given
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
+        PositionFactory positionFactory = board.getPositionFactory();
+        Pawn pawn = new Pawn(WHITE);
+        Position pawnStartingPosition = positionFactory.create(7, "B");
+        board.placePiece(pawnStartingPosition, pawn);
+
+        // When
+        MoveGenerator moveGenerator = game.getMoveGenerator();
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, pawnStartingPosition);
+
+        // Then
+        assertEquals(Set.of(
+                new LegalMove(pawn, pawnStartingPosition, positionFactory.create(8, "B"))
+        ), actualLegalMoves);
+    }
 }

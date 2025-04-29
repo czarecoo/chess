@@ -1,5 +1,6 @@
 package org.czareg;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.position.Index;
 import org.czareg.position.Position;
@@ -11,16 +12,12 @@ import java.util.Optional;
 class ClassicBoard implements Board {
 
     private final Piece[][] board;
+    @Getter
     private final PositionFactory positionFactory;
 
     ClassicBoard(int ranks, int files) {
         this.positionFactory = new PositionFactory(ranks, files);
         this.board = new Piece[ranks][files];
-    }
-
-    @Override
-    public PositionFactory getPositionFactory() {
-        return positionFactory;
     }
 
     @Override
