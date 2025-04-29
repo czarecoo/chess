@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static org.czareg.Player.BLACK;
 import static org.czareg.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PawnTests {
 
@@ -89,5 +91,25 @@ class PawnTests {
         assertEquals(Set.of(
                 new LegalMove(pawn, pawnStartingPosition, positionFactory.create(8, "B"))
         ), actualLegalMoves);
+    }
+
+    @Test
+    void givenEmptyBoard_whenBlackPawnIsMakingMove_thenExceptionIsThrown() {
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
+        PositionFactory positionFactory = board.getPositionFactory();
+
+        LegalMove legalMove = new LegalMove(new Pawn(BLACK), positionFactory.create(1, "A"), positionFactory.create(2, "A"));
+        assertThrows(IllegalArgumentException.class, () -> game.makeMove(legalMove));
+    }
+
+    @Test
+    void givenEmptyBoard_whenWhitePawnIsMakingMove_thenExceptionIsThrown() {
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
+        PositionFactory positionFactory = board.getPositionFactory();
+
+        LegalMove legalMove = new LegalMove(new Pawn(WHITE), positionFactory.create(1, "A"), positionFactory.create(2, "A"));
+        assertThrows(IllegalArgumentException.class, () -> game.makeMove(legalMove));
     }
 }
