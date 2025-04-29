@@ -14,8 +14,11 @@ import java.util.Set;
 class PawnMoveGenerator implements MoveGenerator {
 
     @Override
-    public Set<LegalMove> generate(Game game, Board board, Piece movingPiece, Position currentPosition) {
+    public Set<LegalMove> generate(Game game, Position currentPosition) {
         Set<LegalMove> legalMoves = new HashSet<>();
+        History history = game.getHistory();
+        Board board = game.getBoard();
+        Piece movingPiece = board.getPiece(currentPosition);
         Set<Move> potentialMoves = movingPiece.getPotentialMoves();
 
         for (Move move : potentialMoves) {
@@ -30,7 +33,7 @@ class PawnMoveGenerator implements MoveGenerator {
                 continue;
             }
             if (move instanceof PawnDoubleForwardMove) {
-                if (game.hasPieceMovedBefore(movingPiece)) {
+                if (history.hasPieceMovedBefore(movingPiece)) {
                     log.debug("Rejecting move: {} because the pawn was already moved", move);
                     continue;
                 }

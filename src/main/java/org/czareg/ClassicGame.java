@@ -2,45 +2,26 @@ package org.czareg;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.czareg.Player.values;
-
 class ClassicGame implements Game {
 
     @Getter
     private final Board board;
-    private final Map<Player, List<LegalMove>> history;
+    @Getter
+    private final History history;
 
-    ClassicGame(Board board){
+    ClassicGame() {
+        this(new ClassicBoard(8, 8), new ClassicHistory());
+    }
+
+    ClassicGame(Board board, History history) {
         this.board = board;
-        history = new EnumMap<>(Player.class);
-        for (Player player : values()) {
-            history.put(player, new ArrayList<>());
-        }
-    }
-
-    @Override
-    public boolean hasPieceMovedBefore(Piece piece) {
-        return history
-                .get(piece.getPlayer())
-                .stream()
-                .anyMatch(legalMove -> legalMove.piece() == piece);
-    }
-
-    @Override
-    public Map<Player, List<LegalMove>> getPlayerMoves() {
-        return history;
+        this.history = history;
     }
 
     @Override
     public void makeMove(LegalMove legalMove) {
         // TODO check who's turn it is
         board.movePiece(legalMove.start(), legalMove.end());
-        Player player = legalMove.piece().getPlayer();
-        history.get(player).add(legalMove);
+        history.save(legalMove);
     }
 }

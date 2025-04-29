@@ -6,5 +6,5 @@ import java.util.Set;
 
 interface MoveGenerator {
 
-    Set<LegalMove> generate(Game game, Board board, Piece movingPiece, Position currentPosition);
+    Set<LegalMove> generate(Game game, Position currentPosition);
 }

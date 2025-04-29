@@ -14,8 +14,8 @@ class PawnTests {
     @Test
     void givenWhitePawnDidNotMoveYet_whenGettingPossibleMoves_thenCanMoveByOneOrTwoRows() {
         // Given
-        Board board = new ClassicBoard(8, 8);
-        Game game = new ClassicGame(board);
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Position start = positionFactory.create(2, "A");
         Pawn pawn = new Pawn(WHITE);
@@ -23,7 +23,7 @@ class PawnTests {
 
         // When
         MoveGenerator moveGenerator = new PawnMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, start);
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, start);
 
         // Then
         Set<LegalMove> expectedLegalMoves = Set.of(
@@ -36,16 +36,16 @@ class PawnTests {
     @Test
     void givenWhitePawnDidMoveBefore_whenGettingPossibleMoves_thenCanMoveByOneRow() {
         // Given
-        Board board = new ClassicBoard(8, 8);
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
-        Game game = new ClassicGame(board);
         Pawn pawn = new Pawn(WHITE);
         board.placePiece(positionFactory.create(2, "D"), pawn);
         game.makeMove(new LegalMove(pawn, positionFactory.create(2, "D"), positionFactory.create(3, "D")));
 
         // When
         MoveGenerator moveGenerator = new PawnMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, positionFactory.create(3, "D"));
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, positionFactory.create(3, "D"));
 
         // Then
         Set<LegalMove> expectedLegalMoves = Set.of(
@@ -57,15 +57,15 @@ class PawnTests {
     @Test
     void givenWhitePawnOnLastRank_whenGettingPossibleMoves_thenNoLegalMoves() {
         // Given
-        Board board = new ClassicBoard(8, 8);
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
-        Game game = new ClassicGame(board);
         Pawn pawn = new Pawn(WHITE);
         board.placePiece(positionFactory.create(8, "H"), pawn);
 
         // When
         MoveGenerator moveGenerator = new PawnMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, board, pawn, positionFactory.create(8, "H"));
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, positionFactory.create(8, "H"));
 
         // Then
         assertEquals(Set.of(), actualLegalMoves);
