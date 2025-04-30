@@ -9,4 +9,6 @@ interface Game {
     void makeMove(LegalMove legalMove);
 
     MoveGenerator getMoveGenerator();
+
+    Order getOrder();
 }

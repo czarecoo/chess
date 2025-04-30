@@ -19,7 +19,7 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         History history = game.getHistory();
         Board board = game.getBoard();
         if (history.hasPieceMovedBefore(pawn)) {
-            log.debug("Rejecting PawnDoubleForwardMove because the pawn was already moved");
+            log.debug("Rejecting move because the pawn was already moved");
             return legalMoves;
         }
         Player player = pawn.getPlayer();
@@ -28,13 +28,13 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, secondStepIndexChange);
         if (optionalEndPosition.isEmpty()) {
-            log.debug("Rejecting PawnDoubleForwardMove because it end position is not valid on the board, index: {}, indexChange: {}", currentPositionIndex, secondStepIndexChange);
+            log.debug("Rejecting move because it end position is not valid on the board, index: {}, indexChange: {}", currentPositionIndex, secondStepIndexChange);
             return legalMoves;
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
             Piece targetPositionPiece = board.getPiece(endPosition);
-            log.debug("Rejecting PawnDoubleForwardMove because it end position: {} is occupied by: {}", endPosition, targetPositionPiece);
+            log.debug("Rejecting move because it end position: {} is occupied by piece: {}", endPosition, targetPositionPiece);
             return legalMoves;
         }
         IndexChange firstStepIndexChange = getFirstStepIndexChange(player);
@@ -42,7 +42,7 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         Position middlePosition = optionalMiddlePosition.orElseThrow(); // we checked end position and its on board, the middle position has to be on board too
         if (board.hasPiece(middlePosition)) {
             Piece middlePositionPiece = board.getPiece(endPosition);
-            log.debug("Rejecting PawnDoubleForwardMove because position: {} is occupied by: {}", middlePosition, middlePositionPiece);
+            log.debug("Rejecting move because position: {} is occupied by: {}", middlePosition, middlePositionPiece);
             return legalMoves;
         }
         legalMoves.add(new LegalMove(pawn, currentPosition, endPosition));

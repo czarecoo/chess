@@ -23,13 +23,13 @@ final class PawnForwardMoveGenerator implements PawnMoveGenerator {
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, indexChange);
         if (optionalEndPosition.isEmpty()) {
-            log.debug("Rejecting PawnForwardMove because it end position is not valid on the board, index: {}, indexChange: {}", currentPositionIndex, indexChange);
+            log.debug("Rejecting move because it end position is not valid on the board, index: {}, indexChange: {}", currentPositionIndex, indexChange);
             return legalMoves;
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
             Piece targetPositionPiece = board.getPiece(endPosition);
-            log.debug("Rejecting PawnForwardMove because it end position: {} is occupied by: {}", endPosition, targetPositionPiece);
+            log.debug("Rejecting move because it end position: {} is occupied by piece: {}", endPosition, targetPositionPiece);
             return legalMoves;
         }
         legalMoves.add(new LegalMove(pawn, currentPosition, endPosition));

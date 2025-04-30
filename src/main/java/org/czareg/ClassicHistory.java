@@ -16,7 +16,7 @@ class ClassicHistory implements History {
     public boolean hasPieceMovedBefore(Piece piece) {
         return history
                 .stream()
-                .anyMatch(legalMove -> legalMove.piece() == piece);
+                .anyMatch(legalMove -> legalMove.getPiece() == piece);
     }
 
     @Override
@@ -30,7 +30,7 @@ class ClassicHistory implements History {
             return Optional.empty();
         }
         return Optional.of(history.getLast())
-                .map(LegalMove::piece)
+                .map(LegalMove::getPiece)
                 .map(Piece::getPlayer);
     }
 }

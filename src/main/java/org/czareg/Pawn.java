@@ -8,4 +8,9 @@ import lombok.RequiredArgsConstructor;
 final class Pawn implements Piece {
 
     private final Player player;
+
+    @Override
+    public String toString() {
+        return "%s %s".formatted(player, this.getClass().getSimpleName());
+    }
 }
