@@ -11,13 +11,16 @@ import java.util.Optional;
 @Slf4j
 class ClassicBoard implements Board {
 
+    @Getter
+    private final BoardSize boardSize;
     private final Piece[][] board;
     @Getter
     private final PositionFactory positionFactory;
 
-    ClassicBoard(int ranks, int files) {
-        this.positionFactory = new PositionFactory(ranks, files);
-        this.board = new Piece[ranks][files];
+    ClassicBoard(BoardSize boardSize) {
+        this.boardSize = boardSize;
+        this.positionFactory = new PositionFactory(boardSize);
+        this.board = new Piece[boardSize.getRanks()][boardSize.getFiles()];
     }
 
     @Override

@@ -17,7 +17,7 @@ class ClassicGame implements Game {
 
     ClassicGame() {
         this(
-                new ClassicBoard(8, 8),
+                new ClassicBoard(new BoardSize(8, 8)),
                 new ClassicHistory(),
                 new ClassicMoveGenerator(),
                 new ClassicOrder()

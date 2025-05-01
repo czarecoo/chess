@@ -15,48 +15,56 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Set<LegalMove> generate(Game game, Pawn pawn, Position currentPosition) {
+        log.debug("Generating moves for {} at {}.", pawn, currentPosition);
         Set<LegalMove> legalMoves = new HashSet<>();
         History history = game.getHistory();
         Board board = game.getBoard();
         if (history.hasPieceMovedBefore(pawn)) {
-            log.debug("Rejecting move because the pawn was already moved");
+            log.debug("Rejecting move because it was already moved.");
             return legalMoves;
         }
-        Player player = pawn.getPlayer();
-        IndexChange secondStepIndexChange = getSecondStepIndexChange(player);
         PositionFactory positionFactory = board.getPositionFactory();
+        Player player = pawn.getPlayer();
+        IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
         Index currentPositionIndex = positionFactory.create(currentPosition);
-        Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, secondStepIndexChange);
+        Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
-            log.debug("Rejecting move because it end position is not valid on the board, index: {}, indexChange: {}", currentPositionIndex, secondStepIndexChange);
+            log.debug("Rejecting move because end is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
             return legalMoves;
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
-            Piece targetPositionPiece = board.getPiece(endPosition);
-            log.debug("Rejecting move because it end position: {} is occupied by piece: {}", endPosition, targetPositionPiece);
+            Piece endPositionOccupyingPiece = board.getPiece(endPosition);
+            log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
             return legalMoves;
         }
-        IndexChange firstStepIndexChange = getFirstStepIndexChange(player);
-        Optional<Position> optionalMiddlePosition = positionFactory.create(currentPositionIndex, firstStepIndexChange);
-        Position middlePosition = optionalMiddlePosition.orElseThrow(); // we checked end position and its on board, the middle position has to be on board too
+        BoardSize boardSize = board.getBoardSize();
+        if (endPosition.getRank() == boardSize.getRanks()) {
+            log.debug("Rejecting move because it would land on promotion rank.");
+            return legalMoves;
+        }
+        IndexChange middlePositionIndexChange = getMiddlePositionIndexChange(player);
+        Optional<Position> optionalMiddlePosition = positionFactory.create(currentPositionIndex, middlePositionIndexChange);
+        Position middlePosition = optionalMiddlePosition.orElseThrow(); // we checked end position and we know it is on board, the middle position has to be on board too
         if (board.hasPiece(middlePosition)) {
-            Piece middlePositionPiece = board.getPiece(endPosition);
-            log.debug("Rejecting move because position: {} is occupied by: {}", middlePosition, middlePositionPiece);
+            Piece middlePositionOccupyingPiece = board.getPiece(middlePosition);
+            log.debug("Rejecting move, because middle {} is occupied by {}.", middlePosition, middlePositionOccupyingPiece);
             return legalMoves;
         }
-        legalMoves.add(new LegalMove(pawn, currentPosition, endPosition));
+        LegalMove legalMove = new LegalMove(pawn, currentPosition, endPosition);
+        legalMoves.add(legalMove);
+        log.debug("Accepted move: {}.", legalMove);
         return legalMoves;
     }
 
-    private IndexChange getFirstStepIndexChange(Player player) {
+    private IndexChange getMiddlePositionIndexChange(Player player) {
         return switch (player) {
             case WHITE -> new IndexChange(1, 0);
             case BLACK -> new IndexChange(-1, 0);
         };
     }
 
-    private IndexChange getSecondStepIndexChange(Player player) {
+    private IndexChange getEndPositionIndexChange(Player player) {
         return switch (player) {
             case WHITE -> new IndexChange(2, 0);
             case BLACK -> new IndexChange(-2, 0);

@@ -5,6 +5,8 @@ import org.czareg.position.PositionFactory;
 
 interface Board {
 
+    BoardSize getBoardSize();
+
     PositionFactory getPositionFactory();
 
     boolean hasPiece(Position position);

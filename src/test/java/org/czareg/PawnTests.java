@@ -81,6 +81,27 @@ class PawnTests {
         ), actualLegalMoves);
     }
 
+    /*
+        cannot land on promotion rank from double forward move
+     */
+    @Test
+    void givenWhitePawnOnSixthRank_whenGettingPossibleMoves_thenOneLegalMovesByOneRank() {
+
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
+        PositionFactory positionFactory = board.getPositionFactory();
+        Pawn pawn = new Pawn(WHITE);
+        Position pawnStartingPosition = positionFactory.create(6, "E");
+        board.placePiece(pawnStartingPosition, pawn);
+
+        MoveGenerator moveGenerator = game.getMoveGenerator();
+        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, pawnStartingPosition);
+
+        assertEquals(Set.of(
+                new LegalMove(pawn, pawnStartingPosition, positionFactory.create(7, "E"))
+        ), actualLegalMoves);
+    }
+
     @Test
     void givenEmptyBoard_whenBlackPawnIsMakingMove_thenExceptionIsThrown() {
         Game game = new ClassicGame();

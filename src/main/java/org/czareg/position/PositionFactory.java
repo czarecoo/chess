@@ -1,5 +1,7 @@
 package org.czareg.position;
 
+import org.czareg.BoardSize;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -9,8 +11,10 @@ public class PositionFactory {
     private final List<Integer> allowedRankValues;
     private final List<String> allowedFileValues;
 
-    public PositionFactory(int ranks, int files) {
-        allowedRankValues = IntStream.rangeClosed(1, 26).limit(ranks).boxed().toList();
+    public PositionFactory(BoardSize boardSize) {
+        int ranks = boardSize.getRanks();
+        allowedRankValues = IntStream.rangeClosed(1, ranks).boxed().toList();
+        int files = boardSize.getFiles();
         allowedFileValues = IntStream.rangeClosed('A', 'Z').limit(files).mapToObj(Character::toString).toList();
     }
 
