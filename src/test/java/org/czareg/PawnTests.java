@@ -8,8 +8,7 @@ import java.util.Set;
 
 import static org.czareg.Player.BLACK;
 import static org.czareg.Player.WHITE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PawnTests {
 
@@ -140,5 +139,44 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         assertEquals(Set.of(), moveGenerator.generate(game, positionFactory.create(4, "C")));
         assertEquals(Set.of(), moveGenerator.generate(game, positionFactory.create(5, "C")));
+    }
+
+    @Test
+    void givenWhitePawnAndBlackPawnOnDiagonalRight_whenWhiteMoves_thenItCanCapture() {
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
+        PositionFactory pf = board.getPositionFactory();
+        Pawn whitePawn = new Pawn(WHITE);
+        board.placePiece(pf.create(4, "C"), whitePawn);
+        Pawn blackPawn = new Pawn(BLACK);
+        board.placePiece(pf.create(5, "D"), blackPawn);
+
+        MoveGenerator moveGenerator = game.getMoveGenerator();
+        Set<LegalMove> whiteMoves = moveGenerator.generate(game, pf.create(4, "C"));
+
+        Position expectedCapturePosition = pf.create(5, "D");
+        assertTrue(whiteMoves.stream()
+                .anyMatch(move -> move.getEnd().equals(expectedCapturePosition)
+                        && move.getPiece().equals(whitePawn)));
+    }
+
+    @Test
+    void givenBlackPawnAndWhitePawnOnDiagonalLeft_whenBlackMoves_thenItCanCapture() {
+        Game game = new ClassicGame();
+        Board board = game.getBoard();
+        PositionFactory pf = board.getPositionFactory();
+        Pawn whitePawn = new Pawn(WHITE);
+        board.placePiece(pf.create(2, "A"), whitePawn);
+        Pawn blackPawn = new Pawn(BLACK);
+        board.placePiece(pf.create(3, "B"), blackPawn);
+
+
+        MoveGenerator moveGenerator = game.getMoveGenerator();
+        Set<LegalMove> blackMoves = moveGenerator.generate(game, pf.create(3, "B"));
+
+        Position expectedCapturePosition = pf.create(2, "A");
+        assertTrue(blackMoves.stream()
+                .anyMatch(move -> move.getEnd().equals(expectedCapturePosition)
+                        && move.getPiece().equals(blackPawn)));
     }
 }

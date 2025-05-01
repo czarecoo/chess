@@ -4,15 +4,12 @@ import lombok.Getter;
 
 import java.util.Set;
 
+@Getter
 class ClassicGame implements Game {
 
-    @Getter
     private final Board board;
-    @Getter
     private final History history;
-    @Getter
     private final MoveGenerator moveGenerator;
-    @Getter
     private final Order order;
 
     ClassicGame() {

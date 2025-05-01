@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
+class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Set<LegalMove> generate(Game game, Pawn pawn, Position currentPosition) {
@@ -29,7 +29,7 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
-            log.debug("Rejecting move because end is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
+            log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
             return legalMoves;
         }
         Position endPosition = optionalEndPosition.get();
@@ -39,8 +39,8 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
             return legalMoves;
         }
         BoardSize boardSize = board.getBoardSize();
-        if (endPosition.getRank() == boardSize.getRanks()) {
-            log.debug("Rejecting move because it would land on promotion rank.");
+        if (isOnPromotionRank(endPosition, boardSize, player)) {
+            log.debug("Rejecting move because end {} is a promotion rank.", endPosition);
             return legalMoves;
         }
         IndexChange middlePositionIndexChange = getMiddlePositionIndexChange(player);
@@ -57,17 +57,25 @@ final class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         return legalMoves;
     }
 
-    private IndexChange getMiddlePositionIndexChange(Player player) {
-        return switch (player) {
-            case WHITE -> new IndexChange(1, 0);
-            case BLACK -> new IndexChange(-1, 0);
-        };
-    }
-
     private IndexChange getEndPositionIndexChange(Player player) {
         return switch (player) {
             case WHITE -> new IndexChange(2, 0);
             case BLACK -> new IndexChange(-2, 0);
+        };
+    }
+
+    private boolean isOnPromotionRank(Position position, BoardSize boardSize, Player player) {
+        int rank = position.getRank();
+        return switch (player) {
+            case WHITE -> rank == boardSize.getRanks();
+            case BLACK -> rank == 1;
+        };
+    }
+
+    private IndexChange getMiddlePositionIndexChange(Player player) {
+        return switch (player) {
+            case WHITE -> new IndexChange(1, 0);
+            case BLACK -> new IndexChange(-1, 0);
         };
     }
 }

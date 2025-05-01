@@ -9,7 +9,8 @@ class ClassicMoveGenerator implements MoveGenerator {
 
     private final Set<PawnMoveGenerator> pawnMoveGenerators = Set.of(
             new PawnForwardMoveGenerator(),
-            new PawnDoubleForwardMoveGenerator()
+            new PawnDoubleForwardMoveGenerator(),
+            new PawnCaptureMoveGenerator()
     );
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-final class PawnForwardMoveGenerator implements PawnMoveGenerator {
+class PawnForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Set<LegalMove> generate(Game game, Pawn pawn, Position currentPosition) {
@@ -24,7 +24,7 @@ final class PawnForwardMoveGenerator implements PawnMoveGenerator {
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
-            log.debug("Rejecting move because end is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
+            log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
             return legalMoves;
         }
         Position endPosition = optionalEndPosition.get();
