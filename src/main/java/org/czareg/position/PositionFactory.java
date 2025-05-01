@@ -1,6 +1,6 @@
 package org.czareg.position;
 
-import org.czareg.BoardSize;
+import org.czareg.board.BoardSize;
 
 import java.util.List;
 import java.util.Optional;

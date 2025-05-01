@@ -1,8 +1,11 @@
-package org.czareg;
+package org.czareg.game;
+
+import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 
 import java.util.Optional;
 
-interface History {
+public interface History {
 
     boolean hasPieceMovedBefore(Piece piece);
 

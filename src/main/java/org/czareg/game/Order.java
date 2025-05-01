@@ -1,6 +1,8 @@
-package org.czareg;
+package org.czareg.game;
 
-interface Order {
+import org.czareg.piece.Player;
+
+public interface Order {
 
     Player getNowMovingPlayer(Player lastMovingPlayer);
 

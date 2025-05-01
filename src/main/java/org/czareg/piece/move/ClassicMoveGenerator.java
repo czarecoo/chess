@@ -1,11 +1,20 @@
-package org.czareg;
+package org.czareg.piece.move;
 
+import org.czareg.board.Board;
+import org.czareg.game.Game;
+import org.czareg.game.LegalMove;
+import org.czareg.piece.Pawn;
+import org.czareg.piece.Piece;
+import org.czareg.piece.move.pawn.PawnCaptureMoveGenerator;
+import org.czareg.piece.move.pawn.PawnDoubleForwardMoveGenerator;
+import org.czareg.piece.move.pawn.PawnForwardMoveGenerator;
+import org.czareg.piece.move.pawn.PawnMoveGenerator;
 import org.czareg.position.Position;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class ClassicMoveGenerator implements MoveGenerator {
+public class ClassicMoveGenerator implements MoveGenerator {
 
     private final Set<PawnMoveGenerator> pawnMoveGenerators = Set.of(
             new PawnForwardMoveGenerator(),

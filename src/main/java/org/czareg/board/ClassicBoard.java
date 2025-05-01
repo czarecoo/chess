@@ -1,7 +1,8 @@
-package org.czareg;
+package org.czareg.board;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.czareg.piece.Piece;
 import org.czareg.position.Index;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
@@ -9,7 +10,7 @@ import org.czareg.position.PositionFactory;
 import java.util.Optional;
 
 @Slf4j
-class ClassicBoard implements Board {
+public class ClassicBoard implements Board {
 
     @Getter
     private final BoardSize boardSize;
@@ -17,7 +18,7 @@ class ClassicBoard implements Board {
     @Getter
     private final PositionFactory positionFactory;
 
-    ClassicBoard(BoardSize boardSize) {
+    public ClassicBoard(BoardSize boardSize) {
         this.boardSize = boardSize;
         this.positionFactory = new PositionFactory(boardSize);
         this.board = new Piece[boardSize.getRanks()][boardSize.getFiles()];

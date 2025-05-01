@@ -1,4 +1,4 @@
-package org.czareg;
+package org.czareg.board;
 
 import lombok.Value;
 

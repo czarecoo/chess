@@ -1,14 +1,17 @@
-package org.czareg;
+package org.czareg.game;
+
+import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-class ClassicHistory implements History {
+public class ClassicHistory implements History {
 
     private final List<LegalMove> history;
 
-    ClassicHistory() {
+    public ClassicHistory() {
         history = new ArrayList<>();
     }
 

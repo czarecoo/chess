@@ -1,18 +1,24 @@
-package org.czareg;
+package org.czareg.game;
 
 import lombok.Getter;
+import org.czareg.board.Board;
+import org.czareg.board.BoardSize;
+import org.czareg.board.ClassicBoard;
+import org.czareg.piece.Player;
+import org.czareg.piece.move.ClassicMoveGenerator;
+import org.czareg.piece.move.MoveGenerator;
 
 import java.util.Set;
 
 @Getter
-class ClassicGame implements Game {
+public class ClassicGame implements Game {
 
     private final Board board;
     private final History history;
     private final MoveGenerator moveGenerator;
     private final Order order;
 
-    ClassicGame() {
+    public ClassicGame() {
         this(
                 new ClassicBoard(new BoardSize(8, 8)),
                 new ClassicHistory(),
@@ -21,7 +27,7 @@ class ClassicGame implements Game {
         );
     }
 
-    ClassicGame(Board board, History history, MoveGenerator moveGenerator, Order order) {
+    public ClassicGame(Board board, History history, MoveGenerator moveGenerator, Order order) {
         this.board = board;
         this.history = history;
         this.moveGenerator = moveGenerator;

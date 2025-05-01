@@ -1,9 +1,11 @@
-package org.czareg;
+package org.czareg.game;
 
-import static org.czareg.Player.BLACK;
-import static org.czareg.Player.WHITE;
+import org.czareg.piece.Player;
 
-class ClassicOrder implements Order {
+import static org.czareg.piece.Player.BLACK;
+import static org.czareg.piece.Player.WHITE;
+
+public class ClassicOrder implements Order {
 
     @Override
     public Player getNowMovingPlayer(Player lastMovingPlayer) {

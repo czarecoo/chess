@@ -1,4 +1,4 @@
-package org.czareg;
+package org.czareg.piece;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor
 @ToString
-final class Pawn implements Piece {
+public final class Pawn implements Piece {
 
     private final Player player;
 }

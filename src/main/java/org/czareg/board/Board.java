@@ -1,9 +1,10 @@
-package org.czareg;
+package org.czareg.board;
 
+import org.czareg.piece.Piece;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
-interface Board {
+public interface Board {
 
     BoardSize getBoardSize();
 

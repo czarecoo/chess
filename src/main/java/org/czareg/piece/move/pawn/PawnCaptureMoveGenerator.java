@@ -1,6 +1,12 @@
-package org.czareg;
+package org.czareg.piece.move.pawn;
 
 import lombok.extern.slf4j.Slf4j;
+import org.czareg.board.Board;
+import org.czareg.game.Game;
+import org.czareg.game.LegalMove;
+import org.czareg.piece.Pawn;
+import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -12,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-class PawnCaptureMoveGenerator implements PawnMoveGenerator {
+public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Set<LegalMove> generate(Game game, Pawn pawn, Position currentPosition) {

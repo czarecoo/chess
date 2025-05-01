@@ -1,6 +1,9 @@
-package org.czareg;
+package org.czareg.game;
 
-interface Game {
+import org.czareg.board.Board;
+import org.czareg.piece.move.MoveGenerator;
+
+public interface Game {
 
     Board getBoard();
 

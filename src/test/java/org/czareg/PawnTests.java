@@ -1,13 +1,19 @@
 package org.czareg;
 
+import org.czareg.board.Board;
+import org.czareg.game.ClassicGame;
+import org.czareg.game.Game;
+import org.czareg.game.LegalMove;
+import org.czareg.piece.Pawn;
+import org.czareg.piece.move.MoveGenerator;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.czareg.Player.BLACK;
-import static org.czareg.Player.WHITE;
+import static org.czareg.piece.Player.BLACK;
+import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PawnTests {
