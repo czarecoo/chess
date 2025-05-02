@@ -9,7 +9,7 @@ public interface History {
 
     boolean hasPieceMovedBefore(Piece piece);
 
-    void save(LegalMove legalMove);
+    void save(Move move);
 
     Optional<Player> getLastMovingPlayer();
 }

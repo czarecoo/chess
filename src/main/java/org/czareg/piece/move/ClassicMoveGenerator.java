@@ -2,7 +2,7 @@ package org.czareg.piece.move;
 
 import org.czareg.board.Board;
 import org.czareg.game.Game;
-import org.czareg.game.LegalMove;
+import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.move.pawn.PawnCaptureMoveGenerator;
@@ -23,7 +23,7 @@ public class ClassicMoveGenerator implements MoveGenerator {
     );
 
     @Override
-    public Set<LegalMove> generate(Game game, Position currentPosition) {
+    public Set<Move> generate(Game game, Position currentPosition) {
         Board board = game.getBoard();
         if (!board.hasPiece(currentPosition)) {
             return Set.of();

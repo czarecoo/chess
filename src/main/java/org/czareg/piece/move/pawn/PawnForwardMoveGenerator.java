@@ -3,7 +3,7 @@ package org.czareg.piece.move.pawn;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.game.Game;
-import org.czareg.game.LegalMove;
+import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -20,9 +20,9 @@ import java.util.Set;
 public class PawnForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
-    public Set<LegalMove> generate(Game game, Pawn pawn, Position currentPosition) {
+    public Set<Move> generate(Game game, Pawn pawn, Position currentPosition) {
         log.debug("Generating moves for {} at {}.", pawn, currentPosition);
-        Set<LegalMove> legalMoves = new HashSet<>();
+        Set<Move> moves = new HashSet<>();
         Board board = game.getBoard();
         Player player = pawn.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
@@ -31,18 +31,18 @@ public class PawnForwardMoveGenerator implements PawnMoveGenerator {
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
             log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
-            return legalMoves;
+            return moves;
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
             Piece endPositionOccupyingPiece = board.getPiece(endPosition);
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
-            return legalMoves;
+            return moves;
         }
-        LegalMove legalMove = new LegalMove(pawn, currentPosition, endPosition);
-        legalMoves.add(legalMove);
-        log.debug("Accepted move: {}.", legalMove);
-        return legalMoves;
+        Move move = new Move(pawn, currentPosition, endPosition);
+        moves.add(move);
+        log.debug("Accepted move: {}.", move);
+        return moves;
     }
 
     private IndexChange getEndPositionIndexChange(Player player) {

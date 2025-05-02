@@ -3,7 +3,8 @@ package org.czareg.piece.move.pawn;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.game.Game;
-import org.czareg.game.LegalMove;
+import org.czareg.game.Metadata;
+import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -21,9 +22,9 @@ import java.util.Set;
 public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
 
     @Override
-    public Set<LegalMove> generate(Game game, Pawn pawn, Position currentPosition) {
+    public Set<Move> generate(Game game, Pawn pawn, Position currentPosition) {
         log.debug("Generating moves for {} at {}.", pawn, currentPosition);
-        Set<LegalMove> legalMoves = new HashSet<>();
+        Set<Move> moves = new HashSet<>();
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = pawn.getPlayer();
@@ -46,11 +47,13 @@ public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
                 log.debug("Rejecting move because target {} is occupied by friendly {}.", targetPosition, targetPiece);
                 continue;
             }
-            LegalMove legalMove = new LegalMove(pawn, currentPosition, targetPosition);
-            legalMoves.add(legalMove);
-            log.debug("Accepted move: {}", legalMove);
+            Metadata metadata = new Metadata();
+            metadata.put(Metadata.Key.CAPTURED_PIECE, targetPiece);
+            Move move = new Move(pawn, currentPosition, targetPosition, metadata);
+            moves.add(move);
+            log.debug("Accepted move: {}", move);
         }
-        return legalMoves;
+        return moves;
     }
 
     private List<IndexChange> getCaptureTargetIndexChanges(Player player) {

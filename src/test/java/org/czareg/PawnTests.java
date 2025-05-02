@@ -3,7 +3,7 @@ package org.czareg;
 import org.czareg.board.Board;
 import org.czareg.game.ClassicGame;
 import org.czareg.game.Game;
-import org.czareg.game.LegalMove;
+import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.move.MoveGenerator;
 import org.czareg.position.Position;
@@ -28,13 +28,13 @@ class PawnTests {
         board.placePiece(start, pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, start);
+        Set<Move> actualMoves = moveGenerator.generate(game, start);
 
-        Set<LegalMove> expectedLegalMoves = Set.of(
-                new LegalMove(pawn, start, positionFactory.create(3, "A")),
-                new LegalMove(pawn, start, positionFactory.create(4, "A"))
+        Set<Move> expectedMoves = Set.of(
+                new Move(pawn, start, positionFactory.create(3, "A")),
+                new Move(pawn, start, positionFactory.create(4, "A"))
         );
-        assertEquals(expectedLegalMoves, actualLegalMoves);
+        assertEquals(expectedMoves, actualMoves);
     }
 
     @Test
@@ -44,15 +44,15 @@ class PawnTests {
         PositionFactory positionFactory = board.getPositionFactory();
         Pawn pawn = new Pawn(WHITE);
         board.placePiece(positionFactory.create(2, "D"), pawn);
-        game.makeMove(new LegalMove(pawn, positionFactory.create(2, "D"), positionFactory.create(3, "D")));
+        game.makeMove(new Move(pawn, positionFactory.create(2, "D"), positionFactory.create(3, "D")));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, positionFactory.create(3, "D"));
+        Set<Move> actualMoves = moveGenerator.generate(game, positionFactory.create(3, "D"));
 
-        Set<LegalMove> expectedLegalMoves = Set.of(
-                new LegalMove(pawn, positionFactory.create(3, "D"), positionFactory.create(4, "D"))
+        Set<Move> expectedMoves = Set.of(
+                new Move(pawn, positionFactory.create(3, "D"), positionFactory.create(4, "D"))
         );
-        assertEquals(expectedLegalMoves, actualLegalMoves);
+        assertEquals(expectedMoves, actualMoves);
     }
 
     @Test
@@ -64,9 +64,9 @@ class PawnTests {
         board.placePiece(positionFactory.create(8, "H"), pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, positionFactory.create(8, "H"));
+        Set<Move> actualMoves = moveGenerator.generate(game, positionFactory.create(8, "H"));
 
-        assertEquals(Set.of(), actualLegalMoves);
+        assertEquals(Set.of(), actualMoves);
     }
 
     @Test
@@ -79,11 +79,11 @@ class PawnTests {
         board.placePiece(pawnStartingPosition, pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, pawnStartingPosition);
+        Set<Move> actualMoves = moveGenerator.generate(game, pawnStartingPosition);
 
         assertEquals(Set.of(
-                new LegalMove(pawn, pawnStartingPosition, positionFactory.create(8, "B"))
-        ), actualLegalMoves);
+                new Move(pawn, pawnStartingPosition, positionFactory.create(8, "B"))
+        ), actualMoves);
     }
 
     /*
@@ -100,11 +100,11 @@ class PawnTests {
         board.placePiece(pawnStartingPosition, pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> actualLegalMoves = moveGenerator.generate(game, pawnStartingPosition);
+        Set<Move> actualMoves = moveGenerator.generate(game, pawnStartingPosition);
 
         assertEquals(Set.of(
-                new LegalMove(pawn, pawnStartingPosition, positionFactory.create(7, "E"))
-        ), actualLegalMoves);
+                new Move(pawn, pawnStartingPosition, positionFactory.create(7, "E"))
+        ), actualMoves);
     }
 
     @Test
@@ -113,8 +113,8 @@ class PawnTests {
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
 
-        LegalMove legalMove = new LegalMove(new Pawn(BLACK), positionFactory.create(1, "A"), positionFactory.create(2, "A"));
-        assertThrows(IllegalArgumentException.class, () -> game.makeMove(legalMove));
+        Move move = new Move(new Pawn(BLACK), positionFactory.create(1, "A"), positionFactory.create(2, "A"));
+        assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
     }
 
     @Test
@@ -123,8 +123,8 @@ class PawnTests {
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
 
-        LegalMove legalMove = new LegalMove(new Pawn(WHITE), positionFactory.create(1, "A"), positionFactory.create(2, "A"));
-        assertThrows(IllegalArgumentException.class, () -> game.makeMove(legalMove));
+        Move move = new Move(new Pawn(WHITE), positionFactory.create(1, "A"), positionFactory.create(2, "A"));
+        assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
     }
 
     @Test
@@ -137,10 +137,10 @@ class PawnTests {
         Pawn blackPawn = new Pawn(BLACK);
         board.placePiece(positionFactory.create(8, "C"), blackPawn);
 
-        game.makeMove(new LegalMove(whitePawn, positionFactory.create(1, "C"), positionFactory.create(3, "C")));
-        game.makeMove(new LegalMove(blackPawn, positionFactory.create(8, "C"), positionFactory.create(6, "C")));
-        game.makeMove(new LegalMove(whitePawn, positionFactory.create(3, "C"), positionFactory.create(4, "C")));
-        game.makeMove(new LegalMove(blackPawn, positionFactory.create(6, "C"), positionFactory.create(5, "C")));
+        game.makeMove(new Move(whitePawn, positionFactory.create(1, "C"), positionFactory.create(3, "C")));
+        game.makeMove(new Move(blackPawn, positionFactory.create(8, "C"), positionFactory.create(6, "C")));
+        game.makeMove(new Move(whitePawn, positionFactory.create(3, "C"), positionFactory.create(4, "C")));
+        game.makeMove(new Move(blackPawn, positionFactory.create(6, "C"), positionFactory.create(5, "C")));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
         assertEquals(Set.of(), moveGenerator.generate(game, positionFactory.create(4, "C")));
@@ -158,7 +158,7 @@ class PawnTests {
         board.placePiece(pf.create(5, "D"), blackPawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> whiteMoves = moveGenerator.generate(game, pf.create(4, "C"));
+        Set<Move> whiteMoves = moveGenerator.generate(game, pf.create(4, "C"));
 
         Position expectedCapturePosition = pf.create(5, "D");
         assertTrue(whiteMoves.stream()
@@ -176,9 +176,8 @@ class PawnTests {
         Pawn blackPawn = new Pawn(BLACK);
         board.placePiece(pf.create(3, "B"), blackPawn);
 
-
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<LegalMove> blackMoves = moveGenerator.generate(game, pf.create(3, "B"));
+        Set<Move> blackMoves = moveGenerator.generate(game, pf.create(3, "B"));
 
         Position expectedCapturePosition = pf.create(2, "A");
         assertTrue(blackMoves.stream()

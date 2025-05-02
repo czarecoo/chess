@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class ClassicHistory implements History {
 
-    private final List<LegalMove> history;
+    private final List<Move> history;
 
     public ClassicHistory() {
         history = new ArrayList<>();
@@ -19,12 +19,12 @@ public class ClassicHistory implements History {
     public boolean hasPieceMovedBefore(Piece piece) {
         return history
                 .stream()
-                .anyMatch(legalMove -> legalMove.getPiece() == piece);
+                .anyMatch(move -> move.getPiece() == piece);
     }
 
     @Override
-    public void save(LegalMove legalMove) {
-        history.add(legalMove);
+    public void save(Move move) {
+        history.add(move);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ClassicHistory implements History {
             return Optional.empty();
         }
         return Optional.of(history.getLast())
-                .map(LegalMove::getPiece)
+                .map(Move::getPiece)
                 .map(Piece::getPlayer);
     }
 }
