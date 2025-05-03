@@ -7,5 +7,5 @@ public enum MoveType {
     PAWN_CAPTURE,
     PROMOTION,
     EN_PASSANT,
-    CASTLING;
+    CASTLING
 }

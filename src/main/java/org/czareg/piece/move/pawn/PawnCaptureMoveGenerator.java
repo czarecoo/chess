@@ -24,42 +24,46 @@ public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Stream<Move> generate(Game game, Pawn pawn, Position currentPosition) {
-        log.debug("Generating moves for {} at {}.", pawn, currentPosition);
         List<Move> moves = new ArrayList<>();
-        Board board = game.getBoard();
-        PositionFactory positionFactory = board.getPositionFactory();
         Player player = pawn.getPlayer();
-        Index currentPositionIndex = positionFactory.create(currentPosition);
-
-        for (IndexChange captureTargetIndexChange : getCaptureTargetIndexChanges(player)) {
-            log.debug("Generating move for {}", captureTargetIndexChange);
-            Optional<Position> optionalTargetPosition = positionFactory.create(currentPositionIndex, captureTargetIndexChange);
-            if (optionalTargetPosition.isEmpty()) {
-                log.debug("Rejecting move because target position is not valid on the board ({}, {}).", currentPositionIndex, captureTargetIndexChange);
-                continue;
-            }
-            Position targetPosition = optionalTargetPosition.get();
-            if (!board.hasPiece(targetPosition)) {
-                log.debug("Rejecting move because target {} is empty.", targetPosition);
-                continue;
-            }
-            Piece targetPiece = board.getPiece(targetPosition);
-            if (targetPiece.getPlayer() == player) {
-                log.debug("Rejecting move because target {} is occupied by friendly {}.", targetPosition, targetPiece);
-                continue;
-            }
-            Metadata metadata = new Metadata();
-            metadata.put(Metadata.Key.CAPTURED_PIECE, targetPiece);
-            metadata.put(Metadata.Key.CAPTURED_PIECE_POSITION, targetPosition);
-            metadata.put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_CAPTURE);
-            Move move = new Move(pawn, currentPosition, targetPosition, metadata);
-            moves.add(move);
-            log.debug("Accepted move: {}", move);
+        for (IndexChange endPositionIndexChange : getEndPositionIndexChanges(player)) {
+            generate(game, pawn, currentPosition, endPositionIndexChange).ifPresent(moves::add);
         }
         return moves.stream();
     }
 
-    private List<IndexChange> getCaptureTargetIndexChanges(Player player) {
+    @Override
+    public Optional<Move> generate(Game game, Pawn pawn, Position currentPosition, IndexChange endPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", pawn, currentPosition, endPositionIndexChange);
+        Board board = game.getBoard();
+        PositionFactory positionFactory = board.getPositionFactory();
+        Player player = pawn.getPlayer();
+        Index currentPositionIndex = positionFactory.create(currentPosition);
+        Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
+        if (optionalEndPosition.isEmpty()) {
+            log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
+            return Optional.empty();
+        }
+        Position endPosition = optionalEndPosition.get();
+        if (!board.hasPiece(endPosition)) {
+            log.debug("Rejecting move because target {} is empty.", endPosition);
+            return Optional.empty();
+        }
+        Piece targetPiece = board.getPiece(endPosition);
+        if (targetPiece.getPlayer() == player) {
+            log.debug("Rejecting move because target {} is occupied by friendly {}.", endPosition, targetPiece);
+            return Optional.empty();
+        }
+        Metadata metadata = new Metadata()
+                .put(Metadata.Key.CAPTURED_PIECE, targetPiece)
+                .put(Metadata.Key.CAPTURED_PIECE_POSITION, endPosition)
+                .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_CAPTURE);
+        Move move = new Move(pawn, currentPosition, endPosition, metadata);
+        log.debug("Accepted move {}", move);
+        return Optional.of(move);
+    }
+
+    private List<IndexChange> getEndPositionIndexChanges(Player player) {
         return switch (player) {
             case WHITE -> List.of(
                     new IndexChange(1, -1),
@@ -70,5 +74,10 @@ public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
                     new IndexChange(-1, 1)
             );
         };
+    }
+
+    @Override
+    public MoveType getMoveType() {
+        return MoveType.PAWN_CAPTURE;
     }
 }

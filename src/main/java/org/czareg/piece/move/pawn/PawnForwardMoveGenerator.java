@@ -22,28 +22,33 @@ public class PawnForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Stream<Move> generate(Game game, Pawn pawn, Position currentPosition) {
-        log.debug("Generating moves for {} at {}.", pawn, currentPosition);
-        Board board = game.getBoard();
         Player player = pawn.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
+        return generate(game, pawn, currentPosition, endPositionIndexChange).stream();
+    }
+
+    @Override
+    public Optional<Move> generate(Game game, Pawn pawn, Position currentPosition, IndexChange endPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", pawn, currentPosition, endPositionIndexChange);
+        Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
             log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
-            return Stream.empty();
+            return Optional.empty();
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
             Piece endPositionOccupyingPiece = board.getPiece(endPosition);
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
-            return Stream.empty();
+            return Optional.empty();
         }
-        Metadata metadata = new Metadata();
-        metadata.put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_FORWARD);
+        Metadata metadata = new Metadata()
+                .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_FORWARD);
         Move move = new Move(pawn, currentPosition, endPosition, metadata);
-        log.debug("Accepted move: {}.", move);
-        return Stream.of(move);
+        log.debug("Accepted move {}.", move);
+        return Optional.of(move);
     }
 
     private IndexChange getEndPositionIndexChange(Player player) {
@@ -51,5 +56,10 @@ public class PawnForwardMoveGenerator implements PawnMoveGenerator {
             case WHITE -> new IndexChange(1, 0);
             case BLACK -> new IndexChange(-1, 0);
         };
+    }
+
+    @Override
+    public MoveType getMoveType() {
+        return MoveType.PAWN_FORWARD;
     }
 }

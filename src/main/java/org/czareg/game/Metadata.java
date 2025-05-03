@@ -22,8 +22,9 @@ public class Metadata {
 
     private final Map<Key, Object> data = new EnumMap<>(Key.class);
 
-    public <T> void put(Key key, T value) {
+    public <T> Metadata put(Key key, T value) {
         data.put(key, value);
+        return this;
     }
 
     public <T> Optional<T> get(Key key, Class<T> type) {
@@ -37,9 +38,5 @@ public class Metadata {
         return get(key, typeClass)
                 .filter(typeValue -> typeValue == typeValueToCheck)
                 .isPresent();
-    }
-
-    public boolean containsKey(Key key) {
-        return data.containsKey(key);
     }
 }

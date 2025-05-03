@@ -55,7 +55,7 @@ public class ClassicGame implements Game {
                 .orElse(order.startingPlayer());
         Player requestingPlayer = move.getPiece().getPlayer();
         if (requestingPlayer != nowMovingPlayer) {
-            throw new IllegalArgumentException("Now moving player: %s not player: %s".formatted(nowMovingPlayer, requestingPlayer));
+            throw new IllegalArgumentException("Now moving player %s not player %s".formatted(nowMovingPlayer, requestingPlayer));
         }
     }
 
@@ -63,7 +63,7 @@ public class ClassicGame implements Game {
         Stream<Move> moveStream = moveGenerator.generate(this, move.getStart());
         Set<Move> moves = moveStream.collect(Collectors.toSet());
         if (!moves.contains(move)) {
-            throw new IllegalArgumentException("%s is not one of the legal moves: %s".formatted(move, moves));
+            throw new IllegalArgumentException("%s is not one of the legal moves %s".formatted(move, moves));
         }
     }
 }

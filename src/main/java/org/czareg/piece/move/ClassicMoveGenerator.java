@@ -3,11 +3,15 @@ package org.czareg.piece.move;
 import org.czareg.board.Board;
 import org.czareg.game.Game;
 import org.czareg.game.Move;
+import org.czareg.game.MoveType;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.move.pawn.*;
+import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
+import org.czareg.position.PositionFactory;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -28,7 +32,26 @@ public class ClassicMoveGenerator implements MoveGenerator {
         }
         Piece piece = board.getPiece(currentPosition);
         return switch (piece) {
-            case Pawn pawn -> pawnMoveGenerators.stream().flatMap(gen -> gen.generate(game, pawn, currentPosition));
+            case Pawn pawn -> pawnMoveGenerators.stream()
+                    .flatMap(gen -> gen.generate(game, pawn, currentPosition));
+        };
+    }
+
+    @Override
+    public Optional<Move> generate(Game game, Position currentPosition, Position endPosition, MoveType moveType) {
+        Board board = game.getBoard();
+        if (!board.hasPiece(currentPosition)) {
+            return Optional.empty();
+        }
+        PositionFactory positionFactory = board.getPositionFactory();
+        IndexChange indexChange = positionFactory.create(currentPosition, endPosition);
+        Piece piece = board.getPiece(currentPosition);
+        return switch (piece) {
+            case Pawn pawn -> pawnMoveGenerators.stream()
+                    .filter(gen -> gen.getMoveType() == moveType)
+                    .findFirst()
+                    .orElseThrow()
+                    .generate(game, pawn, currentPosition, indexChange);
         };
     }
 }

@@ -20,11 +20,11 @@ public class PositionFactory {
 
     public Position create(int rank, String file) {
         if (!allowedRankValues.contains(rank)) {
-            String message = "Illegal rank: %s allowed values: %s".formatted(rank, allowedRankValues);
+            String message = "Illegal rank %s allowed values %s".formatted(rank, allowedRankValues);
             throw new IllegalArgumentException(message);
         }
         if (!allowedFileValues.contains(file)) {
-            String message = "Illegal file: %s allowed values: %s".formatted(file, allowedRankValues);
+            String message = "Illegal file %s allowed values %s".formatted(file, allowedRankValues);
             throw new IllegalArgumentException(message);
         }
         return new Position(rank, file);
@@ -32,10 +32,10 @@ public class PositionFactory {
 
     public Position create(int rankIndex, int fileIndex) {
         if (isRankIndexInvalid(rankIndex)) {
-            throw new IllegalArgumentException("Rank index out of bounds: " + rankIndex);
+            throw new IllegalArgumentException("Rank index out of bounds " + rankIndex);
         }
         if (isFileIndexInvalid(fileIndex)) {
-            throw new IllegalArgumentException("File index out of bounds: " + fileIndex);
+            throw new IllegalArgumentException("File index out of bounds " + fileIndex);
         }
         return new Position(allowedRankValues.get(rankIndex), allowedFileValues.get(fileIndex));
     }
@@ -54,6 +54,14 @@ public class PositionFactory {
         }
         Position position = create(changedRankIndex, changedFileIndex);
         return Optional.of(position);
+    }
+
+    public IndexChange create(Position currentPosition, Position endPosition) {
+        Index currentIndex = create(currentPosition);
+        Index endIndex = create(endPosition);
+        int rankChange = endIndex.getRank() - currentIndex.getRank();
+        int fileChange = endIndex.getFile() - currentIndex.getFile();
+        return new IndexChange(rankChange, fileChange);
     }
 
     private boolean isRankIndexInvalid(int rankIndex) {

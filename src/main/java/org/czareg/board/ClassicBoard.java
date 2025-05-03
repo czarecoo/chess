@@ -32,7 +32,7 @@ public class ClassicBoard implements Board {
     @Override
     public Piece getPiece(Position position) {
         if (!hasPiece(position)) {
-            throw new IllegalArgumentException("No piece at position: " + position);
+            throw new IllegalArgumentException("No piece at position " + position);
         }
         return get(position);
     }
@@ -40,11 +40,11 @@ public class ClassicBoard implements Board {
     @Override
     public void placePiece(Position startPosition, Piece piece) {
         if (hasPiece(startPosition)) {
-            String message = "Position: %s already occupied by different piece".formatted(startPosition);
+            String message = "%s already occupied by different piece".formatted(startPosition);
             throw new IllegalArgumentException(message);
         }
         find(piece).ifPresent(foundPiecePosition -> {
-            String message = "Piece is already on board at position: %s".formatted(foundPiecePosition);
+            String message = "Piece is already on board at %s".formatted(foundPiecePosition);
             throw new IllegalStateException(message);
         });
         set(piece, startPosition);

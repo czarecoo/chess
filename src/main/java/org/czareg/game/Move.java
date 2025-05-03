@@ -18,7 +18,7 @@ public class Move {
 
     public Move(Piece piece, Position start, Position end, Metadata metadata) {
         if (start.equals(end)) {
-            throw new IllegalArgumentException("Start and end positions cannot be equal: " + start);
+            throw new IllegalArgumentException("Start and end positions cannot be equal " + start);
         }
         this.piece = piece;
         this.end = end;
