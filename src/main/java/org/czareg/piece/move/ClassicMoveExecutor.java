@@ -4,20 +4,27 @@ import org.czareg.board.Board;
 import org.czareg.game.Game;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
+import org.czareg.game.MoveType;
 import org.czareg.piece.Piece;
 import org.czareg.position.Position;
-import org.czareg.position.PositionFactory;
 
-public class ClassicSpecialMoveExecutor implements SpecialMoveExecutor {
+public class ClassicMoveExecutor implements MoveExecutor {
 
     @Override
     public void execute(Move move, Game game) {
         Board board = game.getBoard();
-        switch (getSpecialMoveType(move)) {
+        Metadata metadata = move.getMetadata();
+        MoveType moveType = metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class).orElseThrow();
+        switch (moveType) {
+            case PAWN_DOUBLE_FORWARD, PAWN_FORWARD, PAWN_CAPTURE -> handleDefault(move, board);
             case PROMOTION -> handlePromotion(move, board);
             case EN_PASSANT -> handleEnPassant(move, board);
             case CASTLING -> handleCastling(move, board);
         }
+    }
+
+    private void handleDefault(Move move, Board board) {
+        board.movePiece(move.getStart(), move.getEnd());
     }
 
     private void handlePromotion(Move move, Board board) {
@@ -29,12 +36,11 @@ public class ClassicSpecialMoveExecutor implements SpecialMoveExecutor {
     }
 
     private void handleEnPassant(Move move, Board board) {
-        PositionFactory positionFactory = board.getPositionFactory();
         Position attackingPawnStart = move.getStart();
         Position attackingPawnEnd = move.getEnd();
-        int capturedPawnRank = attackingPawnStart.getRank();
-        String capturedPawnFile = attackingPawnEnd.getFile();
-        Position capturedPawnPosition = positionFactory.create(capturedPawnRank, capturedPawnFile);
+        Position capturedPawnPosition = move.getMetadata()
+                .get(Metadata.Key.CAPTURED_PIECE_POSITION, Position.class)
+                .orElseThrow(() -> new IllegalStateException("En passant move missing captured piece position."));
         board.removePiece(attackingPawnStart);
         board.removePiece(capturedPawnPosition);
         board.placePiece(attackingPawnEnd, move.getPiece());
@@ -44,10 +50,10 @@ public class ClassicSpecialMoveExecutor implements SpecialMoveExecutor {
         Metadata metadata = move.getMetadata();
         Position rookStart = metadata
                 .get(Metadata.Key.CASTLING_ROOK_START_POSITION, Position.class)
-                .orElseThrow(() -> new IllegalStateException("Castling move missing rook start"));
+                .orElseThrow(() -> new IllegalStateException("Castling move missing rook start position."));
         Position rookEnd = metadata
                 .get(Metadata.Key.CASTLING_ROOK_END_POSITION, Position.class)
-                .orElseThrow(() -> new IllegalStateException("Castling move missing rook end"));
+                .orElseThrow(() -> new IllegalStateException("Castling move missing rook end position."));
         Position kingStart = move.getStart();
         Position kingEnd = move.getEnd();
         board.removePiece(kingStart);

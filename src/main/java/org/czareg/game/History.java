@@ -12,4 +12,6 @@ public interface History {
     void save(Move move);
 
     Optional<Player> getLastMovingPlayer();
+
+    Optional<Move> getLastPlayedMove();
 }

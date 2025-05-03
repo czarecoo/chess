@@ -5,9 +5,9 @@ import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.position.Position;
 
-import java.util.Set;
+import java.util.stream.Stream;
 
 public interface PawnMoveGenerator {
 
-    Set<Move> generate(Game game, Pawn pawn, Position currentPosition);
+    Stream<Move> generate(Game game, Pawn pawn, Position currentPosition);
 }

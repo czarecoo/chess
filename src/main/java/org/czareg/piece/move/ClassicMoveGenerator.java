@@ -5,34 +5,30 @@ import org.czareg.game.Game;
 import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
-import org.czareg.piece.move.pawn.PawnCaptureMoveGenerator;
-import org.czareg.piece.move.pawn.PawnDoubleForwardMoveGenerator;
-import org.czareg.piece.move.pawn.PawnForwardMoveGenerator;
-import org.czareg.piece.move.pawn.PawnMoveGenerator;
+import org.czareg.piece.move.pawn.*;
 import org.czareg.position.Position;
 
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ClassicMoveGenerator implements MoveGenerator {
 
     private final Set<PawnMoveGenerator> pawnMoveGenerators = Set.of(
             new PawnForwardMoveGenerator(),
             new PawnDoubleForwardMoveGenerator(),
-            new PawnCaptureMoveGenerator()
+            new PawnCaptureMoveGenerator(),
+            new PawnEnPassantMoveGenerator()
     );
 
     @Override
-    public Set<Move> generate(Game game, Position currentPosition) {
+    public Stream<Move> generate(Game game, Position currentPosition) {
         Board board = game.getBoard();
         if (!board.hasPiece(currentPosition)) {
-            return Set.of();
+            return Stream.empty();
         }
         Piece piece = board.getPiece(currentPosition);
         return switch (piece) {
-            case Pawn pawn -> pawnMoveGenerators.stream()
-                    .flatMap(gen -> gen.generate(game, pawn, currentPosition).stream())
-                    .collect(Collectors.toSet());
+            case Pawn pawn -> pawnMoveGenerators.stream().flatMap(gen -> gen.generate(game, pawn, currentPosition));
         };
     }
 }

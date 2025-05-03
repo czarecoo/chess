@@ -4,9 +4,9 @@ import org.czareg.game.Game;
 import org.czareg.game.Move;
 import org.czareg.position.Position;
 
-import java.util.Set;
+import java.util.stream.Stream;
 
 public interface MoveGenerator {
 
-    Set<Move> generate(Game game, Position currentPosition);
+    Stream<Move> generate(Game game, Position currentPosition);
 }

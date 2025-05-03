@@ -3,9 +3,7 @@ package org.czareg.piece.move.pawn;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.BoardSize;
-import org.czareg.game.Game;
-import org.czareg.game.History;
-import org.czareg.game.Move;
+import org.czareg.game.*;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -14,22 +12,20 @@ import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 @Slf4j
 public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
-    public Set<Move> generate(Game game, Pawn pawn, Position currentPosition) {
+    public Stream<Move> generate(Game game, Pawn pawn, Position currentPosition) {
         log.debug("Generating moves for {} at {}.", pawn, currentPosition);
-        Set<Move> moves = new HashSet<>();
         History history = game.getHistory();
         Board board = game.getBoard();
         if (history.hasPieceMovedBefore(pawn)) {
             log.debug("Rejecting move because it was already moved.");
-            return moves;
+            return Stream.empty();
         }
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = pawn.getPlayer();
@@ -38,18 +34,18 @@ public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
             log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, endPositionIndexChange);
-            return moves;
+            return Stream.empty();
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
             Piece endPositionOccupyingPiece = board.getPiece(endPosition);
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
-            return moves;
+            return Stream.empty();
         }
         BoardSize boardSize = board.getBoardSize();
         if (isOnPromotionRank(endPosition, boardSize, player)) {
             log.debug("Rejecting move because end {} is a promotion rank.", endPosition);
-            return moves;
+            return Stream.empty();
         }
         IndexChange middlePositionIndexChange = getMiddlePositionIndexChange(player);
         Optional<Position> optionalMiddlePosition = positionFactory.create(currentPositionIndex, middlePositionIndexChange);
@@ -57,12 +53,13 @@ public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         if (board.hasPiece(middlePosition)) {
             Piece middlePositionOccupyingPiece = board.getPiece(middlePosition);
             log.debug("Rejecting move, because middle {} is occupied by {}.", middlePosition, middlePositionOccupyingPiece);
-            return moves;
+            return Stream.empty();
         }
-        Move move = new Move(pawn, currentPosition, endPosition);
-        moves.add(move);
+        Metadata metadata = new Metadata();
+        metadata.put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_DOUBLE_FORWARD);
+        Move move = new Move(pawn, currentPosition, endPosition, metadata);
         log.debug("Accepted move: {}.", move);
-        return moves;
+        return Stream.of(move);
     }
 
     private IndexChange getEndPositionIndexChange(Player player) {

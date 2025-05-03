@@ -29,11 +29,16 @@ public class ClassicHistory implements History {
 
     @Override
     public Optional<Player> getLastMovingPlayer() {
+        return getLastPlayedMove()
+                .map(Move::getPiece)
+                .map(Piece::getPlayer);
+    }
+
+    @Override
+    public Optional<Move> getLastPlayedMove() {
         if (history.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(history.getLast())
-                .map(Move::getPiece)
-                .map(Piece::getPlayer);
+        return Optional.of(history.getLast());
     }
 }

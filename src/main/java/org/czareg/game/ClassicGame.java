@@ -5,12 +5,14 @@ import org.czareg.board.Board;
 import org.czareg.board.BoardSize;
 import org.czareg.board.ClassicBoard;
 import org.czareg.piece.Player;
+import org.czareg.piece.move.ClassicMoveExecutor;
 import org.czareg.piece.move.ClassicMoveGenerator;
-import org.czareg.piece.move.ClassicSpecialMoveExecutor;
+import org.czareg.piece.move.MoveExecutor;
 import org.czareg.piece.move.MoveGenerator;
-import org.czareg.piece.move.SpecialMoveExecutor;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 public class ClassicGame implements Game {
@@ -19,7 +21,7 @@ public class ClassicGame implements Game {
     private final History history;
     private final MoveGenerator moveGenerator;
     private final Order order;
-    private final SpecialMoveExecutor specialMoveExecutor;
+    private final MoveExecutor moveExecutor;
 
     public ClassicGame() {
         this(
@@ -27,32 +29,24 @@ public class ClassicGame implements Game {
                 new ClassicHistory(),
                 new ClassicMoveGenerator(),
                 new ClassicOrder(),
-                new ClassicSpecialMoveExecutor()
+                new ClassicMoveExecutor()
         );
     }
 
-    public ClassicGame(Board board, History history, MoveGenerator moveGenerator, Order order, SpecialMoveExecutor specialMoveExecutor) {
+    public ClassicGame(Board board, History history, MoveGenerator moveGenerator, Order order, MoveExecutor moveExecutor) {
         this.board = board;
         this.history = history;
         this.moveGenerator = moveGenerator;
         this.order = order;
-        this.specialMoveExecutor = specialMoveExecutor;
+        this.moveExecutor = moveExecutor;
     }
 
     @Override
     public void makeMove(Move move) {
         checkIfPlayersTurn(move);
         checkIfLegal(move);
-        make(move);
+        moveExecutor.execute(move, this);
         history.save(move);
-    }
-
-    private void make(Move move) {
-        if (specialMoveExecutor.isSpecialMove(move)) {
-            specialMoveExecutor.execute(move, this);
-        } else {
-            board.movePiece(move.getStart(), move.getEnd());
-        }
     }
 
     private void checkIfPlayersTurn(Move move) {
@@ -66,7 +60,8 @@ public class ClassicGame implements Game {
     }
 
     private void checkIfLegal(Move move) {
-        Set<Move> moves = moveGenerator.generate(this, move.getStart());
+        Stream<Move> moveStream = moveGenerator.generate(this, move.getStart());
+        Set<Move> moves = moveStream.collect(Collectors.toSet());
         if (!moves.contains(move)) {
             throw new IllegalArgumentException("%s is not one of the legal moves: %s".formatted(move, moves));
         }

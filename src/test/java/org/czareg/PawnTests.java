@@ -11,6 +11,7 @@ import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
@@ -28,7 +29,7 @@ class PawnTests {
         board.placePiece(start, pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> actualMoves = moveGenerator.generate(game, start);
+        Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
         Set<Move> expectedMoves = Set.of(
                 new Move(pawn, start, positionFactory.create(3, "A")),
@@ -47,7 +48,7 @@ class PawnTests {
         game.makeMove(new Move(pawn, positionFactory.create(2, "D"), positionFactory.create(3, "D")));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> actualMoves = moveGenerator.generate(game, positionFactory.create(3, "D"));
+        Set<Move> actualMoves = moveGenerator.generate(game, positionFactory.create(3, "D")).collect(Collectors.toSet());
 
         Set<Move> expectedMoves = Set.of(
                 new Move(pawn, positionFactory.create(3, "D"), positionFactory.create(4, "D"))
@@ -64,7 +65,7 @@ class PawnTests {
         board.placePiece(positionFactory.create(8, "H"), pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> actualMoves = moveGenerator.generate(game, positionFactory.create(8, "H"));
+        Set<Move> actualMoves = moveGenerator.generate(game, positionFactory.create(8, "H")).collect(Collectors.toSet());
 
         assertEquals(Set.of(), actualMoves);
     }
@@ -79,7 +80,7 @@ class PawnTests {
         board.placePiece(pawnStartingPosition, pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> actualMoves = moveGenerator.generate(game, pawnStartingPosition);
+        Set<Move> actualMoves = moveGenerator.generate(game, pawnStartingPosition).collect(Collectors.toSet());
 
         assertEquals(Set.of(
                 new Move(pawn, pawnStartingPosition, positionFactory.create(8, "B"))
@@ -100,7 +101,7 @@ class PawnTests {
         board.placePiece(pawnStartingPosition, pawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> actualMoves = moveGenerator.generate(game, pawnStartingPosition);
+        Set<Move> actualMoves = moveGenerator.generate(game, pawnStartingPosition).collect(Collectors.toSet());
 
         assertEquals(Set.of(
                 new Move(pawn, pawnStartingPosition, positionFactory.create(7, "E"))
@@ -158,7 +159,7 @@ class PawnTests {
         board.placePiece(pf.create(5, "D"), blackPawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> whiteMoves = moveGenerator.generate(game, pf.create(4, "C"));
+        Set<Move> whiteMoves = moveGenerator.generate(game, pf.create(4, "C")).collect(Collectors.toSet());
 
         Position expectedCapturePosition = pf.create(5, "D");
         assertTrue(whiteMoves.stream()
@@ -177,7 +178,7 @@ class PawnTests {
         board.placePiece(pf.create(3, "B"), blackPawn);
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
-        Set<Move> blackMoves = moveGenerator.generate(game, pf.create(3, "B"));
+        Set<Move> blackMoves = moveGenerator.generate(game, pf.create(3, "B")).collect(Collectors.toSet());
 
         Position expectedCapturePosition = pf.create(2, "A");
         assertTrue(blackMoves.stream()

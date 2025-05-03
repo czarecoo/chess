@@ -12,11 +12,12 @@ import java.util.Optional;
 public class Metadata {
 
     public enum Key {
-        SPECIAL_MOVE_TYPE,
+        MOVE_TYPE,
         PROMOTION_PIECE,
         CASTLING_ROOK_START_POSITION,
         CASTLING_ROOK_END_POSITION,
-        CAPTURED_PIECE
+        CAPTURED_PIECE,
+        CAPTURED_PIECE_POSITION
     }
 
     private final Map<Key, Object> data = new EnumMap<>(Key.class);
@@ -29,6 +30,13 @@ public class Metadata {
         return Optional.ofNullable(data.get(key))
                 .filter(type::isInstance)
                 .map(type::cast);
+    }
+
+    public <T> boolean isExactly(Key key, T typeValueToCheck) {
+        Class<?> typeClass = typeValueToCheck.getClass();
+        return get(key, typeClass)
+                .filter(typeValue -> typeValue == typeValueToCheck)
+                .isPresent();
     }
 
     public boolean containsKey(Key key) {

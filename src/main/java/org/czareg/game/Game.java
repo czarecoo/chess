@@ -1,8 +1,8 @@
 package org.czareg.game;
 
 import org.czareg.board.Board;
+import org.czareg.piece.move.MoveExecutor;
 import org.czareg.piece.move.MoveGenerator;
-import org.czareg.piece.move.SpecialMoveExecutor;
 
 public interface Game {
 
@@ -16,5 +16,5 @@ public interface Game {
 
     Order getOrder();
 
-    SpecialMoveExecutor getSpecialMoveExecutor();
+    MoveExecutor getMoveExecutor();
 }
