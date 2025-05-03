@@ -111,7 +111,7 @@ class PawnTests {
         Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
-        assertEquals(e.getMessage(), "Now moving player WHITE not player BLACK");
+        assertEquals("Now moving player WHITE not player BLACK", e.getMessage());
     }
 
     @Test
