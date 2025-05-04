@@ -67,10 +67,10 @@ public class ClassicGame implements Game {
         Set<Move> moves = moveStream.collect(Collectors.toSet());
         log.debug("Generated moves size {} ", moves.size());
         boolean noMatchingGeneratedMoveFound = moves.stream()
-                .filter(expectedMove -> Objects.equals(move.getStart(), expectedMove.getStart()))
-                .filter(expectedMove -> Objects.equals(move.getEnd(), expectedMove.getEnd()))
-                .filter(expectedMove -> move.getPiece() == expectedMove.getPiece())
-                .filter(expectedMove -> move.getMetadata().containsAll(expectedMove.getMetadata())) // allow extra metadata e.g. user chosen PROMOTION_PIECE
+                .filter(generatedMove -> Objects.equals(move.getStart(), generatedMove.getStart()))
+                .filter(generatedMove -> Objects.equals(move.getEnd(), generatedMove.getEnd()))
+                .filter(generatedMove -> move.getPiece() == generatedMove.getPiece())
+                .filter(generatedMove -> move.getMetadata().containsAll(generatedMove.getMetadata())) // allow extra metadata e.g. user chosen PROMOTION_PIECE
                 .findAny()
                 .isEmpty();
         if (noMatchingGeneratedMoveFound) {

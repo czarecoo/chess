@@ -143,6 +143,43 @@ class PawnTests {
     }
 
     @Test
+    void givenWhiteAndBlackPawns_whenWhiteIsDoingDoubleForwardMoveToTheEndPositionOccupiedByBlackPawn_thenNoMovesAreReturned() {
+        Position whitePosition = pf.create(2, "E");
+        board.placePiece(whitePosition, new Pawn(WHITE));
+        Position blackPosition = pf.create(4, "E");
+        board.placePiece(blackPosition, new Pawn(BLACK));
+
+        Optional<Move> move = moveGenerator.generate(game, whitePosition, blackPosition, PAWN_DOUBLE_FORWARD);
+
+        assertTrue(move.isEmpty());
+    }
+
+    @Test
+    void givenWhiteAndBlackPawns_whenWhiteIsDoingDoubleForwardMoveAndBlackPawnIsOnTheWay_thenNoMovesAreReturned() {
+        Position whiteStartPosition = pf.create(2, "E");
+        board.placePiece(whiteStartPosition, new Pawn(WHITE));
+        Position blackPosition = pf.create(3, "E");
+        board.placePiece(blackPosition, new Pawn(BLACK));
+        Position whiteEndPosition = pf.create(4, "E");
+
+        Optional<Move> move = moveGenerator.generate(game, whiteStartPosition, whiteEndPosition, PAWN_DOUBLE_FORWARD);
+
+        assertTrue(move.isEmpty());
+    }
+
+    @Test
+    void givenTwoWhitePawns_whenOnePawnIsTryingToCaptureAnother_thenNoMovesAreReturned() {
+        Position firstWhitePosition = pf.create(3, "B");
+        board.placePiece(firstWhitePosition, new Pawn(WHITE));
+        Position secondWhitePosition = pf.create(4, "A");
+        board.placePiece(secondWhitePosition, new Pawn(WHITE));
+
+        Optional<Move> move = moveGenerator.generate(game, firstWhitePosition, secondWhitePosition, PAWN_CAPTURE);
+
+        assertTrue(move.isEmpty());
+    }
+
+    @Test
     void givenTwoPlayers_whenPlayersAreMovingTheirPawnsOnTheSameFileUntilTheyFaceEachOther_thenThereAreNoMoreMoves() {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(1, "C"), whitePawn);
