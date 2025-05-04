@@ -6,6 +6,7 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
+import org.czareg.piece.Queen;
 import org.czareg.piece.move.pawn.*;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -21,7 +22,8 @@ public class ClassicMoveGenerator implements MoveGenerator {
             new PawnForwardMoveGenerator(),
             new PawnDoubleForwardMoveGenerator(),
             new PawnCaptureMoveGenerator(),
-            new PawnEnPassantMoveGenerator()
+            new PawnEnPassantMoveGenerator(),
+            new PawnPromotionMoveGenerator()
     );
 
     @Override
@@ -34,6 +36,7 @@ public class ClassicMoveGenerator implements MoveGenerator {
         return switch (piece) {
             case Pawn pawn -> pawnMoveGenerators.stream()
                     .flatMap(gen -> gen.generate(game, pawn, currentPosition));
+            case Queen queen -> Stream.empty(); // TODO implement
         };
     }
 
@@ -52,6 +55,7 @@ public class ClassicMoveGenerator implements MoveGenerator {
                     .findFirst()
                     .orElseThrow()
                     .generate(game, pawn, currentPosition, indexChange);
+            case Queen queen -> Optional.empty(); // TODO implement
         };
     }
 }

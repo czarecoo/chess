@@ -1,5 +1,6 @@
 package org.czareg.piece.move;
 
+import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.game.Game;
 import org.czareg.game.Metadata;
@@ -8,6 +9,7 @@ import org.czareg.game.MoveType;
 import org.czareg.piece.Piece;
 import org.czareg.position.Position;
 
+@Slf4j
 public class ClassicMoveExecutor implements MoveExecutor {
 
     @Override
@@ -31,6 +33,11 @@ public class ClassicMoveExecutor implements MoveExecutor {
         Piece promotedPiece = move.getMetadata()
                 .get(Metadata.Key.PROMOTION_PIECE, Piece.class)
                 .orElseThrow(() -> new IllegalStateException("Promotion move missing chosen piece."));
+        Piece oldPiece = move.getPiece();
+        if (oldPiece.getPlayer() != promotedPiece.getPlayer()) {
+            throw new IllegalStateException("Cannot promote to different player %s %s".formatted(oldPiece, promotedPiece));
+        }
+        log.debug("Promotion {}", promotedPiece);
         board.removePiece(move.getStart());
         board.placePiece(move.getEnd(), promotedPiece);
     }

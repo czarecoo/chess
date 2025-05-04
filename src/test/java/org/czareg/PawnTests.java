@@ -12,6 +12,7 @@ import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,7 @@ class PawnTests {
     }
 
     @Test
-    void givenWhitePawnOnLastRank_whenGettingPossibleMoves_thenNoLegalMoves() {
+    void givenWhitePawnOnLastRank_whenGettingPossibleMoves_thenNoGeneratedMoves() {
         Pawn pawn = new Pawn(WHITE);
         Position start = pf.create(8, "H");
         board.placePiece(start, pawn);
@@ -78,7 +79,7 @@ class PawnTests {
     }
 
     @Test
-    void givenWhitePawnOnSeventhRank_whenGettingPossibleMoves_thenOneLegalMovesByOneRank() {
+    void givenWhitePawnOnSeventhRank_whenGettingPossibleMoves_thenOneGeneratedMovesByOneRank() {
         Pawn pawn = new Pawn(WHITE);
         Position start = pf.create(7, "B");
         board.placePiece(start, pawn);
@@ -86,7 +87,7 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(8, "B"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(8, "B"), new Metadata().put(MOVE_TYPE, PROMOTION)));
         assertEquals(expectedMoves, actualMoves);
     }
 
@@ -94,7 +95,7 @@ class PawnTests {
         cannot land on promotion rank from double forward move
      */
     @Test
-    void givenWhitePawnOnSixthRank_whenGettingPossibleMoves_thenOneLegalMovesByOneRank() {
+    void givenWhitePawnOnSixthRank_whenGettingPossibleMoves_thenOneGeneratedMovesByOneRank() {
         Pawn pawn = new Pawn(WHITE);
         Position start = pf.create(6, "E");
         board.placePiece(start, pawn);
@@ -119,7 +120,26 @@ class PawnTests {
         Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
-        assertTrue(e.getMessage().contains("is not one of the legal moves []"));
+        assertTrue(e.getMessage().contains("is not one of the generated moves []"));
+    }
+
+    @Test
+    void givenEmptyBoard_whenGeneratingMovesForPositionWithoutPiece_thenNoMovesAreReturned() {
+        Position positionWithoutPiece = pf.create(1, "A");
+
+        Set<Move> moves = moveGenerator.generate(game, positionWithoutPiece).collect(Collectors.toSet());
+
+        assertTrue(moves.isEmpty());
+    }
+
+    @Test
+    void givenEmptyBoard_whenGeneratingMoveForPositionWithoutPiece_thenNoMovesAreReturned() {
+        Position positionWithoutPiece = pf.create(1, "D");
+        Position anotherPositionWithoutPiece = pf.create(2, "D");
+
+        Optional<Move> move = moveGenerator.generate(game, positionWithoutPiece, anotherPositionWithoutPiece, PAWN_FORWARD);
+
+        assertTrue(move.isEmpty());
     }
 
     @Test

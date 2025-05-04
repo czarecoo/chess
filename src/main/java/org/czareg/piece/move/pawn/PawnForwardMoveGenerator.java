@@ -2,6 +2,7 @@ package org.czareg.piece.move.pawn;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
+import org.czareg.board.BoardSize;
 import org.czareg.game.Game;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
@@ -44,11 +45,25 @@ public class PawnForwardMoveGenerator implements PawnMoveGenerator {
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
             return Optional.empty();
         }
+        BoardSize boardSize = board.getBoardSize();
+        Player player = pawn.getPlayer();
+        if (isOnPromotionRank(endPosition, boardSize, player)) {
+            log.debug("Rejecting move because end {} is a promotion rank {}.", endPosition, boardSize);
+            return Optional.empty();
+        }
         Metadata metadata = new Metadata()
                 .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_FORWARD);
         Move move = new Move(pawn, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
+    }
+
+    private boolean isOnPromotionRank(Position position, BoardSize boardSize, Player player) {
+        int rank = position.getRank();
+        return switch (player) {
+            case WHITE -> rank == boardSize.getRanks();
+            case BLACK -> rank == 1;
+        };
     }
 
     private IndexChange getEndPositionIndexChange(Player player) {

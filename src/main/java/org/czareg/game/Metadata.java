@@ -39,4 +39,8 @@ public class Metadata {
                 .filter(typeValue -> typeValue == typeValueToCheck)
                 .isPresent();
     }
+
+    public boolean containsAll(Metadata metadataToCheck) {
+        return data.entrySet().containsAll(metadataToCheck.data.entrySet());
+    }
 }

@@ -3,7 +3,10 @@ package org.czareg.piece.move.pawn;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.BoardSize;
-import org.czareg.game.*;
+import org.czareg.game.Game;
+import org.czareg.game.Metadata;
+import org.czareg.game.Move;
+import org.czareg.game.MoveType;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -16,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
+public class PawnPromotionMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public Stream<Move> generate(Game game, Pawn pawn, Position currentPosition) {
@@ -28,11 +31,6 @@ public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
     @Override
     public Optional<Move> generate(Game game, Pawn pawn, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", pawn, currentPosition, endPositionIndexChange);
-        History history = game.getHistory();
-        if (history.hasPieceMovedBefore(pawn)) {
-            log.debug("Rejecting move because it was already moved.");
-            return Optional.empty();
-        }
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
@@ -49,41 +47,26 @@ public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
         }
         BoardSize boardSize = board.getBoardSize();
         Player player = pawn.getPlayer();
-        if (isOnPromotionRank(endPosition, boardSize, player)) {
-            log.debug("Rejecting move because end {} is a promotion rank {}.", endPosition, boardSize);
-            return Optional.empty();
-        }
-        IndexChange middlePositionIndexChange = getMiddlePositionIndexChange(player);
-        Optional<Position> optionalMiddlePosition = positionFactory.create(currentPositionIndex, middlePositionIndexChange);
-        Position middlePosition = optionalMiddlePosition.orElseThrow(); // we checked end position and we know it is on board so the middle position has to be on board too
-        if (board.hasPiece(middlePosition)) {
-            Piece middlePositionOccupyingPiece = board.getPiece(middlePosition);
-            log.debug("Rejecting move, because middle {} is occupied by {}.", middlePosition, middlePositionOccupyingPiece);
+        if (!isOnPromotionRank(endPosition, boardSize, player)) {
+            log.debug("Rejecting move because end {} is not on promotion rank {}.", endPosition, boardSize);
             return Optional.empty();
         }
         Metadata metadata = new Metadata()
-                .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_DOUBLE_FORWARD);
+                .put(Metadata.Key.MOVE_TYPE, MoveType.PROMOTION);
         Move move = new Move(pawn, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
     }
 
-    private IndexChange getEndPositionIndexChange(Player player) {
-        return switch (player) {
-            case WHITE -> new IndexChange(2, 0);
-            case BLACK -> new IndexChange(-2, 0);
-        };
-    }
-
-    private boolean isOnPromotionRank(Position endPosition, BoardSize boardSize, Player player) {
-        int rank = endPosition.getRank();
+    private boolean isOnPromotionRank(Position position, BoardSize boardSize, Player player) {
+        int rank = position.getRank();
         return switch (player) {
             case WHITE -> rank == boardSize.getRanks();
             case BLACK -> rank == 1;
         };
     }
 
-    private IndexChange getMiddlePositionIndexChange(Player player) {
+    private IndexChange getEndPositionIndexChange(Player player) {
         return switch (player) {
             case WHITE -> new IndexChange(1, 0);
             case BLACK -> new IndexChange(-1, 0);
@@ -92,6 +75,6 @@ public class PawnDoubleForwardMoveGenerator implements PawnMoveGenerator {
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.PAWN_DOUBLE_FORWARD;
+        return MoveType.PROMOTION;
     }
 }

@@ -1,6 +1,7 @@
 package org.czareg.game;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.BoardSize;
 import org.czareg.board.ClassicBoard;
@@ -10,10 +11,12 @@ import org.czareg.piece.move.ClassicMoveGenerator;
 import org.czareg.piece.move.MoveExecutor;
 import org.czareg.piece.move.MoveGenerator;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 @Getter
 public class ClassicGame implements Game {
 
@@ -62,8 +65,16 @@ public class ClassicGame implements Game {
     private void checkIfLegal(Move move) {
         Stream<Move> moveStream = moveGenerator.generate(this, move.getStart());
         Set<Move> moves = moveStream.collect(Collectors.toSet());
-        if (!moves.contains(move)) {
-            throw new IllegalArgumentException("%s is not one of the legal moves %s".formatted(move, moves));
+        log.debug("Generated moves size {} ", moves.size());
+        boolean noMatchingGeneratedMoveFound = moves.stream()
+                .filter(expectedMove -> Objects.equals(move.getStart(), expectedMove.getStart()))
+                .filter(expectedMove -> Objects.equals(move.getEnd(), expectedMove.getEnd()))
+                .filter(expectedMove -> move.getPiece() == expectedMove.getPiece())
+                .filter(expectedMove -> move.getMetadata().containsAll(expectedMove.getMetadata())) // allow extra metadata e.g. user chosen PROMOTION_PIECE
+                .findAny()
+                .isEmpty();
+        if (noMatchingGeneratedMoveFound) {
+            throw new IllegalArgumentException("%s is not one of the generated moves %s".formatted(move, moves));
         }
     }
 }
