@@ -55,8 +55,8 @@ class PawnEnPassantTests {
         assertEquals(enPassantMove, lastMove);
         Metadata expectedMetadata = new Metadata()
                 .put(MOVE_TYPE, EN_PASSANT)
-                .put(CAPTURED_PIECE, blackPawnToBeCaptured)
-                .put(CAPTURED_PIECE_POSITION, pf.create(5, "E"));
+                .put(CAPTURE_PIECE, blackPawnToBeCaptured)
+                .put(CAPTURE_PIECE_POSITION, pf.create(5, "E"));
         Move expectedMove = new Move(whitePawn, pf.create(5, "D"), pf.create(6, "E"), expectedMetadata);
         assertEquals(expectedMove, enPassantMove);
     }

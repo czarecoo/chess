@@ -210,8 +210,8 @@ class PawnTests {
 
         Metadata expectedMetadata = new Metadata()
                 .put(MOVE_TYPE, PAWN_CAPTURE)
-                .put(CAPTURED_PIECE, blackPawn)
-                .put(CAPTURED_PIECE_POSITION, blackPosition);
+                .put(CAPTURE_PIECE, blackPawn)
+                .put(CAPTURE_PIECE_POSITION, blackPosition);
         Move expectedMove = new Move(whitePawn, whitePosition, blackPosition, expectedMetadata);
         assertTrue(whiteMoves.contains(expectedMove));
     }
@@ -230,8 +230,8 @@ class PawnTests {
 
         Metadata expectedMetadata = new Metadata()
                 .put(MOVE_TYPE, PAWN_CAPTURE)
-                .put(CAPTURED_PIECE, whitePawn)
-                .put(CAPTURED_PIECE_POSITION, whitePosition);
+                .put(CAPTURE_PIECE, whitePawn)
+                .put(CAPTURE_PIECE_POSITION, whitePosition);
         Move expectedMove = new Move(blackPawn, blackPosition, whitePosition, expectedMetadata);
         assertTrue(blackMoves.contains(expectedMove));
     }

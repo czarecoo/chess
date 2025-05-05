@@ -16,8 +16,8 @@ public class Metadata {
         PROMOTION_PIECE,
         CASTLING_ROOK_START_POSITION,
         CASTLING_ROOK_END_POSITION,
-        CAPTURED_PIECE,
-        CAPTURED_PIECE_POSITION
+        CAPTURE_PIECE,
+        CAPTURE_PIECE_POSITION
     }
 
     private final Map<Key, Object> data = new EnumMap<>(Key.class);

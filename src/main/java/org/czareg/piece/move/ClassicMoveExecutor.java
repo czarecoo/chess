@@ -46,7 +46,7 @@ public class ClassicMoveExecutor implements MoveExecutor {
         Position attackingPawnStart = move.getStart();
         Position attackingPawnEnd = move.getEnd();
         Position capturedPawnPosition = move.getMetadata()
-                .get(Metadata.Key.CAPTURED_PIECE_POSITION, Position.class)
+                .get(Metadata.Key.CAPTURE_PIECE_POSITION, Position.class)
                 .orElseThrow(() -> new IllegalStateException("En passant move missing captured piece position."));
         board.removePiece(attackingPawnStart);
         board.removePiece(capturedPawnPosition);

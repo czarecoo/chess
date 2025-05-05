@@ -55,8 +55,8 @@ public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
             return Optional.empty();
         }
         Metadata metadata = new Metadata()
-                .put(Metadata.Key.CAPTURED_PIECE, targetPiece)
-                .put(Metadata.Key.CAPTURED_PIECE_POSITION, endPosition)
+                .put(Metadata.Key.CAPTURE_PIECE, targetPiece)
+                .put(Metadata.Key.CAPTURE_PIECE_POSITION, endPosition)
                 .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_CAPTURE);
         Move move = new Move(pawn, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}", move);

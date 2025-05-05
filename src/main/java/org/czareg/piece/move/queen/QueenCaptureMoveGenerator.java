@@ -66,8 +66,8 @@ public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
         }
         Metadata metadata = new Metadata()
                 .put(MOVE_TYPE, MoveType.QUEEN_CAPTURE)
-                .put(CAPTURED_PIECE, targetPiece)
-                .put(CAPTURED_PIECE_POSITION, endPosition);
+                .put(CAPTURE_PIECE, targetPiece)
+                .put(CAPTURE_PIECE_POSITION, endPosition);
 
         Move move = new Move(queen, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
