@@ -18,10 +18,10 @@ public class ClassicMoveExecutor implements MoveExecutor {
         Metadata metadata = move.getMetadata();
         MoveType moveType = metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class).orElseThrow();
         switch (moveType) {
-            case PAWN_DOUBLE_FORWARD, PAWN_FORWARD, PAWN_CAPTURE -> handleDefault(move, board);
             case PROMOTION -> handlePromotion(move, board);
             case EN_PASSANT -> handleEnPassant(move, board);
             case CASTLING -> handleCastling(move, board);
+            default -> handleDefault(move, board);
         }
     }
 

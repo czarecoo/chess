@@ -8,6 +8,8 @@ import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Queen;
 import org.czareg.piece.move.pawn.*;
+import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
+import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
@@ -26,6 +28,11 @@ public class ClassicMoveGenerator implements MoveGenerator {
             new PawnPromotionMoveGenerator()
     );
 
+    private final Set<QueenMoveGenerator> queenMoveGenerators = Set.of(
+            new QueenMoveMoveGenerator(),
+            new QueenCaptureMoveGenerator()
+    );
+
     @Override
     public Stream<Move> generate(Game game, Position currentPosition) {
         Board board = game.getBoard();
@@ -36,7 +43,8 @@ public class ClassicMoveGenerator implements MoveGenerator {
         return switch (piece) {
             case Pawn pawn -> pawnMoveGenerators.stream()
                     .flatMap(gen -> gen.generate(game, pawn, currentPosition));
-            case Queen queen -> Stream.empty(); // TODO implement
+            case Queen queen -> queenMoveGenerators.stream()
+                    .flatMap(gen -> gen.generate(game, queen, currentPosition));
         };
     }
 
@@ -55,7 +63,11 @@ public class ClassicMoveGenerator implements MoveGenerator {
                     .findFirst()
                     .orElseThrow()
                     .generate(game, pawn, currentPosition, indexChange);
-            case Queen queen -> Optional.empty(); // TODO implement
+            case Queen queen -> queenMoveGenerators.stream()
+                    .filter(gen -> gen.getMoveType() == moveType)
+                    .findFirst()
+                    .orElseThrow()
+                    .generate(game, queen, currentPosition, indexChange);
         };
     }
 }
