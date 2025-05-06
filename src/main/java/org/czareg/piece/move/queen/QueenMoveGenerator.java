@@ -1,4 +1,4 @@
-package org.czareg.piece.move.pawn;
+package org.czareg.piece.move.queen;
 
 import org.czareg.game.Game;
 import org.czareg.game.Move;
@@ -18,5 +18,16 @@ public interface QueenMoveGenerator {
 
     MoveType getMoveType();
 
-    //TODO move directions here?
+    default Stream<IndexChange> getDirections() {
+        return Stream.of(
+                new IndexChange(-1, 0),
+                new IndexChange(1, 0),
+                new IndexChange(0, -1),
+                new IndexChange(0, 1),
+                new IndexChange(-1, -1),
+                new IndexChange(-1, 1),
+                new IndexChange(1, -1),
+                new IndexChange(1, 1)
+        );
+    }
 }

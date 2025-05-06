@@ -9,13 +9,11 @@ import org.czareg.game.MoveType;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.piece.Queen;
-import org.czareg.piece.move.pawn.QueenMoveGenerator;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -24,20 +22,9 @@ import static org.czareg.game.Metadata.Key.*;
 @Slf4j
 public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
 
-    private static final List<IndexChange> DIRECTIONS = List.of(
-            new IndexChange(-1, 0), // up
-            new IndexChange(1, 0),  // down
-            new IndexChange(0, -1), // left
-            new IndexChange(0, 1),  // right
-            new IndexChange(-1, -1), // up-left
-            new IndexChange(-1, 1),  // up-right
-            new IndexChange(1, -1),  // down-left
-            new IndexChange(1, 1)    // down-right
-    );
-
     @Override
     public Stream<Move> generate(Game game, Queen queen, Position currentPosition) {
-        return DIRECTIONS.stream()
+        return getDirections()
                 .map(direction -> searchCapture(game, queen, currentPosition, direction))
                 .flatMap(Optional::stream);
     }
@@ -80,7 +67,6 @@ public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
     }
 
     private Optional<Move> searchCapture(Game game, Queen queen, Position currentPosition, IndexChange direction) {
-        log.debug("Searching capture moves for {} at {} and {}.", queen, currentPosition, direction);
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index checkedPositionIndex = positionFactory.create(currentPosition);

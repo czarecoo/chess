@@ -3,10 +3,9 @@ package org.czareg;
 import org.czareg.board.Board;
 import org.czareg.game.*;
 import org.czareg.piece.Pawn;
-import org.czareg.piece.Piece;
 import org.czareg.piece.Queen;
-import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveGenerator;
+import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class QueenCaptureTests {
+class QueenMoveTests {
 
     private Game game;
     private Board board;
@@ -33,11 +32,11 @@ class QueenCaptureTests {
         game = new ClassicGame();
         board = game.getBoard();
         pf = board.getPositionFactory();
-        queenMoveGenerator = new QueenCaptureMoveGenerator();
+        queenMoveGenerator = new QueenMoveMoveGenerator();
     }
 
     @Test
-    void givenWhiteQueenAloneOnTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
+    void givenWhiteQueenAloneOnTheBoard_whenGeneratingMoves_thenManyMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
         Position queenPosition = pf.create(4, "D");
         board.placePiece(queenPosition, queen);
@@ -46,7 +45,13 @@ class QueenCaptureTests {
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 
-        assertEquals(Set.of(), moves);
+        assertEquals(27, moves.size());
+        assertEquals(27, moves.stream().map(Move::getEnd).distinct().count());
+        assertTrue(moves.stream().map(Move::getMetadata)
+                .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .allMatch(moveType -> moveType == MoveType.QUEEN_MOVE));
     }
 
     @Test
@@ -71,7 +76,7 @@ class QueenCaptureTests {
     }
 
     @Test
-    void givenWhiteQueenSurroundedByBlackPawns_whenGeneratingMoves_thenThereAreEightCaptureMoves() {
+    void givenWhiteQueenSurroundedByBlackPawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
         Position queenPosition = pf.create(4, "D");
         board.placePiece(queenPosition, queen);
@@ -88,25 +93,11 @@ class QueenCaptureTests {
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 
-        assertEquals(8, moves.size());
-        assertEquals(8, moves.stream().map(Move::getEnd).distinct().count());
-        assertEquals(8, moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE, Piece.class))
-                .distinct()
-                .count());
-        assertEquals(8, moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE_POSITION, Position.class))
-                .distinct()
-                .count());
-        assertTrue(moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.QUEEN_CAPTURE));
+        assertEquals(Set.of(), moves);
     }
 
     @Test
-    void givenWhiteQueenHasEightPossibleCaptures_whenGeneratingMoves_thenThereAreEightCaptureMoves() {
+    void givenWhiteQueenHasManyPossibleMoves_whenGeneratingMoves_thenManyMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
         Position queenPosition = pf.create(4, "D");
         board.placePiece(queenPosition, queen);
@@ -123,20 +114,12 @@ class QueenCaptureTests {
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 
-        assertEquals(8, moves.size());
-        assertEquals(8, moves.stream().map(Move::getEnd).distinct().count());
-        assertEquals(8, moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE, Piece.class))
-                .distinct()
-                .count());
-        assertEquals(8, moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE_POSITION, Position.class))
-                .distinct()
-                .count());
+        assertEquals(19, moves.size());
+        assertEquals(19, moves.stream().map(Move::getEnd).distinct().count());
         assertTrue(moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.QUEEN_CAPTURE));
+                .allMatch(moveType -> moveType == MoveType.QUEEN_MOVE));
     }
 }

@@ -9,6 +9,7 @@ import org.czareg.piece.Piece;
 import org.czareg.piece.Queen;
 import org.czareg.piece.move.pawn.*;
 import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
+import org.czareg.piece.move.queen.QueenMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
