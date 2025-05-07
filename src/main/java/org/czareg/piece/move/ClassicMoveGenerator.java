@@ -7,10 +7,14 @@ import org.czareg.game.MoveType;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Queen;
+import org.czareg.piece.Rook;
 import org.czareg.piece.move.pawn.*;
 import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
+import org.czareg.piece.move.rook.RookCaptureMoveGenerator;
+import org.czareg.piece.move.rook.RookMoveGenerator;
+import org.czareg.piece.move.rook.RookMoveMoveGenerator;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
@@ -28,10 +32,13 @@ public class ClassicMoveGenerator implements MoveGenerator {
             new PawnEnPassantMoveGenerator(),
             new PawnPromotionMoveGenerator()
     );
-
     private final Set<QueenMoveGenerator> queenMoveGenerators = Set.of(
             new QueenMoveMoveGenerator(),
             new QueenCaptureMoveGenerator()
+    );
+    private final Set<RookMoveGenerator> rookMoveGenerators = Set.of(
+            new RookMoveMoveGenerator(),
+            new RookCaptureMoveGenerator()
     );
 
     @Override
@@ -46,6 +53,8 @@ public class ClassicMoveGenerator implements MoveGenerator {
                     .flatMap(gen -> gen.generate(game, pawn, currentPosition));
             case Queen queen -> queenMoveGenerators.stream()
                     .flatMap(gen -> gen.generate(game, queen, currentPosition));
+            case Rook rook -> rookMoveGenerators.stream()
+                    .flatMap(gen -> gen.generate(game, rook, currentPosition));
         };
     }
 
@@ -69,6 +78,11 @@ public class ClassicMoveGenerator implements MoveGenerator {
                     .findFirst()
                     .orElseThrow()
                     .generate(game, queen, currentPosition, indexChange);
+            case Rook rook -> rookMoveGenerators.stream()
+                    .filter(gen -> gen.getMoveType() == moveType)
+                    .findFirst()
+                    .orElseThrow()
+                    .generate(game, rook, currentPosition, indexChange);
         };
     }
 }

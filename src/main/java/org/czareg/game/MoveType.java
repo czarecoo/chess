@@ -11,5 +11,8 @@ public enum MoveType {
     QUEEN_MOVE,
     QUEEN_CAPTURE,
 
+    ROOK_MOVE,
+    ROOK_CAPTURE,
+
     CASTLING
 }
