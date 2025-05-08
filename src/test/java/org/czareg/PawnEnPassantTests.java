@@ -41,10 +41,10 @@ class PawnEnPassantTests {
         board.placePiece(pf.create(2, "D"), whitePawn);
         board.placePiece(pf.create(7, "E"), blackPawnToBeCaptured);
         board.placePiece(pf.create(7, "A"), blackPawnIrrelevantForTest);
-        game.makeMove(new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata().put(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
-        game.makeMove(new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
-        game.makeMove(new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
-        game.makeMove(new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata().put(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
+        game.makeMove(new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
+        game.makeMove(new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
         Move enPassantMove = moveGenerator.generate(game, pf.create(5, "D"), pf.create(6, "E"), EN_PASSANT).orElseThrow();
 
         game.makeMove(enPassantMove);
@@ -53,8 +53,7 @@ class PawnEnPassantTests {
         assertEquals(whitePawn, board.getPiece(pf.create(6, "E")));
         Move lastMove = game.getHistory().getLastPlayedMove().orElseThrow();
         assertEquals(enPassantMove, lastMove);
-        Metadata expectedMetadata = new Metadata()
-                .put(MOVE_TYPE, EN_PASSANT)
+        Metadata expectedMetadata = new Metadata(MOVE_TYPE, EN_PASSANT)
                 .put(CAPTURE_PIECE, blackPawnToBeCaptured)
                 .put(CAPTURE_PIECE_POSITION, pf.create(5, "E"));
         Move expectedMove = new Move(whitePawn, pf.create(5, "D"), pf.create(6, "E"), expectedMetadata);

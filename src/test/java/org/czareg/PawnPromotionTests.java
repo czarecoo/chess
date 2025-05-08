@@ -79,8 +79,7 @@ class PawnPromotionTests {
 
         Move lastMove = game.getHistory().getLastPlayedMove().orElseThrow();
         assertEquals(promotionMove, lastMove);
-        Metadata expectedMetadata = new Metadata()
-                .put(MOVE_TYPE, PROMOTION)
+        Metadata expectedMetadata = new Metadata(MOVE_TYPE, PROMOTION)
                 .put(PROMOTION_PIECE, newPiece);
         Move expectedMove = new Move(whitePawn, pf.create(7, "D"), pf.create(8, "D"), expectedMetadata);
         assertEquals(expectedMove, promotionMove);

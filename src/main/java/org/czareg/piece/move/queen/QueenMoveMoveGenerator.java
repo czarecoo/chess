@@ -7,7 +7,6 @@ import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.piece.Piece;
-import org.czareg.piece.Queen;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -24,17 +23,17 @@ import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 public class QueenMoveMoveGenerator implements QueenMoveGenerator {
 
     @Override
-    public Stream<Move> generate(Game game, Queen queen, Position currentPosition) {
+    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
         for (IndexChange direction : getDirections().toList()) {
-            moves.addAll(searchMoves(game, queen, currentPosition, direction));
+            moves.addAll(searchMoves(game, piece, currentPosition, direction));
         }
         return moves.stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Queen queen, Position currentPosition, IndexChange endPositionIndexChange) {
-        log.debug("Generating move for {} at {} and {}.", queen, currentPosition, endPositionIndexChange);
+    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
@@ -49,8 +48,8 @@ public class QueenMoveMoveGenerator implements QueenMoveGenerator {
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, targetPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata().put(MOVE_TYPE, MoveType.QUEEN_MOVE);
-        Move move = new Move(queen, currentPosition, endPosition, metadata);
+        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType());
+        Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
     }
@@ -60,7 +59,7 @@ public class QueenMoveMoveGenerator implements QueenMoveGenerator {
         return MoveType.QUEEN_MOVE;
     }
 
-    private List<Move> searchMoves(Game game, Queen queen, Position currentPosition, IndexChange direction) {
+    private List<Move> searchMoves(Game game, Piece piece, Position currentPosition, IndexChange direction) {
         List<Move> moves = new ArrayList<>();
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
@@ -79,7 +78,7 @@ public class QueenMoveMoveGenerator implements QueenMoveGenerator {
             }
             checkedPositionIndex = positionFactory.create(endPosition);
             IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
-            generate(game, queen, currentPosition, endPositionIndexChange).ifPresent(moves::add);
+            generate(game, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
         }
     }
 }

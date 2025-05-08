@@ -7,9 +7,9 @@ import org.czareg.game.Game;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
-import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
+import org.czareg.piece.move.PieceMoveGenerator;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -18,19 +18,21 @@ import org.czareg.position.PositionFactory;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.czareg.game.Metadata.Key.MOVE_TYPE;
+
 @Slf4j
-public class PawnForwardMoveGenerator implements PawnMoveGenerator {
+public class PawnForwardMoveGenerator implements PieceMoveGenerator {
 
     @Override
-    public Stream<Move> generate(Game game, Pawn pawn, Position currentPosition) {
-        Player player = pawn.getPlayer();
+    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+        Player player = piece.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
-        return generate(game, pawn, currentPosition, endPositionIndexChange).stream();
+        return generate(game, piece, currentPosition, endPositionIndexChange).stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Pawn pawn, Position currentPosition, IndexChange endPositionIndexChange) {
-        log.debug("Generating move for {} at {} and {}.", pawn, currentPosition, endPositionIndexChange);
+    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
@@ -46,14 +48,13 @@ public class PawnForwardMoveGenerator implements PawnMoveGenerator {
             return Optional.empty();
         }
         BoardSize boardSize = board.getBoardSize();
-        Player player = pawn.getPlayer();
+        Player player = piece.getPlayer();
         if (isOnPromotionRank(endPosition, boardSize, player)) {
             log.debug("Rejecting move because end {} is a promotion rank {}.", endPosition, boardSize);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata()
-                .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_FORWARD);
-        Move move = new Move(pawn, currentPosition, endPosition, metadata);
+        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType());
+        Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
     }

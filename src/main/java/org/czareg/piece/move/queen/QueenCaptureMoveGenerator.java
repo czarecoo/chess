@@ -8,7 +8,6 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
-import org.czareg.piece.Queen;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -23,18 +22,18 @@ import static org.czareg.game.Metadata.Key.*;
 public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
 
     @Override
-    public Stream<Move> generate(Game game, Queen queen, Position currentPosition) {
+    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
         return getDirections()
-                .map(direction -> searchCapture(game, queen, currentPosition, direction))
+                .map(direction -> searchCapture(game, piece, currentPosition, direction))
                 .flatMap(Optional::stream);
     }
 
     @Override
-    public Optional<Move> generate(Game game, Queen queen, Position currentPosition, IndexChange endPositionIndexChange) {
-        log.debug("Generating move for {} at {} and {}.", queen, currentPosition, endPositionIndexChange);
+    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
-        Player player = queen.getPlayer();
+        Player player = piece.getPlayer();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
@@ -51,12 +50,11 @@ public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
             log.debug("Rejecting move because target {} is occupied by friendly {}.", endPosition, targetPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata()
-                .put(MOVE_TYPE, MoveType.QUEEN_CAPTURE)
+        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType())
                 .put(CAPTURE_PIECE, targetPiece)
                 .put(CAPTURE_PIECE_POSITION, endPosition);
 
-        Move move = new Move(queen, currentPosition, endPosition, metadata);
+        Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
     }
@@ -66,7 +64,7 @@ public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
         return MoveType.QUEEN_CAPTURE;
     }
 
-    private Optional<Move> searchCapture(Game game, Queen queen, Position currentPosition, IndexChange direction) {
+    private Optional<Move> searchCapture(Game game, Piece piece, Position currentPosition, IndexChange direction) {
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index checkedPositionIndex = positionFactory.create(currentPosition);
@@ -83,7 +81,7 @@ public class QueenCaptureMoveGenerator implements QueenMoveGenerator {
                 continue;
             }
             IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
-            return generate(game, queen, currentPosition, endPositionIndexChange);
+            return generate(game, piece, currentPosition, endPositionIndexChange);
         }
     }
 }

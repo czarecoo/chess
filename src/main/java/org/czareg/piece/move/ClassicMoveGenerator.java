@@ -10,36 +10,41 @@ import org.czareg.piece.Queen;
 import org.czareg.piece.Rook;
 import org.czareg.piece.move.pawn.*;
 import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
-import org.czareg.piece.move.queen.QueenMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
 import org.czareg.piece.move.rook.RookCaptureMoveGenerator;
-import org.czareg.piece.move.rook.RookMoveGenerator;
 import org.czareg.piece.move.rook.RookMoveMoveGenerator;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class ClassicMoveGenerator implements MoveGenerator {
 
-    private final Set<PawnMoveGenerator> pawnMoveGenerators = Set.of(
-            new PawnForwardMoveGenerator(),
-            new PawnDoubleForwardMoveGenerator(),
-            new PawnCaptureMoveGenerator(),
-            new PawnEnPassantMoveGenerator(),
-            new PawnPromotionMoveGenerator()
-    );
-    private final Set<QueenMoveGenerator> queenMoveGenerators = Set.of(
-            new QueenMoveMoveGenerator(),
-            new QueenCaptureMoveGenerator()
-    );
-    private final Set<RookMoveGenerator> rookMoveGenerators = Set.of(
-            new RookMoveMoveGenerator(),
-            new RookCaptureMoveGenerator()
-    );
+    private final Map<Class<? extends Piece>, List<PieceMoveGenerator>> moveGenerators;
+
+    public ClassicMoveGenerator() {
+        moveGenerators = new HashMap<>();
+        moveGenerators.put(Pawn.class, List.of(
+                new PawnForwardMoveGenerator(),
+                new PawnCaptureMoveGenerator(),
+                new PawnPromotionMoveGenerator(),
+                new PawnDoubleForwardMoveGenerator(),
+                new PawnEnPassantMoveGenerator()
+        ));
+        moveGenerators.put(Queen.class, List.of(
+                new QueenMoveMoveGenerator(),
+                new QueenCaptureMoveGenerator()
+        ));
+        moveGenerators.put(Rook.class, List.of(
+                new RookMoveMoveGenerator(),
+                new RookCaptureMoveGenerator()
+        ));
+    }
 
     @Override
     public Stream<Move> generate(Game game, Position currentPosition) {
@@ -48,14 +53,8 @@ public class ClassicMoveGenerator implements MoveGenerator {
             return Stream.empty();
         }
         Piece piece = board.getPiece(currentPosition);
-        return switch (piece) {
-            case Pawn pawn -> pawnMoveGenerators.stream()
-                    .flatMap(gen -> gen.generate(game, pawn, currentPosition));
-            case Queen queen -> queenMoveGenerators.stream()
-                    .flatMap(gen -> gen.generate(game, queen, currentPosition));
-            case Rook rook -> rookMoveGenerators.stream()
-                    .flatMap(gen -> gen.generate(game, rook, currentPosition));
-        };
+        return getStreamOfGeneratorsFor(piece)
+                .flatMap(gen -> gen.generate(game, piece, currentPosition));
     }
 
     @Override
@@ -67,22 +66,14 @@ public class ClassicMoveGenerator implements MoveGenerator {
         PositionFactory positionFactory = board.getPositionFactory();
         IndexChange indexChange = positionFactory.create(currentPosition, endPosition);
         Piece piece = board.getPiece(currentPosition);
-        return switch (piece) {
-            case Pawn pawn -> pawnMoveGenerators.stream()
-                    .filter(gen -> gen.getMoveType() == moveType)
-                    .findFirst()
-                    .orElseThrow()
-                    .generate(game, pawn, currentPosition, indexChange);
-            case Queen queen -> queenMoveGenerators.stream()
-                    .filter(gen -> gen.getMoveType() == moveType)
-                    .findFirst()
-                    .orElseThrow()
-                    .generate(game, queen, currentPosition, indexChange);
-            case Rook rook -> rookMoveGenerators.stream()
-                    .filter(gen -> gen.getMoveType() == moveType)
-                    .findFirst()
-                    .orElseThrow()
-                    .generate(game, rook, currentPosition, indexChange);
-        };
+        return getStreamOfGeneratorsFor(piece)
+                .filter(gen -> gen.getMoveType() == moveType)
+                .findFirst()
+                .orElseThrow()
+                .generate(game, piece, currentPosition, indexChange);
+    }
+
+    private Stream<PieceMoveGenerator> getStreamOfGeneratorsFor(Piece piece) {
+        return moveGenerators.getOrDefault(piece.getClass(), List.of()).stream();
     }
 }

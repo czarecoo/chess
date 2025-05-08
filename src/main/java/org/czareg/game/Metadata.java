@@ -20,9 +20,17 @@ public class Metadata {
         CAPTURE_PIECE_POSITION
     }
 
-    private final Map<Key, Object> data = new EnumMap<>(Key.class);
+    private final Map<Key, Object> data;
+
+    public Metadata(Key key, Object moveTypeClass) {
+        data = new EnumMap<>(Key.class);
+        data.put(key, moveTypeClass);
+    }
 
     public <T> Metadata put(Key key, T value) {
+        if (data.containsKey(key)) {
+            throw new IllegalStateException("Metadata with %s already exists. Overwriting is forbidden.".formatted(key));
+        }
         data.put(key, value);
         return this;
     }

@@ -6,9 +6,9 @@ import org.czareg.game.Game;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
-import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
+import org.czareg.piece.move.PieceMoveGenerator;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -19,25 +19,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.czareg.game.Metadata.Key.*;
+
 @Slf4j
-public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
+public class PawnCaptureMoveGenerator implements PieceMoveGenerator {
 
     @Override
-    public Stream<Move> generate(Game game, Pawn pawn, Position currentPosition) {
+    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
-        Player player = pawn.getPlayer();
+        Player player = piece.getPlayer();
         for (IndexChange endPositionIndexChange : getEndPositionIndexChanges(player)) {
-            generate(game, pawn, currentPosition, endPositionIndexChange).ifPresent(moves::add);
+            generate(game, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
         }
         return moves.stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Pawn pawn, Position currentPosition, IndexChange endPositionIndexChange) {
-        log.debug("Generating move for {} at {} and {}.", pawn, currentPosition, endPositionIndexChange);
+    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
-        Player player = pawn.getPlayer();
+        Player player = piece.getPlayer();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
@@ -54,11 +56,10 @@ public class PawnCaptureMoveGenerator implements PawnMoveGenerator {
             log.debug("Rejecting move because target {} is occupied by friendly {}.", endPosition, targetPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata()
-                .put(Metadata.Key.CAPTURE_PIECE, targetPiece)
-                .put(Metadata.Key.CAPTURE_PIECE_POSITION, endPosition)
-                .put(Metadata.Key.MOVE_TYPE, MoveType.PAWN_CAPTURE);
-        Move move = new Move(pawn, currentPosition, endPosition, metadata);
+        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType())
+                .put(CAPTURE_PIECE, targetPiece)
+                .put(CAPTURE_PIECE_POSITION, endPosition);
+        Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);
     }

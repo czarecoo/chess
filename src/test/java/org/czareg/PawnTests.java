@@ -46,8 +46,8 @@ class PawnTests {
         Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
         Set<Move> expectedMoves = Set.of(
-                new Move(pawn, start, pf.create(3, "A"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)),
-                new Move(pawn, start, pf.create(4, "A"), new Metadata().put(MOVE_TYPE, PAWN_DOUBLE_FORWARD))
+                new Move(pawn, start, pf.create(3, "A"), new Metadata(MOVE_TYPE, PAWN_FORWARD)),
+                new Move(pawn, start, pf.create(4, "A"), new Metadata(MOVE_TYPE, PAWN_DOUBLE_FORWARD))
         );
         assertEquals(expectedMoves, actualMoves);
     }
@@ -57,12 +57,12 @@ class PawnTests {
         Pawn pawn = new Pawn(WHITE);
         Position whiteStart = pf.create(2, "D");
         board.placePiece(whiteStart, pawn);
-        game.makeMove(new Move(pawn, whiteStart, pf.create(3, "D"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
+        game.makeMove(new Move(pawn, whiteStart, pf.create(3, "D"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> actualMoves = moveGenerator.generate(game, pf.create(3, "D")).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, pf.create(3, "D"), pf.create(4, "D"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, pf.create(3, "D"), pf.create(4, "D"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
         assertEquals(expectedMoves, actualMoves);
     }
 
@@ -87,7 +87,7 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(8, "B"), new Metadata().put(MOVE_TYPE, PROMOTION)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(8, "B"), new Metadata(MOVE_TYPE, PROMOTION)));
         assertEquals(expectedMoves, actualMoves);
     }
 
@@ -103,13 +103,13 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(7, "E"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(7, "E"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
         assertEquals(expectedMoves, actualMoves);
     }
 
     @Test
     void givenEmptyBoard_whenBlackPawnIsMakingMove_thenExceptionIsThrown() {
-        Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"));
+        Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE_TYPE, PAWN_FORWARD));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
         assertEquals("Now moving player WHITE not player BLACK", e.getMessage());
@@ -117,7 +117,7 @@ class PawnTests {
 
     @Test
     void givenEmptyBoard_whenWhitePawnIsMakingMove_thenExceptionIsThrown() {
-        Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"));
+        Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE_TYPE, PAWN_FORWARD));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
         assertTrue(e.getMessage().contains("is not one of the generated moves []"));
@@ -186,10 +186,10 @@ class PawnTests {
         Pawn blackPawn = new Pawn(BLACK);
         board.placePiece(pf.create(8, "C"), blackPawn);
 
-        game.makeMove(new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata().put(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
-        game.makeMove(new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata().put(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
-        game.makeMove(new Move(whitePawn, pf.create(3, "C"), pf.create(4, "C"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
-        game.makeMove(new Move(blackPawn, pf.create(6, "C"), pf.create(5, "C"), new Metadata().put(MOVE_TYPE, PAWN_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
+        game.makeMove(new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata(MOVE_TYPE, PAWN_DOUBLE_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(3, "C"), pf.create(4, "C"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
+        game.makeMove(new Move(blackPawn, pf.create(6, "C"), pf.create(5, "C"), new Metadata(MOVE_TYPE, PAWN_FORWARD)));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
         assertEquals(Set.of(), moveGenerator.generate(game, pf.create(4, "C")).collect(Collectors.toSet()));
@@ -208,8 +208,7 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> whiteMoves = moveGenerator.generate(game, whitePosition).collect(Collectors.toSet());
 
-        Metadata expectedMetadata = new Metadata()
-                .put(MOVE_TYPE, PAWN_CAPTURE)
+        Metadata expectedMetadata = new Metadata(MOVE_TYPE, PAWN_CAPTURE)
                 .put(CAPTURE_PIECE, blackPawn)
                 .put(CAPTURE_PIECE_POSITION, blackPosition);
         Move expectedMove = new Move(whitePawn, whitePosition, blackPosition, expectedMetadata);
@@ -228,8 +227,7 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> blackMoves = moveGenerator.generate(game, blackPosition).collect(Collectors.toSet());
 
-        Metadata expectedMetadata = new Metadata()
-                .put(MOVE_TYPE, PAWN_CAPTURE)
+        Metadata expectedMetadata = new Metadata(MOVE_TYPE, PAWN_CAPTURE)
                 .put(CAPTURE_PIECE, whitePawn)
                 .put(CAPTURE_PIECE_POSITION, whitePosition);
         Move expectedMove = new Move(blackPawn, blackPosition, whitePosition, expectedMetadata);
