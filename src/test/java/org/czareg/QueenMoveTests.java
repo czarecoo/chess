@@ -4,7 +4,7 @@ import org.czareg.board.Board;
 import org.czareg.game.*;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Queen;
-import org.czareg.piece.move.queen.QueenMoveGenerator;
+import org.czareg.piece.move.PieceMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
@@ -25,14 +25,14 @@ class QueenMoveTests {
     private Game game;
     private Board board;
     private PositionFactory pf;
-    private QueenMoveGenerator queenMoveGenerator;
+    private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
         game = new ClassicGame();
         board = game.getBoard();
         pf = board.getPositionFactory();
-        queenMoveGenerator = new QueenMoveMoveGenerator();
+        pieceMoveGenerator = new QueenMoveMoveGenerator();
     }
 
     @Test
@@ -41,7 +41,7 @@ class QueenMoveTests {
         Position queenPosition = pf.create(4, "D");
         board.placePiece(queenPosition, queen);
 
-        Set<Move> moves = queenMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 
@@ -68,7 +68,7 @@ class QueenMoveTests {
         board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
         board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
 
-        Set<Move> moves = queenMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 
@@ -89,7 +89,7 @@ class QueenMoveTests {
         board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
         board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
 
-        Set<Move> moves = queenMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 
@@ -110,7 +110,7 @@ class QueenMoveTests {
         board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
         board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
 
-        Set<Move> moves = queenMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, queen, queenPosition)
                 .collect(Collectors.toSet());
 

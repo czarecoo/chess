@@ -5,7 +5,7 @@ import org.czareg.game.*;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Rook;
-import org.czareg.piece.move.rook.RookMoveGenerator;
+import org.czareg.piece.move.PieceMoveGenerator;
 import org.czareg.piece.move.rook.RookMoveMoveGenerator;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
@@ -26,14 +26,14 @@ class RookMoveTests {
     private Game game;
     private Board board;
     private PositionFactory pf;
-    private RookMoveGenerator rookMoveGenerator;
+    private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
         game = new ClassicGame();
         board = game.getBoard();
         pf = board.getPositionFactory();
-        rookMoveGenerator = new RookMoveMoveGenerator();
+        pieceMoveGenerator = new RookMoveMoveGenerator();
     }
 
     @Test
@@ -42,7 +42,7 @@ class RookMoveTests {
         Position position = pf.create(4, "D");
         board.placePiece(position, piece);
 
-        Set<Move> moves = rookMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, piece, position)
                 .collect(Collectors.toSet());
 
@@ -69,7 +69,7 @@ class RookMoveTests {
         board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
         board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
 
-        Set<Move> moves = rookMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, piece, position)
                 .collect(Collectors.toSet());
 
@@ -90,7 +90,7 @@ class RookMoveTests {
         board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
         board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
 
-        Set<Move> moves = rookMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, piece, Position)
                 .collect(Collectors.toSet());
 
@@ -111,7 +111,7 @@ class RookMoveTests {
         board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
         board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
 
-        Set<Move> moves = rookMoveGenerator
+        Set<Move> moves = pieceMoveGenerator
                 .generate(game, piece, position)
                 .collect(Collectors.toSet());
 

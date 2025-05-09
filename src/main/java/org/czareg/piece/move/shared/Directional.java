@@ -1,4 +1,4 @@
-package org.czareg.piece.move;
+package org.czareg.piece.move.shared;
 
 import org.czareg.position.IndexChange;
 

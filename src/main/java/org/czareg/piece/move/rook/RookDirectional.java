@@ -1,12 +1,11 @@
 package org.czareg.piece.move.rook;
 
-import org.czareg.piece.move.Directional;
-import org.czareg.piece.move.PieceMoveGenerator;
+import org.czareg.piece.move.shared.Directional;
 import org.czareg.position.IndexChange;
 
 import java.util.stream.Stream;
 
-public interface RookMoveGenerator extends PieceMoveGenerator, Directional {
+public interface RookDirectional extends Directional {
 
     default Stream<IndexChange> getDirections() {
         return Stream.of(

@@ -1,12 +1,11 @@
 package org.czareg.piece.move.queen;
 
-import org.czareg.piece.move.Directional;
-import org.czareg.piece.move.PieceMoveGenerator;
+import org.czareg.piece.move.shared.Directional;
 import org.czareg.position.IndexChange;
 
 import java.util.stream.Stream;
 
-public interface QueenMoveGenerator extends PieceMoveGenerator, Directional {
+public interface QueenDirectional extends Directional {
 
     default Stream<IndexChange> getDirections() {
         return Stream.of(
