@@ -5,8 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.BoardSize;
 import org.czareg.board.ClassicBoard;
+import org.czareg.move.ClassicMoveExecutor;
+import org.czareg.move.ClassicMoveGenerator;
+import org.czareg.move.MoveExecutor;
+import org.czareg.move.MoveGenerator;
+import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.piece.Player;
-import org.czareg.piece.move.*;
 
 import java.util.Objects;
 import java.util.Set;

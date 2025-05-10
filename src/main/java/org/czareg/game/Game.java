@@ -1,8 +1,8 @@
 package org.czareg.game;
 
 import org.czareg.board.Board;
-import org.czareg.piece.move.MoveExecutor;
-import org.czareg.piece.move.MoveGenerator;
+import org.czareg.move.MoveExecutor;
+import org.czareg.move.MoveGenerator;
 
 public interface Game {
 

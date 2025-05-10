@@ -2,11 +2,11 @@ package org.czareg;
 
 import org.czareg.board.Board;
 import org.czareg.game.*;
+import org.czareg.move.piece.PieceMoveGenerator;
+import org.czareg.move.piece.rook.RookMoveMoveGenerator;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Rook;
-import org.czareg.piece.move.PieceMoveGenerator;
-import org.czareg.piece.move.rook.RookMoveMoveGenerator;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.BeforeEach;
