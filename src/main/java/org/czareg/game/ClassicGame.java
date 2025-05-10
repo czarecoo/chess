@@ -6,10 +6,7 @@ import org.czareg.board.Board;
 import org.czareg.board.BoardSize;
 import org.czareg.board.ClassicBoard;
 import org.czareg.piece.Player;
-import org.czareg.piece.move.ClassicMoveExecutor;
-import org.czareg.piece.move.ClassicMoveGenerator;
-import org.czareg.piece.move.MoveExecutor;
-import org.czareg.piece.move.MoveGenerator;
+import org.czareg.piece.move.*;
 
 import java.util.Objects;
 import java.util.Set;
@@ -30,7 +27,7 @@ public class ClassicGame implements Game {
         this(
                 new ClassicBoard(new BoardSize(8, 8)),
                 new ClassicHistory(),
-                new ClassicMoveGenerator(),
+                new ClassicMoveGenerator(new ClassicPieceMoveGeneratorFactory()),
                 new ClassicOrder(),
                 new ClassicMoveExecutor()
         );
@@ -65,7 +62,7 @@ public class ClassicGame implements Game {
     private void checkIfLegal(Move move) {
         Stream<Move> moveStream = moveGenerator.generate(this, move.getStart());
         Set<Move> moves = moveStream.collect(Collectors.toSet());
-        log.debug("Generated moves size {} ", moves.size());
+        log.debug("Generated {} moves.", moves.size());
         boolean noMatchingGeneratedMoveFound = moves.stream()
                 .filter(generatedMove -> Objects.equals(move.getStart(), generatedMove.getStart()))
                 .filter(generatedMove -> Objects.equals(move.getEnd(), generatedMove.getEnd()))

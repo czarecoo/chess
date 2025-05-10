@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
-import static org.czareg.game.Metadata.Key.CAPTURE_PIECE_POSITION;
 
 @Slf4j
 public class KnightCaptureMoveGenerator implements PieceMoveGenerator, KnightDirectional {
@@ -53,8 +52,7 @@ public class KnightCaptureMoveGenerator implements PieceMoveGenerator, KnightDir
             return Optional.empty();
         }
         Metadata metadata = new Metadata(getMoveType())
-                .put(CAPTURE_PIECE, targetPiece)
-                .put(CAPTURE_PIECE_POSITION, endPosition);
+                .put(CAPTURE_PIECE, targetPiece);
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);

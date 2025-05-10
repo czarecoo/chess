@@ -1,59 +1,24 @@
 package org.czareg.piece.move;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.czareg.board.Board;
 import org.czareg.game.Game;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
-import org.czareg.piece.*;
-import org.czareg.piece.move.bishop.BishopCaptureMoveGenerator;
-import org.czareg.piece.move.bishop.BishopMoveMoveGenerator;
-import org.czareg.piece.move.knight.KnightCaptureMoveGenerator;
-import org.czareg.piece.move.knight.KnightMoveMoveGenerator;
-import org.czareg.piece.move.pawn.*;
-import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
-import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
-import org.czareg.piece.move.rook.RookCaptureMoveGenerator;
-import org.czareg.piece.move.rook.RookMoveMoveGenerator;
+import org.czareg.piece.Piece;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Getter
+@RequiredArgsConstructor
 public class ClassicMoveGenerator implements MoveGenerator {
 
-    private final Map<Class<? extends Piece>, List<PieceMoveGenerator>> moveGenerators;
-
-    public ClassicMoveGenerator() {
-        moveGenerators = new HashMap<>();
-        moveGenerators.put(Pawn.class, List.of(
-                new PawnForwardMoveGenerator(),
-                new PawnCaptureMoveGenerator(),
-                new PawnPromotionMoveGenerator(),
-                new PawnDoubleForwardMoveGenerator(),
-                new PawnEnPassantMoveGenerator()
-        ));
-        moveGenerators.put(Queen.class, List.of(
-                new QueenMoveMoveGenerator(),
-                new QueenCaptureMoveGenerator()
-        ));
-        moveGenerators.put(Rook.class, List.of(
-                new RookMoveMoveGenerator(),
-                new RookCaptureMoveGenerator()
-        ));
-        moveGenerators.put(Bishop.class, List.of(
-                new BishopMoveMoveGenerator(),
-                new BishopCaptureMoveGenerator()
-        ));
-        moveGenerators.put(Knight.class, List.of(
-                new KnightMoveMoveGenerator(),
-                new KnightCaptureMoveGenerator()
-        ));
-    }
+    private final PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
 
     @Override
     public Stream<Move> generate(Game game, Position currentPosition) {
@@ -62,8 +27,8 @@ public class ClassicMoveGenerator implements MoveGenerator {
             return Stream.empty();
         }
         Piece piece = board.getPiece(currentPosition);
-        return getStreamOfGeneratorsFor(piece)
-                .flatMap(gen -> gen.generate(game, piece, currentPosition));
+        return pieceMoveGeneratorFactory.getMoveGenerators(piece)
+                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piece, currentPosition));
     }
 
     @Override
@@ -75,14 +40,10 @@ public class ClassicMoveGenerator implements MoveGenerator {
         PositionFactory positionFactory = board.getPositionFactory();
         IndexChange indexChange = positionFactory.create(currentPosition, endPosition);
         Piece piece = board.getPiece(currentPosition);
-        return getStreamOfGeneratorsFor(piece)
-                .filter(gen -> gen.getMoveType() == moveType)
+        return pieceMoveGeneratorFactory.getMoveGenerators(piece)
+                .filter(pieceMoveGenerator -> pieceMoveGenerator.getMoveType() == moveType)
                 .findFirst()
                 .orElseThrow()
                 .generate(game, piece, currentPosition, indexChange);
-    }
-
-    private Stream<PieceMoveGenerator> getStreamOfGeneratorsFor(Piece piece) {
-        return moveGenerators.getOrDefault(piece.getClass(), List.of()).stream();
     }
 }
