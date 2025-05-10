@@ -7,6 +7,8 @@ import org.czareg.game.MoveType;
 import org.czareg.piece.*;
 import org.czareg.piece.move.bishop.BishopCaptureMoveGenerator;
 import org.czareg.piece.move.bishop.BishopMoveMoveGenerator;
+import org.czareg.piece.move.knight.KnightCaptureMoveGenerator;
+import org.czareg.piece.move.knight.KnightMoveMoveGenerator;
 import org.czareg.piece.move.pawn.*;
 import org.czareg.piece.move.queen.QueenCaptureMoveGenerator;
 import org.czareg.piece.move.queen.QueenMoveMoveGenerator;
@@ -46,6 +48,10 @@ public class ClassicMoveGenerator implements MoveGenerator {
         moveGenerators.put(Bishop.class, List.of(
                 new BishopMoveMoveGenerator(),
                 new BishopCaptureMoveGenerator()
+        ));
+        moveGenerators.put(Knight.class, List.of(
+                new KnightMoveMoveGenerator(),
+                new KnightCaptureMoveGenerator()
         ));
     }
 
