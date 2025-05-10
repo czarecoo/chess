@@ -99,10 +99,6 @@ class RookCaptureTests {
                 .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE, Piece.class))
                 .distinct()
                 .count());
-        assertEquals(4, moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE_POSITION, Position.class))
-                .distinct()
-                .count());
         assertTrue(moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
@@ -137,10 +133,6 @@ class RookCaptureTests {
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
         assertEquals(4, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE, Piece.class))
-                .distinct()
-                .count());
-        assertEquals(4, moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE_POSITION, Position.class))
                 .distinct()
                 .count());
         assertTrue(moves.stream().map(Move::getMetadata)

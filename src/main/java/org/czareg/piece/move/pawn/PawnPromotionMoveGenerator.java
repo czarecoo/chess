@@ -18,8 +18,6 @@ import org.czareg.position.PositionFactory;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.czareg.game.Metadata.Key.MOVE_TYPE;
-
 @Slf4j
 public class PawnPromotionMoveGenerator implements PieceMoveGenerator {
 
@@ -53,7 +51,7 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator {
             log.debug("Rejecting move because end {} is not on promotion rank {}.", endPosition, boardSize);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType());
+        Metadata metadata = new Metadata(getMoveType());
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);

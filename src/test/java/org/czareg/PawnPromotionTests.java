@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 import static org.czareg.game.Metadata.Key.PROMOTION_PIECE;
 import static org.czareg.game.MoveType.PROMOTION;
 import static org.czareg.piece.Player.BLACK;
@@ -79,7 +78,7 @@ class PawnPromotionTests {
 
         Move lastMove = game.getHistory().getLastPlayedMove().orElseThrow();
         assertEquals(promotionMove, lastMove);
-        Metadata expectedMetadata = new Metadata(MOVE_TYPE, PROMOTION)
+        Metadata expectedMetadata = new Metadata(PROMOTION)
                 .put(PROMOTION_PIECE, newPiece);
         Move expectedMove = new Move(whitePawn, pf.create(7, "D"), pf.create(8, "D"), expectedMetadata);
         assertEquals(expectedMove, promotionMove);

@@ -5,7 +5,10 @@ import lombok.ToString;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+
+import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
 @EqualsAndHashCode
 @ToString
@@ -17,14 +20,14 @@ public class Metadata {
         CASTLING_ROOK_START_POSITION,
         CASTLING_ROOK_END_POSITION,
         CAPTURE_PIECE,
-        CAPTURE_PIECE_POSITION
+        CAPTURE_PIECE_POSITION // in classic chess, this key should only be added for en passant
     }
 
     private final Map<Key, Object> data;
 
-    public Metadata(Key key, Object moveTypeClass) {
+    public Metadata(MoveType moveType) {
         data = new EnumMap<>(Key.class);
-        data.put(key, moveTypeClass);
+        data.put(MOVE_TYPE, Objects.requireNonNull(moveType));
     }
 
     public <T> Metadata put(Key key, T value) {

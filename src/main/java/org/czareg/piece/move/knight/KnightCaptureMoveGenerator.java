@@ -17,7 +17,8 @@ import org.czareg.position.PositionFactory;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.czareg.game.Metadata.Key.*;
+import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
+import static org.czareg.game.Metadata.Key.CAPTURE_PIECE_POSITION;
 
 @Slf4j
 public class KnightCaptureMoveGenerator implements PieceMoveGenerator, KnightDirectional {
@@ -51,7 +52,7 @@ public class KnightCaptureMoveGenerator implements PieceMoveGenerator, KnightDir
             log.debug("Rejecting move because target {} is occupied by friendly {}.", endPosition, targetPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType())
+        Metadata metadata = new Metadata(getMoveType())
                 .put(CAPTURE_PIECE, targetPiece)
                 .put(CAPTURE_PIECE_POSITION, endPosition);
         Move move = new Move(piece, currentPosition, endPosition, metadata);

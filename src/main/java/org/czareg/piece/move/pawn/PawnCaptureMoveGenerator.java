@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.czareg.game.Metadata.Key.*;
+import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 
 @Slf4j
 public class PawnCaptureMoveGenerator implements PieceMoveGenerator {
@@ -56,9 +56,8 @@ public class PawnCaptureMoveGenerator implements PieceMoveGenerator {
             log.debug("Rejecting move because target {} is occupied by friendly {}.", endPosition, targetPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType())
-                .put(CAPTURE_PIECE, targetPiece)
-                .put(CAPTURE_PIECE_POSITION, endPosition);
+        Metadata metadata = new Metadata(getMoveType())
+                .put(CAPTURE_PIECE, targetPiece);
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);

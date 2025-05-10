@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.czareg.game.Metadata.Key.MOVE_TYPE;
+import static org.czareg.game.Metadata.Key.*;
+import static org.czareg.game.MoveType.PAWN_DOUBLE_FORWARD;
 
 @Slf4j
 public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
@@ -84,13 +85,13 @@ public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
             return Optional.empty();
         }
         Metadata lastPlayedMoveMetadata = lastPlayedMove.getMetadata();
-        if (!lastPlayedMoveMetadata.isExactly(Metadata.Key.MOVE_TYPE, MoveType.PAWN_DOUBLE_FORWARD)) {
+        if (!lastPlayedMoveMetadata.isExactly(MOVE_TYPE, PAWN_DOUBLE_FORWARD)) {
             log.debug("Rejecting move because last played move done by {} was not double forward move.", lastMovedPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType())
-                .put(Metadata.Key.CAPTURE_PIECE, targetPiece)
-                .put(Metadata.Key.CAPTURE_PIECE_POSITION, targetPosition);
+        Metadata metadata = new Metadata(getMoveType())
+                .put(CAPTURE_PIECE, targetPiece)
+                .put(CAPTURE_PIECE_POSITION, targetPosition);
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);

@@ -15,8 +15,6 @@ import org.czareg.position.PositionFactory;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.czareg.game.Metadata.Key.MOVE_TYPE;
-
 @Slf4j
 public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator {
 
@@ -63,7 +61,7 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator {
             log.debug("Rejecting move, because middle {} is occupied by {}.", middlePosition, middlePositionOccupyingPiece);
             return Optional.empty();
         }
-        Metadata metadata = new Metadata(MOVE_TYPE, getMoveType());
+        Metadata metadata = new Metadata(getMoveType());
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
