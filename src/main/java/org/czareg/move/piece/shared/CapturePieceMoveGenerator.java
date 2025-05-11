@@ -5,6 +5,7 @@ import org.czareg.board.Board;
 import org.czareg.game.Game;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
+import org.czareg.game.MoveType;
 import org.czareg.move.piece.Directional;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.piece.Piece;
@@ -78,5 +79,10 @@ public abstract class CapturePieceMoveGenerator implements PieceMoveGenerator, D
             IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
             return generate(game, piece, currentPosition, endPositionIndexChange);
         }
+    }
+
+    @Override
+    public MoveType getMoveType() {
+        return MoveType.CAPTURE;
     }
 }

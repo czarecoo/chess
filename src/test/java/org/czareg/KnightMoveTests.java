@@ -52,7 +52,7 @@ class KnightMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.KNIGHT_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 
     @Test
@@ -79,7 +79,7 @@ class KnightMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.KNIGHT_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 
     @Test
@@ -106,7 +106,7 @@ class KnightMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.KNIGHT_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 
     @Test
@@ -133,7 +133,7 @@ class KnightMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.KNIGHT_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 
     @Test

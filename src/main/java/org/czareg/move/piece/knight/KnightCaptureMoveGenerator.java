@@ -60,6 +60,6 @@ public class KnightCaptureMoveGenerator implements PieceMoveGenerator, KnightDir
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.KNIGHT_CAPTURE;
+        return MoveType.CAPTURE;
     }
 }

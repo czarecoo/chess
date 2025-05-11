@@ -51,7 +51,7 @@ class QueenMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.QUEEN_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 
     @Test
@@ -120,6 +120,6 @@ class QueenMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.QUEEN_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 }

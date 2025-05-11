@@ -98,7 +98,7 @@ class QueenCaptureTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.QUEEN_CAPTURE));
+                .allMatch(moveType -> moveType == MoveType.CAPTURE));
     }
 
     @Test
@@ -129,6 +129,6 @@ class QueenCaptureTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.QUEEN_CAPTURE));
+                .allMatch(moveType -> moveType == MoveType.CAPTURE));
     }
 }

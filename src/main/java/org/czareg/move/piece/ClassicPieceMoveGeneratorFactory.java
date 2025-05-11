@@ -1,6 +1,5 @@
 package org.czareg.move.piece;
 
-import org.czareg.game.MoveType;
 import org.czareg.move.piece.bishop.BishopCaptureMoveGenerator;
 import org.czareg.move.piece.bishop.BishopMoveMoveGenerator;
 import org.czareg.move.piece.knight.KnightCaptureMoveGenerator;
@@ -12,7 +11,6 @@ import org.czareg.move.piece.rook.RookCaptureMoveGenerator;
 import org.czareg.move.piece.rook.RookMoveMoveGenerator;
 import org.czareg.piece.*;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,16 +31,6 @@ public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFacto
 
     public Stream<PieceMoveGenerator> getMoveGenerator(Piece piece) {
         return moveGenerators.getOrDefault(piece.getClass(), List.of()).stream();
-    }
-
-    @Override
-    public PieceMoveGenerator getMoveGenerator(MoveType moveType) {
-        return moveGenerators.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .filter(pieceMoveGenerator -> pieceMoveGenerator.getMoveType() == moveType)
-                .findFirst()
-                .orElseThrow();
     }
 
     private List<PieceMoveGenerator> createPawnMoveGenerators() {

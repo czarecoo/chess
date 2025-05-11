@@ -41,6 +41,9 @@ public class ClassicMoveGenerator implements MoveGenerator {
         PositionFactory positionFactory = board.getPositionFactory();
         IndexChange indexChange = positionFactory.create(currentPosition, endPosition);
         Piece piece = board.getPiece(currentPosition);
-        return pieceMoveGeneratorFactory.getMoveGenerator(moveType).generate(game, piece, currentPosition, indexChange);
+        return pieceMoveGeneratorFactory.getMoveGenerator(piece)
+                .filter(pieceMoveGenerator -> pieceMoveGenerator.getMoveType() == moveType)
+                .findFirst()
+                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piece, currentPosition, indexChange));
     }
 }

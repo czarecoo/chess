@@ -149,6 +149,6 @@ class KnightCaptureTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.KNIGHT_CAPTURE));
+                .allMatch(moveType -> moveType == MoveType.CAPTURE));
     }
 }

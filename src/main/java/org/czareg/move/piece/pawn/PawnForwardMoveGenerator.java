@@ -74,6 +74,6 @@ public class PawnForwardMoveGenerator implements PieceMoveGenerator {
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.PAWN_FORWARD;
+        return MoveType.MOVE;
     }
 }

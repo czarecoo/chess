@@ -42,10 +42,10 @@ class PawnEnPassantTests {
         board.placePiece(pf.create(2, "D"), whitePawn);
         board.placePiece(pf.create(7, "E"), blackPawnToBeCaptured);
         board.placePiece(pf.create(7, "A"), blackPawnIrrelevantForTest);
-        game.makeMove(new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata(PAWN_DOUBLE_FORWARD)));
-        game.makeMove(new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(PAWN_FORWARD)));
-        game.makeMove(new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(PAWN_FORWARD)));
-        game.makeMove(new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(PAWN_DOUBLE_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        game.makeMove(new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
+        game.makeMove(new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(MOVE)));
+        game.makeMove(new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(INITIAL_DOUBLE_FORWARD)));
         Move enPassantMove = moveGenerator.generate(game, pf.create(5, "D"), pf.create(6, "E"), EN_PASSANT).orElseThrow();
 
         game.makeMove(enPassantMove);

@@ -2,23 +2,13 @@ package org.czareg.game;
 
 public enum MoveType {
 
-    PAWN_DOUBLE_FORWARD,
-    PAWN_FORWARD,
-    PAWN_CAPTURE,
+    MOVE,
+    CAPTURE,
+
+    INITIAL_DOUBLE_FORWARD,
+
     PROMOTION,
     EN_PASSANT,
-
-    KNIGHT_MOVE,
-    KNIGHT_CAPTURE,
-
-    BISHOP_MOVE,
-    BISHOP_CAPTURE,
-
-    ROOK_MOVE,
-    ROOK_CAPTURE,
-
-    QUEEN_MOVE,
-    QUEEN_CAPTURE,
 
     CASTLING
 }

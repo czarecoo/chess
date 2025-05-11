@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.game.*;
 import org.czareg.move.piece.PieceMoveGenerator;
-import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Index;
@@ -18,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.czareg.game.Metadata.Key.*;
-import static org.czareg.game.MoveType.PAWN_DOUBLE_FORWARD;
+import static org.czareg.game.MoveType.INITIAL_DOUBLE_FORWARD;
 
 @Slf4j
 public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
@@ -63,8 +62,12 @@ public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
             return Optional.empty();
         }
         Piece targetPiece = board.getPiece(targetPosition);
-        if (targetPiece.getPlayer() == player || !(targetPiece instanceof Pawn)) {
+        if (targetPiece.getPlayer() == player) {
             log.debug("Rejecting move because target {} is occupied by friendly {}.", targetPosition, targetPiece);
+            return Optional.empty();
+        }
+        if (piece.getClass() != targetPiece.getClass()) {
+            log.debug("Rejecting move because target {} is not of the same type than moving {}.", targetPiece, piece);
             return Optional.empty();
         }
         History history = game.getHistory();
@@ -85,7 +88,7 @@ public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
             return Optional.empty();
         }
         Metadata lastPlayedMoveMetadata = lastPlayedMove.getMetadata();
-        if (!lastPlayedMoveMetadata.isExactly(MOVE_TYPE, PAWN_DOUBLE_FORWARD)) {
+        if (!lastPlayedMoveMetadata.isExactly(MOVE_TYPE, INITIAL_DOUBLE_FORWARD)) {
             log.debug("Rejecting move because last played move done by {} was not double forward move.", lastMovedPiece);
             return Optional.empty();
         }

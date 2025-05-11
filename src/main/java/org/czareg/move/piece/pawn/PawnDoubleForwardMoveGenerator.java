@@ -91,6 +91,6 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator {
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.PAWN_DOUBLE_FORWARD;
+        return MoveType.INITIAL_DOUBLE_FORWARD;
     }
 }

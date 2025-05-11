@@ -51,6 +51,6 @@ public class KnightMoveMoveGenerator implements PieceMoveGenerator, KnightDirect
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.KNIGHT_MOVE;
+        return MoveType.MOVE;
     }
 }

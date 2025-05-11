@@ -103,7 +103,7 @@ class BishopCaptureTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.BISHOP_CAPTURE));
+                .allMatch(moveType -> moveType == MoveType.CAPTURE));
     }
 
     @Test
@@ -139,6 +139,6 @@ class BishopCaptureTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.BISHOP_CAPTURE));
+                .allMatch(moveType -> moveType == MoveType.CAPTURE));
     }
 }

@@ -46,8 +46,8 @@ class PawnTests {
         Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
         Set<Move> expectedMoves = Set.of(
-                new Move(pawn, start, pf.create(3, "A"), new Metadata(PAWN_FORWARD)),
-                new Move(pawn, start, pf.create(4, "A"), new Metadata(PAWN_DOUBLE_FORWARD))
+                new Move(pawn, start, pf.create(3, "A"), new Metadata(MOVE)),
+                new Move(pawn, start, pf.create(4, "A"), new Metadata(INITIAL_DOUBLE_FORWARD))
         );
         assertEquals(expectedMoves, actualMoves);
     }
@@ -57,12 +57,12 @@ class PawnTests {
         Pawn pawn = new Pawn(WHITE);
         Position whiteStart = pf.create(2, "D");
         board.placePiece(whiteStart, pawn);
-        game.makeMove(new Move(pawn, whiteStart, pf.create(3, "D"), new Metadata(PAWN_FORWARD)));
+        game.makeMove(new Move(pawn, whiteStart, pf.create(3, "D"), new Metadata(MOVE)));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> actualMoves = moveGenerator.generate(game, pf.create(3, "D")).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, pf.create(3, "D"), pf.create(4, "D"), new Metadata(PAWN_FORWARD)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, pf.create(3, "D"), pf.create(4, "D"), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
     }
 
@@ -103,13 +103,13 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> actualMoves = moveGenerator.generate(game, start).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(7, "E"), new Metadata(PAWN_FORWARD)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(7, "E"), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
     }
 
     @Test
     void givenEmptyBoard_whenBlackPawnIsMakingMove_thenExceptionIsThrown() {
-        Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"), new Metadata(PAWN_FORWARD));
+        Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
         assertEquals("Now moving player WHITE not player BLACK", e.getMessage());
@@ -117,7 +117,7 @@ class PawnTests {
 
     @Test
     void givenEmptyBoard_whenWhitePawnIsMakingMove_thenExceptionIsThrown() {
-        Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"), new Metadata(PAWN_FORWARD));
+        Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(move));
         assertTrue(e.getMessage().contains("is not one of the generated moves []"));
@@ -137,7 +137,7 @@ class PawnTests {
         Position positionWithoutPiece = pf.create(1, "D");
         Position anotherPositionWithoutPiece = pf.create(2, "D");
 
-        Optional<Move> move = moveGenerator.generate(game, positionWithoutPiece, anotherPositionWithoutPiece, PAWN_FORWARD);
+        Optional<Move> move = moveGenerator.generate(game, positionWithoutPiece, anotherPositionWithoutPiece, MOVE);
 
         assertTrue(move.isEmpty());
     }
@@ -149,7 +149,7 @@ class PawnTests {
         Position blackPosition = pf.create(4, "E");
         board.placePiece(blackPosition, new Pawn(BLACK));
 
-        Optional<Move> move = moveGenerator.generate(game, whitePosition, blackPosition, PAWN_DOUBLE_FORWARD);
+        Optional<Move> move = moveGenerator.generate(game, whitePosition, blackPosition, INITIAL_DOUBLE_FORWARD);
 
         assertTrue(move.isEmpty());
     }
@@ -162,7 +162,7 @@ class PawnTests {
         board.placePiece(blackPosition, new Pawn(BLACK));
         Position whiteEndPosition = pf.create(4, "E");
 
-        Optional<Move> move = moveGenerator.generate(game, whiteStartPosition, whiteEndPosition, PAWN_DOUBLE_FORWARD);
+        Optional<Move> move = moveGenerator.generate(game, whiteStartPosition, whiteEndPosition, INITIAL_DOUBLE_FORWARD);
 
         assertTrue(move.isEmpty());
     }
@@ -174,7 +174,7 @@ class PawnTests {
         Position secondWhitePosition = pf.create(4, "A");
         board.placePiece(secondWhitePosition, new Pawn(WHITE));
 
-        Optional<Move> move = moveGenerator.generate(game, firstWhitePosition, secondWhitePosition, PAWN_CAPTURE);
+        Optional<Move> move = moveGenerator.generate(game, firstWhitePosition, secondWhitePosition, CAPTURE);
 
         assertTrue(move.isEmpty());
     }
@@ -186,10 +186,10 @@ class PawnTests {
         Pawn blackPawn = new Pawn(BLACK);
         board.placePiece(pf.create(8, "C"), blackPawn);
 
-        game.makeMove(new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata(PAWN_DOUBLE_FORWARD)));
-        game.makeMove(new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata(PAWN_DOUBLE_FORWARD)));
-        game.makeMove(new Move(whitePawn, pf.create(3, "C"), pf.create(4, "C"), new Metadata(PAWN_FORWARD)));
-        game.makeMove(new Move(blackPawn, pf.create(6, "C"), pf.create(5, "C"), new Metadata(PAWN_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        game.makeMove(new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        game.makeMove(new Move(whitePawn, pf.create(3, "C"), pf.create(4, "C"), new Metadata(MOVE)));
+        game.makeMove(new Move(blackPawn, pf.create(6, "C"), pf.create(5, "C"), new Metadata(MOVE)));
 
         MoveGenerator moveGenerator = game.getMoveGenerator();
         assertEquals(Set.of(), moveGenerator.generate(game, pf.create(4, "C")).collect(Collectors.toSet()));
@@ -208,7 +208,7 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> whiteMoves = moveGenerator.generate(game, whitePosition).collect(Collectors.toSet());
 
-        Metadata expectedMetadata = new Metadata(PAWN_CAPTURE)
+        Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, blackPawn);
         Move expectedMove = new Move(whitePawn, whitePosition, blackPosition, expectedMetadata);
         assertTrue(whiteMoves.contains(expectedMove));
@@ -226,7 +226,7 @@ class PawnTests {
         MoveGenerator moveGenerator = game.getMoveGenerator();
         Set<Move> blackMoves = moveGenerator.generate(game, blackPosition).collect(Collectors.toSet());
 
-        Metadata expectedMetadata = new Metadata(PAWN_CAPTURE)
+        Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, whitePawn);
         Move expectedMove = new Move(blackPawn, blackPosition, whitePosition, expectedMetadata);
         assertTrue(blackMoves.contains(expectedMove));

@@ -52,7 +52,7 @@ class RookMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.ROOK_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 
     @Test
@@ -121,6 +121,6 @@ class RookMoveTests {
                 .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .allMatch(moveType -> moveType == MoveType.ROOK_MOVE));
+                .allMatch(moveType -> moveType == MoveType.MOVE));
     }
 }

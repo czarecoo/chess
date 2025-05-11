@@ -78,6 +78,6 @@ public class PawnCaptureMoveGenerator implements PieceMoveGenerator {
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.PAWN_CAPTURE;
+        return MoveType.CAPTURE;
     }
 }
