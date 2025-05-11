@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
-import static org.czareg.game.Metadata.Key.CAPTURE_PIECE_POSITION;
+import static org.czareg.game.Metadata.Key.EN_PASSANT_CAPTURE_PIECE_POSITION;
 import static org.czareg.game.MoveType.*;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
@@ -56,7 +56,7 @@ class PawnEnPassantTests {
         assertEquals(enPassantMove, lastMove);
         Metadata expectedMetadata = new Metadata(EN_PASSANT)
                 .put(CAPTURE_PIECE, blackPawnToBeCaptured)
-                .put(CAPTURE_PIECE_POSITION, pf.create(5, "E"));
+                .put(EN_PASSANT_CAPTURE_PIECE_POSITION, pf.create(5, "E"));
         Move expectedMove = new Move(whitePawn, pf.create(5, "D"), pf.create(6, "E"), expectedMetadata);
         assertEquals(expectedMove, enPassantMove);
     }

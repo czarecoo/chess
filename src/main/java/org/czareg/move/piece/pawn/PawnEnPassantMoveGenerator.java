@@ -91,7 +91,7 @@ public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
         }
         Metadata metadata = new Metadata(getMoveType())
                 .put(CAPTURE_PIECE, targetPiece)
-                .put(CAPTURE_PIECE_POSITION, targetPosition);
+                .put(EN_PASSANT_CAPTURE_PIECE_POSITION, targetPosition);
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);

@@ -20,7 +20,7 @@ public class Metadata {
         CASTLING_ROOK_START_POSITION,
         CASTLING_ROOK_END_POSITION,
         CAPTURE_PIECE,
-        CAPTURE_PIECE_POSITION // in classic chess, this key should only be added for en passant
+        EN_PASSANT_CAPTURE_PIECE_POSITION
     }
 
     private final Map<Key, Object> data;
