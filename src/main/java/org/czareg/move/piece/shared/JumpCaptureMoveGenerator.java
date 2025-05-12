@@ -21,13 +21,13 @@ import java.util.stream.Stream;
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 
 @Slf4j
-public abstract class CapturePieceMoveGenerator implements PieceMoveGenerator, Directional {
+public abstract class JumpCaptureMoveGenerator implements PieceMoveGenerator, Directional {
 
     @Override
     public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
-        return getDirections()
-                .map(direction -> searchCapture(game, piece, currentPosition, direction))
-                .flatMap(Optional::stream);
+        return getDirections().map(endPositionIndexChange -> generate(game, piece, currentPosition, endPositionIndexChange))
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     @Override
@@ -54,31 +54,9 @@ public abstract class CapturePieceMoveGenerator implements PieceMoveGenerator, D
         }
         Metadata metadata = new Metadata(getMoveType())
                 .put(CAPTURE_PIECE, targetPiece);
-
         Move move = new Move(piece, currentPosition, endPosition, metadata);
-        log.debug("Accepted move {}.", move);
+        log.debug("Accepted move {}", move);
         return Optional.of(move);
-    }
-
-    private Optional<Move> searchCapture(Game game, Piece piece, Position currentPosition, IndexChange direction) {
-        Board board = game.getBoard();
-        PositionFactory positionFactory = board.getPositionFactory();
-        Index checkedPositionIndex = positionFactory.create(currentPosition);
-        while (true) {
-            Optional<Position> optionalEndPosition = positionFactory.create(checkedPositionIndex, direction);
-            if (optionalEndPosition.isEmpty()) {
-                log.debug("Rejecting move because end position is not valid on the board ({}, {}).", checkedPositionIndex, direction);
-                return Optional.empty();
-            }
-            Position endPosition = optionalEndPosition.get();
-            if (!board.hasPiece(endPosition)) {
-                checkedPositionIndex = positionFactory.create(endPosition);
-                log.debug("Continuing search since {} is empty.", endPosition);
-                continue;
-            }
-            IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
-            return generate(game, piece, currentPosition, endPositionIndexChange);
-        }
     }
 
     @Override

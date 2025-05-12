@@ -5,7 +5,7 @@ import org.czareg.position.IndexChange;
 
 import java.util.stream.Stream;
 
-public interface KnightDirectional extends Directional {
+public interface LDirectional extends Directional {
 
     @Override
     default Stream<IndexChange> getDirections() {

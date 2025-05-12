@@ -14,21 +14,17 @@ import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public abstract class MovePieceMoveGenerator implements PieceMoveGenerator, Directional {
+public abstract class JumpMoveMoveGenerator implements PieceMoveGenerator, Directional {
 
     @Override
     public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
-        List<Move> moves = new ArrayList<>();
-        for (IndexChange direction : getDirections().toList()) {
-            moves.addAll(searchMoves(game, piece, currentPosition, direction));
-        }
-        return moves.stream();
+        return getDirections().map(endPositionIndexChange -> generate(game, piece, currentPosition, endPositionIndexChange))
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     @Override
@@ -44,37 +40,14 @@ public abstract class MovePieceMoveGenerator implements PieceMoveGenerator, Dire
         }
         Position endPosition = optionalEndPosition.get();
         if (board.hasPiece(endPosition)) {
-            Piece targetPiece = board.getPiece(endPosition);
-            log.debug("Rejecting move because end {} is occupied by {}.", endPosition, targetPiece);
+            Piece endPositionOccupyingPiece = board.getPiece(endPosition);
+            log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
             return Optional.empty();
         }
         Metadata metadata = new Metadata(getMoveType());
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
-    }
-
-    private List<Move> searchMoves(Game game, Piece piece, Position currentPosition, IndexChange direction) {
-        List<Move> moves = new ArrayList<>();
-        Board board = game.getBoard();
-        PositionFactory positionFactory = board.getPositionFactory();
-        Index checkedPositionIndex = positionFactory.create(currentPosition);
-        while (true) {
-            Optional<Position> optionalEndPosition = positionFactory.create(checkedPositionIndex, direction);
-            if (optionalEndPosition.isEmpty()) {
-                log.debug("Rejecting move because end position is not valid on the board ({}, {}).", checkedPositionIndex, direction);
-                return moves;
-            }
-            Position endPosition = optionalEndPosition.get();
-            if (board.hasPiece(endPosition)) {
-                Piece targetPiece = board.getPiece(endPosition);
-                log.debug("Rejecting move because end {} is occupied by {}.", endPosition, targetPiece);
-                return moves;
-            }
-            checkedPositionIndex = positionFactory.create(endPosition);
-            IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
-            generate(game, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
-        }
     }
 
     @Override

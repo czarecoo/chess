@@ -1,8 +1,6 @@
 package org.czareg.move.piece.rook;
 
-import lombok.extern.slf4j.Slf4j;
-import org.czareg.move.piece.shared.MovePieceMoveGenerator;
+import org.czareg.move.piece.shared.SearchMovePieceMoveGenerator;
 
-@Slf4j
-public class RookMoveMoveGenerator extends MovePieceMoveGenerator implements RookDirectional {
+public class RookMoveMoveGenerator extends SearchMovePieceMoveGenerator implements OrthogonalDirectional {
 }

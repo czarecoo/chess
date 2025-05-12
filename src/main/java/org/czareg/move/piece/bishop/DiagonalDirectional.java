@@ -5,7 +5,7 @@ import org.czareg.position.IndexChange;
 
 import java.util.stream.Stream;
 
-public interface BishopDirectional extends Directional {
+public interface DiagonalDirectional extends Directional {
 
     @Override
     default Stream<IndexChange> getDirections() {

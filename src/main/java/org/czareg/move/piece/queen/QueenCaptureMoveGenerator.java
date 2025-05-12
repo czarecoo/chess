@@ -1,8 +1,7 @@
 package org.czareg.move.piece.queen;
 
-import lombok.extern.slf4j.Slf4j;
-import org.czareg.move.piece.shared.CapturePieceMoveGenerator;
+import org.czareg.move.piece.shared.AllDirectional;
+import org.czareg.move.piece.shared.SearchCapturePieceMoveGenerator;
 
-@Slf4j
-public class QueenCaptureMoveGenerator extends CapturePieceMoveGenerator implements QueenDirectional {
+public class QueenCaptureMoveGenerator extends SearchCapturePieceMoveGenerator implements AllDirectional {
 }
