@@ -2,12 +2,12 @@ package org.czareg.move.piece.pawn;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.board.BoardSize;
 import org.czareg.game.Game;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
+import org.czareg.move.piece.shared.PromotionRankChecker;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Index;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class PawnPromotionMoveGenerator implements PieceMoveGenerator {
+public class PawnPromotionMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
 
     @Override
     public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
@@ -45,24 +45,15 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator {
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
             return Optional.empty();
         }
-        BoardSize boardSize = board.getBoardSize();
         Player player = piece.getPlayer();
-        if (!isOnPromotionRank(endPosition, boardSize, player)) {
-            log.debug("Rejecting move because end {} is not on promotion rank {}.", endPosition, boardSize);
+        if (!isOnPromotionRank(endPosition, positionFactory, player)) {
+            log.debug("Rejecting move because end {} is not on promotion rank.", endPosition);
             return Optional.empty();
         }
         Metadata metadata = new Metadata(getMoveType());
         Move move = new Move(piece, currentPosition, endPosition, metadata);
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
-    }
-
-    private boolean isOnPromotionRank(Position position, BoardSize boardSize, Player player) {
-        int rank = position.getRank();
-        return switch (player) {
-            case WHITE -> rank == boardSize.getRanks();
-            case BLACK -> rank == 1;
-        };
     }
 
     private IndexChange getEndPositionIndexChange(Player player) {

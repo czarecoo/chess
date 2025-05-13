@@ -1,21 +1,39 @@
 package org.czareg.position;
 
-import org.czareg.board.BoardSize;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+@Getter
 public class PositionFactory {
 
+    private static final int MIN_RANK = 1;
+    private static final int MAX_RANK = 26;
+    private static final int MIN_FILES = 1;
+    private static final int MAX_FILES = 26;
+
+    int minRank;
+    int minFile;
+    int maxRank;
+    int maxFile;
     private final List<Integer> allowedRankValues;
     private final List<String> allowedFileValues;
 
-    public PositionFactory(BoardSize boardSize) {
-        int ranks = boardSize.getRanks();
-        allowedRankValues = IntStream.rangeClosed(1, ranks).boxed().toList();
-        int files = boardSize.getFiles();
-        allowedFileValues = IntStream.rangeClosed('A', 'Z').limit(files).mapToObj(Character::toString).toList();
+    public PositionFactory(int maxRank, int maxFile) {
+        if (maxRank < MIN_RANK || maxRank > MAX_RANK) {
+            throw new IllegalArgumentException("Ranks has to be between <%d,%d>".formatted(MIN_RANK, MAX_RANK));
+        }
+        if (maxFile < MIN_FILES || maxFile > MAX_FILES) {
+            throw new IllegalArgumentException("Files has to be between <%d,%d>".formatted(MIN_FILES, MAX_FILES));
+        }
+        this.minRank = MIN_RANK;
+        this.minFile = MIN_FILES;
+        this.maxRank = maxRank;
+        this.maxFile = maxFile;
+        allowedRankValues = IntStream.rangeClosed(1, maxRank).boxed().toList();
+        allowedFileValues = IntStream.rangeClosed('A', 'Z').limit(maxFile).mapToObj(Character::toString).toList();
     }
 
     public Position create(int rank, String file) {
@@ -47,8 +65,8 @@ public class PositionFactory {
     }
 
     public Optional<Position> create(Index index, IndexChange indexChange) {
-        int changedRankIndex = index.getRank() + indexChange.getRank();
-        int changedFileIndex = index.getFile() + indexChange.getFile();
+        int changedRankIndex = index.getRank() + indexChange.getRankChange();
+        int changedFileIndex = index.getFile() + indexChange.getFileChange();
         if (isRankIndexInvalid(changedRankIndex) || isFileIndexInvalid(changedFileIndex)) {
             return Optional.empty();
         }

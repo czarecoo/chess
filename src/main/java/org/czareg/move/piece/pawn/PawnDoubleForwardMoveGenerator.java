@@ -2,9 +2,9 @@ package org.czareg.move.piece.pawn;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.board.BoardSize;
 import org.czareg.game.*;
 import org.czareg.move.piece.PieceMoveGenerator;
+import org.czareg.move.piece.shared.PromotionRankChecker;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Index;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator {
+public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
 
     @Override
     public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
@@ -47,10 +47,9 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator {
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
             return Optional.empty();
         }
-        BoardSize boardSize = board.getBoardSize();
         Player player = piece.getPlayer();
-        if (isOnPromotionRank(endPosition, boardSize, player)) {
-            log.debug("Rejecting move because end {} is a promotion rank {}.", endPosition, boardSize);
+        if (isOnPromotionRank(endPosition, positionFactory, player)) {
+            log.debug("Rejecting move because end {} is on promotion rank.", endPosition);
             return Optional.empty();
         }
         IndexChange middlePositionIndexChange = getMiddlePositionIndexChange(player);
@@ -71,14 +70,6 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator {
         return switch (player) {
             case WHITE -> new IndexChange(2, 0);
             case BLACK -> new IndexChange(-2, 0);
-        };
-    }
-
-    private boolean isOnPromotionRank(Position endPosition, BoardSize boardSize, Player player) {
-        int rank = endPosition.getRank();
-        return switch (player) {
-            case WHITE -> rank == boardSize.getRanks();
-            case BLACK -> rank == 1;
         };
     }
 

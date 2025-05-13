@@ -101,7 +101,7 @@ public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
     }
 
     private IndexChange getCaptureTargetIndexChanges(IndexChange endPositionIndexChange) {
-        return new IndexChange(0, endPositionIndexChange.getFile());
+        return new IndexChange(0, endPositionIndexChange.getFileChange());
     }
 
     private List<IndexChange> getEndPositionIndexChanges(Player player) {

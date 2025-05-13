@@ -3,7 +3,6 @@ package org.czareg.game;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.board.BoardSize;
 import org.czareg.board.ClassicBoard;
 import org.czareg.move.ClassicMoveExecutor;
 import org.czareg.move.ClassicMoveGenerator;
@@ -29,7 +28,7 @@ public class ClassicGame implements Game {
 
     public ClassicGame() {
         this(
-                new ClassicBoard(new BoardSize(8, 8)),
+                new ClassicBoard(8, 8),
                 new ClassicHistory(),
                 new ClassicMoveGenerator(new ClassicPieceMoveGeneratorFactory()),
                 new ClassicOrder(),

@@ -5,6 +5,6 @@ import lombok.Value;
 @Value
 public class IndexChange {
 
-    int rank;
-    int file;
+    int rankChange;
+    int fileChange;
 }
