@@ -29,8 +29,7 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
     @Override
     public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
-        Player player = piece.getPlayer();
-        for (IndexChange captureTargetIndexChange : getEndPositionIndexChanges(player)) {
+        for (IndexChange captureTargetIndexChange : getEndPositionIndexChanges()) {
             generate(game, piece, currentPosition, captureTargetIndexChange).ifPresent(moves::add);
         }
         return moves.stream();
@@ -42,20 +41,20 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = piece.getPlayer();
-        Index currentPositionIndex = positionFactory.create(kingCurrentPosition);
-        Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, kingEndPositionIndexChange);
-        if (optionalEndPosition.isEmpty()) {
-            log.debug("Rejecting move because end position is not valid on the board ({}, {}).", currentPositionIndex, kingEndPositionIndexChange);
+        Index kingCurrentPositionIndex = positionFactory.create(kingCurrentPosition);
+        Optional<Position> optionalKingEndPosition = positionFactory.create(kingCurrentPositionIndex, kingEndPositionIndexChange);
+        if (optionalKingEndPosition.isEmpty()) {
+            log.debug("Rejecting move because end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, kingEndPositionIndexChange);
             return Optional.empty();
         }
-        Position kingEndPosition = optionalEndPosition.get();
+        Position kingEndPosition = optionalKingEndPosition.get();
         if (board.hasPiece(kingEndPosition)) {
             Piece endPositionOccupyingPiece = board.getPiece(kingEndPosition);
             log.debug("Rejecting move because end {} is occupied by {}.", kingEndPosition, endPositionOccupyingPiece);
             return Optional.empty();
         }
-        int rank = kingCurrentPosition.getRank();
-        if (rank != kingEndPosition.getRank()) {
+        int currentRank = kingCurrentPosition.getRank();
+        if (currentRank != kingEndPosition.getRank()) {
             log.debug("Rejecting move because end {} is on different rank than current {}.", kingEndPosition, kingCurrentPosition);
             return Optional.empty();
         }
@@ -75,34 +74,43 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
         Position rookEndPosition;
         if (kingEndPositionIndexChange.getFileChange() > 0) {
             // O-O
-            // rookStartPosition = positionFactory.create(rank, )
+            String lastFile = positionFactory.getAllowedFileValues().getLast();
+            rookStartPosition = positionFactory.create(currentRank, lastFile);
+            IndexChange indexChange = new IndexChange(0, 1);
+            Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, indexChange);
+            if (optionalRookEndPosition.isEmpty()) {
+                log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, indexChange);
+                return Optional.empty();
+            }
+            rookEndPosition = optionalRookEndPosition.get();
         } else {
             // 0-0-0
+            String firstFile = positionFactory.getAllowedFileValues().getFirst();
+            rookStartPosition = positionFactory.create(currentRank, firstFile);
+            IndexChange indexChange = new IndexChange(0, -1);
+            Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, indexChange);
+            if (optionalRookEndPosition.isEmpty()) {
+                log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, indexChange);
+                return Optional.empty();
+            }
+            rookEndPosition = optionalRookEndPosition.get();
         }
 
+        // TODO
+
         Metadata metadata = new Metadata(getMoveType())
-                .put(CASTLING_ROOK_START_POSITION, null)
-                .put(CASTLING_ROOK_END_POSITION, null);
+                .put(CASTLING_ROOK_START_POSITION, rookStartPosition)
+                .put(CASTLING_ROOK_END_POSITION, rookEndPosition);
         Move move = new Move(piece, kingCurrentPosition, kingEndPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);
     }
 
-    private IndexChange getCaptureTargetIndexChanges(IndexChange endPositionIndexChange) {
-        return new IndexChange(0, endPositionIndexChange.getFileChange());
-    }
-
-    private List<IndexChange> getEndPositionIndexChanges(Player player) {
-        return switch (player) {
-            case WHITE -> List.of(
-                    new IndexChange(1, -1),
-                    new IndexChange(1, 1)
+    private List<IndexChange> getEndPositionIndexChanges() {
+        return List.of(
+                new IndexChange(0, -2),
+                new IndexChange(0, 2)
             );
-            case BLACK -> List.of(
-                    new IndexChange(-1, -1),
-                    new IndexChange(-1, 1)
-            );
-        };
     }
 
     @Override
