@@ -2,6 +2,9 @@ package org.czareg.move.piece;
 
 import org.czareg.move.piece.bishop.BishopCaptureMoveGenerator;
 import org.czareg.move.piece.bishop.BishopMoveMoveGenerator;
+import org.czareg.move.piece.king.KingCaptureMoveGenerator;
+import org.czareg.move.piece.king.KingCastlingMoveGenerator;
+import org.czareg.move.piece.king.KingMoveMoveGenerator;
 import org.czareg.move.piece.knight.KnightCaptureMoveGenerator;
 import org.czareg.move.piece.knight.KnightMoveMoveGenerator;
 import org.czareg.move.piece.pawn.*;
@@ -27,6 +30,7 @@ public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFacto
         moveGenerators.put(Bishop.class, createBishopMoveGenerators());
         moveGenerators.put(Rook.class, createRookMoveGenerators());
         moveGenerators.put(Queen.class, createQueenMoveGenerators());
+        moveGenerators.put(King.class, createKingMoveGenerators());
     }
 
     public Stream<PieceMoveGenerator> getMoveGenerator(Piece piece) {
@@ -68,6 +72,14 @@ public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFacto
         return List.of(
                 new QueenMoveMoveGenerator(),
                 new QueenCaptureMoveGenerator()
+        );
+    }
+
+    private List<PieceMoveGenerator> createKingMoveGenerators() {
+        return List.of(
+                new KingMoveMoveGenerator(),
+                new KingCaptureMoveGenerator(),
+                new KingCastlingMoveGenerator()
         );
     }
 }

@@ -2,12 +2,9 @@ package org.czareg.move.piece.king;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
-import org.czareg.game.Metadata;
-import org.czareg.game.Move;
-import org.czareg.game.MoveType;
+import org.czareg.game.*;
 import org.czareg.move.piece.PieceMoveGenerator;
-import org.czareg.move.piece.shared.PromotionRankChecker;
+import org.czareg.move.piece.shared.StartingRankChecker;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Index;
@@ -24,7 +21,7 @@ import static org.czareg.game.Metadata.Key.CASTLING_ROOK_END_POSITION;
 import static org.czareg.game.Metadata.Key.CASTLING_ROOK_START_POSITION;
 
 @Slf4j
-public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
+public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRankChecker {
 
     @Override
     public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
@@ -36,11 +33,11 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position kingCurrentPosition, IndexChange kingEndPositionIndexChange) {
-        log.debug("Generating move for {} at {} and {}.", piece, kingCurrentPosition, kingEndPositionIndexChange);
+    public Optional<Move> generate(Game game, Piece king, Position kingCurrentPosition, IndexChange kingEndPositionIndexChange) {
+        log.debug("Generating move for {} at {} and {}.", king, kingCurrentPosition, kingEndPositionIndexChange);
         Board board = game.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
-        Player player = piece.getPlayer();
+        Player player = king.getPlayer();
         Index kingCurrentPositionIndex = positionFactory.create(kingCurrentPosition);
         Optional<Position> optionalKingEndPosition = positionFactory.create(kingCurrentPositionIndex, kingEndPositionIndexChange);
         if (optionalKingEndPosition.isEmpty()) {
@@ -58,8 +55,8 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
             log.debug("Rejecting move because end {} is on different rank than current {}.", kingEndPosition, kingCurrentPosition);
             return Optional.empty();
         }
-        if (!isOnPromotionRank(kingEndPosition, positionFactory, player)) {
-            log.debug("Rejecting move because end {} is not on promotion rank.", kingEndPosition);
+        if (!isOnStartingRank(kingEndPosition, positionFactory, player)) {
+            log.debug("Rejecting move because end {} is not on starting rank.", kingEndPosition);
             return Optional.empty();
         }
         if (kingEndPositionIndexChange.getRankChange() != 0) {
@@ -76,10 +73,10 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
             // O-O
             String lastFile = positionFactory.getAllowedFileValues().getLast();
             rookStartPosition = positionFactory.create(currentRank, lastFile);
-            IndexChange indexChange = new IndexChange(0, 1);
-            Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, indexChange);
+            IndexChange rookEndPositionIndexChange = new IndexChange(0, 1);
+            Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, rookEndPositionIndexChange);
             if (optionalRookEndPosition.isEmpty()) {
-                log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, indexChange);
+                log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, rookEndPositionIndexChange);
                 return Optional.empty();
             }
             rookEndPosition = optionalRookEndPosition.get();
@@ -87,21 +84,42 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
             // 0-0-0
             String firstFile = positionFactory.getAllowedFileValues().getFirst();
             rookStartPosition = positionFactory.create(currentRank, firstFile);
-            IndexChange indexChange = new IndexChange(0, -1);
-            Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, indexChange);
+            IndexChange rookEndPositionIndexChange = new IndexChange(0, -1);
+            Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, rookEndPositionIndexChange);
             if (optionalRookEndPosition.isEmpty()) {
-                log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, indexChange);
+                log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, rookEndPositionIndexChange);
                 return Optional.empty();
             }
             rookEndPosition = optionalRookEndPosition.get();
         }
+        if (!board.hasPiece(rookStartPosition)) {
+            log.debug("Rejecting move because there is no rook at start {}.", rookStartPosition);
+            return Optional.empty();
+        }
+        Piece rook = board.getPiece(rookStartPosition);
+        History history = game.getHistory();
+        if (history.hasPieceMovedBefore(king) || history.hasPieceMovedBefore(rook)) {
+            log.debug("Rejecting move because king or rook has moved before.");
+            return Optional.empty();
+        }
+        Index rookStartPositionIndex = positionFactory.create(rookStartPosition);
+        List<Position> positionsBetween = getPositionsBetween(kingCurrentPositionIndex, rookStartPositionIndex, positionFactory);
+        List<Position> positionsWithPiecesBetween = positionsBetween.stream().filter(board::hasPiece).toList();
+        if (!positionsWithPiecesBetween.isEmpty()) {
+            log.debug("Rejecting move because there are pieces between king and rook at {}.", positionsWithPiecesBetween);
+            return Optional.empty();
+        }
 
-        // TODO
+//        TODO
+//        Ensure no square is under attack
+//        if (game.isInCheck(king.getPlayer())) return;
+//        if (game.isUnderAttack(kingPassThrough, king.getPlayer().opponent())) return;
+//        if (game.isUnderAttack(kingDestination, king.getPlayer().opponent())) return;
 
         Metadata metadata = new Metadata(getMoveType())
                 .put(CASTLING_ROOK_START_POSITION, rookStartPosition)
                 .put(CASTLING_ROOK_END_POSITION, rookEndPosition);
-        Move move = new Move(piece, kingCurrentPosition, kingEndPosition, metadata);
+        Move move = new Move(king, kingCurrentPosition, kingEndPosition, metadata);
         log.debug("Accepted move {}", move);
         return Optional.of(move);
     }
@@ -118,53 +136,16 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, PromotionR
         return MoveType.CASTLING;
     }
 
-//    private void tryCastling(Game game,
-//                             Piece king,
-//                             Position kingStart,
-//                             Position kingEnd,
-//                             Position rookStart,
-//                             Position kingPassThrough,
-//                             Position kingDestination,
-//                             Position rookEnd,
-//                             List<Move> moves) {
-//        Board board = game.getBoard();
-//        History history = game.getHistory();
-//
-//        if (!board.hasPiece(rookStart)) return;
-//        Piece rook = board.getPiece(rookStart);
-//        if (!rook.getPlayer().equals(king.getPlayer())) return;
-//
-//        // Check neither piece has moved
-//        if (history.hasMoved(king) || history.hasMoved(rook)) return;
-//
-//        // Ensure path between king and rook is empty
-//        List<Position> between = getPositionsBetween(kingStart, rookStart, board.getPositionFactory());
-//        if (between.stream().anyMatch(board::hasPiece)) return;
-//
-//        // Ensure no square is under attack
-//        if (game.isInCheck(king.getPlayer())) return;
-//        if (game.isUnderAttack(kingPassThrough, king.getPlayer().opponent())) return;
-//        if (game.isUnderAttack(kingDestination, king.getPlayer().opponent())) return;
-//
-//        // Create move with metadata
-//        Metadata metadata = new MetadataBuilder(MoveType.CASTLING)
-//                .put(CASTLING_ROOK_START_POSITION, rookStart)
-//                .put(CASTLING_ROOK_END_POSITION, rookEnd)
-//                .build();
-//
-//        moves.add(new Move(king, kingStart, kingEnd, metadata));
-//    }
-//
-//    private List<Position> getPositionsBetween(Position start, Position end, PositionFactory factory) {
-//        List<Position> between = new ArrayList<>();
-//        int startFile = start.getFile();
-//        int endFile = end.getFile();
-//        int rank = start.getRank();
-//        int min = Math.min(startFile, endFile);
-//        int max = Math.max(startFile, endFile);
-//        for (int file = min + 1; file < max; file++) {
-//            between.add(factory.create(rank, file));
-//        }
-//        return between;
-//    }
+    private List<Position> getPositionsBetween(Index start, Index end, PositionFactory factory) {
+        List<Position> between = new ArrayList<>();
+        int startFile = start.getFile();
+        int endFile = end.getFile();
+        int rank = start.getRank();
+        int min = Math.min(startFile, endFile);
+        int max = Math.max(startFile, endFile);
+        for (int file = min + 1; file < max; file++) {
+            between.add(factory.create(rank, file));
+        }
+        return between;
+    }
 }
