@@ -10,6 +10,7 @@ import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
 import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.piece.Player;
+import org.czareg.position.Position;
 
 import java.util.Objects;
 import java.util.Set;
@@ -50,6 +51,12 @@ public class ClassicGame implements Game {
         checkIfLegal(move);
         moveExecutor.execute(move, this);
         history.save(move);
+    }
+
+    @Override
+    public boolean isUnderAttack(Position position, Player byPlayer) {
+        //TODO
+        return false;
     }
 
     private void checkIfPlayersTurn(Move move) {

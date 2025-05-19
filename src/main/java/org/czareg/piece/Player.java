@@ -2,5 +2,12 @@ package org.czareg.piece;
 
 public enum Player {
 
-    WHITE, BLACK
+    WHITE, BLACK;
+
+    public Player getOpponent() {
+        return switch (this) {
+            case WHITE -> BLACK;
+            case BLACK -> WHITE;
+        };
+    }
 }

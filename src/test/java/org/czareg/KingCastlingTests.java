@@ -156,4 +156,38 @@ class KingCastlingTests {
         assertInstanceOf(King.class, actualKing);
         assertEquals(BLACK, actualKing.getPlayer());
     }
+
+    @Test
+    void testWhiteLongCastleImpossibleBecauseKingEndPositionIsUnderAttack() {
+        board.placePiece(pf.create(8, "C"), new Rook(BLACK));
+        Piece king = new King(WHITE);
+        Position kingPosition = pf.create(1, "E");
+        board.placePiece(kingPosition, king);
+        Piece rook = new Rook(WHITE);
+        Position rookPosition = pf.create(1, "A");
+        board.placePiece(rookPosition, rook);
+
+        List<Move> moves = pieceMoveGenerator
+                .generate(game, king, kingPosition)
+                .toList();
+
+        assertEquals(0, moves.size());
+    }
+
+    @Test
+    void testWhiteLongCastleImpossibleBecauseRookEndPositionIsUnderAttack() {
+        board.placePiece(pf.create(8, "D"), new Rook(BLACK));
+        Piece king = new King(WHITE);
+        Position kingPosition = pf.create(1, "E");
+        board.placePiece(kingPosition, king);
+        Piece rook = new Rook(WHITE);
+        Position rookPosition = pf.create(1, "A");
+        board.placePiece(rookPosition, rook);
+
+        List<Move> moves = pieceMoveGenerator
+                .generate(game, king, kingPosition)
+                .toList();
+
+        assertEquals(0, moves.size());
+    }
 }

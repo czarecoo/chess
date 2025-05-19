@@ -109,13 +109,15 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
             log.debug("Rejecting move because there are pieces between king and rook at {}.", positionsWithPiecesBetween);
             return Optional.empty();
         }
-
-//        TODO
-//        Ensure no square is under attack
-//        if (game.isInCheck(king.getPlayer())) return;
-//        if (game.isUnderAttack(kingPassThrough, king.getPlayer().opponent())) return;
-//        if (game.isUnderAttack(kingDestination, king.getPlayer().opponent())) return;
-
+        Player opponent = player.getOpponent();
+        if (game.isUnderAttack(rookEndPosition, opponent)) {
+            log.debug("Rejecting move because rook end {} is under attack by {}.", rookEndPosition, opponent);
+            return Optional.empty();
+        }
+        if (game.isUnderAttack(kingEndPosition, opponent)) {
+            log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
+            return Optional.empty();
+        }
         Metadata metadata = new Metadata(getMoveType())
                 .put(CASTLING_ROOK_START_POSITION, rookStartPosition)
                 .put(CASTLING_ROOK_END_POSITION, rookEndPosition);
