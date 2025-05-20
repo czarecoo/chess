@@ -9,9 +9,11 @@ import org.czareg.move.ClassicMoveGenerator;
 import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
 import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
+import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Position;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,9 +56,16 @@ public class ClassicGame implements Game {
     }
 
     @Override
-    public boolean isUnderAttack(Position position, Player byPlayer) {
-        //TODO
-        return false;
+    public boolean isUnderAttack(Position position, Player defender, Player attacker) {
+        List<Move> attackMoves = moveGenerator.generate(this, attacker)
+                .filter(move -> move.getEnd().equals(position))
+                .filter(move -> move.getMetadata().isExactly(Metadata.Key.MOVE_TYPE, MoveType.CAPTURE))
+                .filter(move -> move.getMetadata().get(Metadata.Key.CAPTURE_PIECE, Piece.class)
+                        .filter(piece -> piece.getPlayer() == defender)
+                        .isPresent()
+                ).toList();
+        log.debug("Generated {} moves that attack {} where defender {} and attacker {}", attackMoves.size(), position, defender, attacker);
+        return !attackMoves.isEmpty();
     }
 
     private void checkIfPlayersTurn(Move move) {

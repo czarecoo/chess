@@ -3,11 +3,13 @@ package org.czareg.board;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.Index;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Slf4j
 public class ClassicBoard implements Board {
@@ -58,6 +60,21 @@ public class ClassicBoard implements Board {
     public void movePiece(Position startPosition, Position endPosition) {
         Piece piece = removePiece(startPosition);
         placePiece(endPosition, piece);
+    }
+
+    @Override
+    public Stream<PiecePosition> getAllPiecePositions(Player player) {
+        Stream.Builder<PiecePosition> stream = Stream.builder();
+        for (int rankIndex = 0; rankIndex < board.length; rankIndex++) {
+            for (int fileIndex = 0; fileIndex < board[rankIndex].length; fileIndex++) {
+                Piece piece = board[rankIndex][fileIndex];
+                if (piece != null && piece.getPlayer() == player) {
+                    Position position = positionFactory.create(rankIndex, fileIndex);
+                    stream.accept(new PiecePosition(piece, position));
+                }
+            }
+        }
+        return stream.build();
     }
 
     private Piece get(Position position) {

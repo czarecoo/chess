@@ -20,5 +20,5 @@ public interface Game {
 
     MoveExecutor getMoveExecutor();
 
-    boolean isUnderAttack(Position position, Player byPlayer);
+    boolean isUnderAttack(Position position, Player defender, Player attacker);
 }

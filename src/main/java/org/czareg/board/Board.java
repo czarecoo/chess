@@ -1,8 +1,11 @@
 package org.czareg.board;
 
 import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
+
+import java.util.stream.Stream;
 
 public interface Board {
 
@@ -17,4 +20,6 @@ public interface Board {
     void movePiece(Position startPosition, Position endPosition);
 
     Piece removePiece(Position position);
+
+    Stream<PiecePosition> getAllPiecePositions(Player player);
 }

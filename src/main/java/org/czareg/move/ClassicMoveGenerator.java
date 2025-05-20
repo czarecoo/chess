@@ -8,6 +8,7 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
 import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
@@ -45,5 +46,13 @@ public class ClassicMoveGenerator implements MoveGenerator {
                 .filter(pieceMoveGenerator -> pieceMoveGenerator.getMoveType() == moveType)
                 .findFirst()
                 .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piece, currentPosition, indexChange));
+    }
+
+    @Override
+    public Stream<Move> generate(Game game, Player attacker) {
+        Board board = game.getBoard();
+        return board.getAllPiecePositions(attacker)
+                .flatMap(piecePosition -> pieceMoveGeneratorFactory.getMoveGenerator(piecePosition.piece())
+                        .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piecePosition.piece(), piecePosition.position())));
     }
 }

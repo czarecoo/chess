@@ -110,11 +110,11 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
             return Optional.empty();
         }
         Player opponent = player.getOpponent();
-        if (game.isUnderAttack(rookEndPosition, opponent)) {
+        if (game.isUnderAttack(rookEndPosition, player, opponent)) {
             log.debug("Rejecting move because rook end {} is under attack by {}.", rookEndPosition, opponent);
             return Optional.empty();
         }
-        if (game.isUnderAttack(kingEndPosition, opponent)) {
+        if (game.isUnderAttack(kingEndPosition, player, opponent)) {
             log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
             return Optional.empty();
         }
