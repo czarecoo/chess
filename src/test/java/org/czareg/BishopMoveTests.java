@@ -1,14 +1,14 @@
 package org.czareg;
 
-import org.czareg.board.Board;
-import org.czareg.game.*;
+import org.czareg.game.Metadata;
+import org.czareg.game.Move;
+import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.bishop.BishopMoveMoveGenerator;
 import org.czareg.piece.Bishop;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.position.Position;
-import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,18 +21,12 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BishopMoveTests {
+class BishopMoveTests extends BaseTests {
 
-    private Context context;
-    private Board board;
-    private PositionFactory pf;
     private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
-        context = new ClassicContext();
-        board = context.getBoard();
-        pf = board.getPositionFactory();
         pieceMoveGenerator = new BishopMoveMoveGenerator();
     }
 

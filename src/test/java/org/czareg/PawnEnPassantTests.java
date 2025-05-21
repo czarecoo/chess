@@ -1,11 +1,8 @@
 package org.czareg;
 
-import org.czareg.board.Board;
-import org.czareg.game.*;
-import org.czareg.move.MoveGenerator;
+import org.czareg.game.Metadata;
+import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
-import org.czareg.position.PositionFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
@@ -16,24 +13,7 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class PawnEnPassantTests {
-
-    private Context context;
-    private Board board;
-    private PositionFactory pf;
-    private MoveGenerator moveGenerator;
-    private Game game;
-    private History history;
-
-    @BeforeEach
-    void setUp() {
-        context = new ClassicContext();
-        board = context.getBoard();
-        pf = board.getPositionFactory();
-        moveGenerator = context.getMoveGenerator();
-        game = context.getGame();
-        history = context.getHistory();
-    }
+class PawnEnPassantTests extends BaseTests {
 
     @Test
     void givenWhitePawnAndTwoBlackPawns_whenEnPassantConditionsAreMet_thenEnPassantIsGeneratedAndExecutedCorrectly() {

@@ -1,12 +1,9 @@
 package org.czareg;
 
-import org.czareg.board.Board;
-import org.czareg.game.*;
-import org.czareg.move.MoveGenerator;
+import org.czareg.game.Metadata;
+import org.czareg.game.Move;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Queen;
-import org.czareg.position.PositionFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -17,24 +14,7 @@ import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class PawnPromotionTests {
-
-    private Context context;
-    private Board board;
-    private PositionFactory pf;
-    private MoveGenerator moveGenerator;
-    private Game game;
-    private History history;
-
-    @BeforeEach
-    void setUp() {
-        context = new ClassicContext();
-        board = context.getBoard();
-        pf = board.getPositionFactory();
-        moveGenerator = context.getMoveGenerator();
-        game = context.getGame();
-        history = context.getHistory();
-    }
+class PawnPromotionTests extends BaseTests {
 
     @Test
     void givenWhitePawnOnSeventhRank_whenMovingForwardToEighthWithoutChoosingPromotionPiece_thenExceptionIsThrown() {

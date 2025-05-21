@@ -1,7 +1,7 @@
 package org.czareg;
 
-import org.czareg.board.Board;
-import org.czareg.game.*;
+import org.czareg.game.Metadata;
+import org.czareg.game.Move;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.king.KingCastlingMoveGenerator;
 import org.czareg.piece.King;
@@ -9,7 +9,6 @@ import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Rook;
 import org.czareg.position.Position;
-import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,20 +19,12 @@ import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class KingCastlingTests {
+class KingCastlingTests extends BaseTests {
 
-    private Context context;
-    private Board board;
-    private PositionFactory pf;
     private PieceMoveGenerator pieceMoveGenerator;
-    private Game game;
 
     @BeforeEach
     void setUp() {
-        context = new ClassicContext();
-        game = context.getGame();
-        board = context.getBoard();
-        pf = board.getPositionFactory();
         pieceMoveGenerator = new KingCastlingMoveGenerator();
     }
 
