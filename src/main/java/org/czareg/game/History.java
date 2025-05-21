@@ -5,7 +5,7 @@ import org.czareg.piece.Player;
 
 import java.util.Optional;
 
-public interface History {
+public interface History extends Duplicatable<History> {
 
     boolean hasPieceMovedBefore(Piece piece);
 

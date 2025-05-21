@@ -3,6 +3,7 @@ package org.czareg.move.piece.king;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.game.*;
+import org.czareg.move.MoveExecutor;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.shared.StartingRankChecker;
 import org.czareg.piece.Piece;
@@ -109,20 +110,23 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
             log.debug("Rejecting move because there are pieces between king and rook at {}.", positionsWithPiecesBetween);
             return Optional.empty();
         }
-        Player opponent = player.getOpponent();
-        Game game = context.getGame();
-        if (game.isUnderAttack(context, rookEndPosition, player, opponent)) {
-            log.debug("Rejecting move because rook end {} is under attack by {}.", rookEndPosition, opponent);
-            return Optional.empty();
-        }
-        if (game.isUnderAttack(context, kingEndPosition, player, opponent)) {
-            log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
-            return Optional.empty();
-        }
         Metadata metadata = new Metadata(getMoveType())
                 .put(CASTLING_ROOK_START_POSITION, rookStartPosition)
                 .put(CASTLING_ROOK_END_POSITION, rookEndPosition);
         Move move = new Move(king, kingCurrentPosition, kingEndPosition, metadata);
+        Player opponent = player.getOpponent();
+        Game game = context.getGame();
+        Context duplicatedContext = context.duplicate();
+        MoveExecutor moveExecutor = context.getMoveExecutor();
+        moveExecutor.execute(duplicatedContext, move);
+        if (game.isUnderAttack(duplicatedContext, rookEndPosition, player, opponent)) {
+            log.debug("Rejecting move because king pass through {} is under attack by {}.", rookEndPosition, opponent);
+            return Optional.empty();
+        }
+        if (game.isUnderAttack(duplicatedContext, kingEndPosition, player, opponent)) {
+            log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
+            return Optional.empty();
+        }
         log.debug("Accepted move {}", move);
         return Optional.of(move);
     }

@@ -1,5 +1,6 @@
 package org.czareg.game;
 
+import lombok.RequiredArgsConstructor;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class ClassicHistory implements History {
 
     private final List<Move> history;
@@ -40,5 +42,10 @@ public class ClassicHistory implements History {
             return Optional.empty();
         }
         return Optional.of(history.getLast());
+    }
+
+    @Override
+    public ClassicHistory duplicate() {
+        return new ClassicHistory(new ArrayList<>(history));
     }
 }

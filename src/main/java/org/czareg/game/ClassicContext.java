@@ -36,4 +36,17 @@ public class ClassicContext implements Context {
                 new ClassicPieceMoveGeneratorFactory()
         );
     }
+
+    @Override
+    public ClassicContext duplicate() {
+        return new ClassicContext(
+                board.duplicate(),
+                history.duplicate(),
+                game,
+                moveGenerator,
+                order,
+                moveExecutor,
+                pieceMoveGeneratorFactory
+        );
+    }
 }

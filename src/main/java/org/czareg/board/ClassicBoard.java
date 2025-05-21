@@ -1,6 +1,7 @@
 package org.czareg.board;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ClassicBoard implements Board {
 
     private final Piece[][] board;
@@ -75,6 +77,15 @@ public class ClassicBoard implements Board {
             }
         }
         return stream.build();
+    }
+
+    @Override
+    public ClassicBoard duplicate() {
+        Piece[][] shallowCopy = new Piece[board.length][];
+        for (int i = 0; i < board.length; i++) {
+            shallowCopy[i] = board[i].clone();
+        }
+        return new ClassicBoard(shallowCopy, positionFactory);
     }
 
     private Piece get(Position position) {
