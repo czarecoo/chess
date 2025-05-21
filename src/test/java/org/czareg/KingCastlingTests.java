@@ -1,10 +1,7 @@
 package org.czareg;
 
 import org.czareg.board.Board;
-import org.czareg.game.ClassicGame;
-import org.czareg.game.Game;
-import org.czareg.game.Metadata;
-import org.czareg.game.Move;
+import org.czareg.game.*;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.king.KingCastlingMoveGenerator;
 import org.czareg.piece.King;
@@ -25,15 +22,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class KingCastlingTests {
 
-    private Game game;
+    private Context context;
     private Board board;
     private PositionFactory pf;
     private PieceMoveGenerator pieceMoveGenerator;
+    private Game game;
 
     @BeforeEach
     void setUp() {
-        game = new ClassicGame();
-        board = game.getBoard();
+        context = new ClassicContext();
+        game = context.getGame();
+        board = context.getBoard();
         pf = board.getPositionFactory();
         pieceMoveGenerator = new KingCastlingMoveGenerator();
     }
@@ -47,11 +46,11 @@ class KingCastlingTests {
         Position rookPosition = pf.create(1, "A");
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
-                .generate(game, king, kingPosition)
+                .generate(context, king, kingPosition)
                 .toList();
         assertEquals(1, moves.size());
 
-        game.makeMove(moves.getFirst());
+        game.makeMove(context, moves.getFirst());
 
         Position expectedRookPosition = pf.create(1, "D");
         assertTrue(board.hasPiece(expectedRookPosition));
@@ -74,11 +73,11 @@ class KingCastlingTests {
         Position rookPosition = pf.create(1, "H");
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
-                .generate(game, king, kingPosition)
+                .generate(context, king, kingPosition)
                 .toList();
         assertEquals(1, moves.size());
 
-        game.makeMove(moves.getFirst());
+        game.makeMove(context, moves.getFirst());
 
         Position expectedRookPosition = pf.create(1, "F");
         assertTrue(board.hasPiece(expectedRookPosition));
@@ -98,7 +97,7 @@ class KingCastlingTests {
         Position pawnStartPosition = pf.create(1, "A");
         Position pawnEndPosition = pf.create(2, "A");
         board.placePiece(pawnStartPosition, pawn);
-        game.makeMove(new Move(pawn, pawnStartPosition, pawnEndPosition, new Metadata(MOVE)));
+        game.makeMove(context, new Move(pawn, pawnStartPosition, pawnEndPosition, new Metadata(MOVE)));
         Piece king = new King(BLACK);
         Position kingPosition = pf.create(8, "E");
         board.placePiece(kingPosition, king);
@@ -106,12 +105,12 @@ class KingCastlingTests {
         Position rookPosition = pf.create(8, "A");
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
-                .generate(game, king, kingPosition)
+                .generate(context, king, kingPosition)
                 .toList();
         assertEquals(1, moves.size());
 
 
-        game.makeMove(moves.getFirst());
+        game.makeMove(context, moves.getFirst());
 
         Position expectedRookPosition = pf.create(8, "D");
         assertTrue(board.hasPiece(expectedRookPosition));
@@ -131,7 +130,7 @@ class KingCastlingTests {
         Position pawnStartPosition = pf.create(1, "A");
         Position pawnEndPosition = pf.create(2, "A");
         board.placePiece(pawnStartPosition, pawn);
-        game.makeMove(new Move(pawn, pawnStartPosition, pawnEndPosition, new Metadata(MOVE)));
+        game.makeMove(context, new Move(pawn, pawnStartPosition, pawnEndPosition, new Metadata(MOVE)));
         Piece king = new King(BLACK);
         Position kingPosition = pf.create(8, "E");
         board.placePiece(kingPosition, king);
@@ -139,11 +138,11 @@ class KingCastlingTests {
         Position rookPosition = pf.create(8, "H");
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
-                .generate(game, king, kingPosition)
+                .generate(context, king, kingPosition)
                 .toList();
         assertEquals(1, moves.size());
 
-        game.makeMove(moves.getFirst());
+        game.makeMove(context, moves.getFirst());
 
         Position expectedRookPosition = pf.create(8, "F");
         assertTrue(board.hasPiece(expectedRookPosition));
@@ -168,7 +167,7 @@ class KingCastlingTests {
         board.placePiece(rookPosition, rook);
 
         List<Move> moves = pieceMoveGenerator
-                .generate(game, king, kingPosition)
+                .generate(context, king, kingPosition)
                 .toList();
 
         assertEquals(0, moves.size());
@@ -185,7 +184,7 @@ class KingCastlingTests {
         board.placePiece(rookPosition, rook);
 
         List<Move> moves = pieceMoveGenerator
-                .generate(game, king, kingPosition)
+                .generate(context, king, kingPosition)
                 .toList();
 
         assertEquals(0, moves.size());

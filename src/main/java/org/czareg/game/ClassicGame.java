@@ -2,13 +2,8 @@ package org.czareg.game;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.czareg.board.Board;
-import org.czareg.board.ClassicBoard;
-import org.czareg.move.ClassicMoveExecutor;
-import org.czareg.move.ClassicMoveGenerator;
 import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
-import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Position;
@@ -23,41 +18,20 @@ import java.util.stream.Stream;
 @Getter
 public class ClassicGame implements Game {
 
-    private final Board board;
-    private final History history;
-    private final MoveGenerator moveGenerator;
-    private final Order order;
-    private final MoveExecutor moveExecutor;
-
-    public ClassicGame() {
-        this(
-                new ClassicBoard(8, 8),
-                new ClassicHistory(),
-                new ClassicMoveGenerator(new ClassicPieceMoveGeneratorFactory()),
-                new ClassicOrder(),
-                new ClassicMoveExecutor()
-        );
-    }
-
-    public ClassicGame(Board board, History history, MoveGenerator moveGenerator, Order order, MoveExecutor moveExecutor) {
-        this.board = board;
-        this.history = history;
-        this.moveGenerator = moveGenerator;
-        this.order = order;
-        this.moveExecutor = moveExecutor;
-    }
-
     @Override
-    public void makeMove(Move move) {
-        checkIfPlayersTurn(move);
-        checkIfLegal(move);
-        moveExecutor.execute(move, this);
+    public void makeMove(Context context, Move move) {
+        checkIfPlayersTurn(context, move);
+        checkIfLegal(context, move);
+        MoveExecutor moveExecutor = context.getMoveExecutor();
+        moveExecutor.execute(context, move);
+        History history = context.getHistory();
         history.save(move);
     }
 
     @Override
-    public boolean isUnderAttack(Position position, Player defender, Player attacker) {
-        List<Move> attackMoves = moveGenerator.generate(this, attacker)
+    public boolean isUnderAttack(Context context, Position position, Player defender, Player attacker) {
+        MoveGenerator moveGenerator = context.getMoveGenerator();
+        List<Move> attackMoves = moveGenerator.generate(context, attacker)
                 .filter(move -> move.getEnd().equals(position))
                 .filter(move -> move.getMetadata().isExactly(Metadata.Key.MOVE_TYPE, MoveType.CAPTURE))
                 .filter(move -> move.getMetadata().get(Metadata.Key.CAPTURE_PIECE, Piece.class)
@@ -68,7 +42,9 @@ public class ClassicGame implements Game {
         return !attackMoves.isEmpty();
     }
 
-    private void checkIfPlayersTurn(Move move) {
+    private void checkIfPlayersTurn(Context context, Move move) {
+        History history = context.getHistory();
+        Order order = context.getOrder();
         Player nowMovingPlayer = history.getLastMovingPlayer()
                 .map(order::getNowMovingPlayer)
                 .orElse(order.startingPlayer());
@@ -78,8 +54,9 @@ public class ClassicGame implements Game {
         }
     }
 
-    private void checkIfLegal(Move move) {
-        Stream<Move> moveStream = moveGenerator.generate(this, move.getStart());
+    private void checkIfLegal(Context context, Move move) {
+        MoveGenerator moveGenerator = context.getMoveGenerator();
+        Stream<Move> moveStream = moveGenerator.generate(context, move.getStart());
         Set<Move> moves = moveStream.collect(Collectors.toSet());
         log.debug("Generated {} moves.", moves.size());
         boolean noMatchingGeneratedMoveFound = moves.stream()

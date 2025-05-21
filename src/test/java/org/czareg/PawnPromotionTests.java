@@ -1,10 +1,7 @@
 package org.czareg;
 
 import org.czareg.board.Board;
-import org.czareg.game.ClassicGame;
-import org.czareg.game.Game;
-import org.czareg.game.Metadata;
-import org.czareg.game.Move;
+import org.czareg.game.*;
 import org.czareg.move.MoveGenerator;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Queen;
@@ -22,17 +19,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PawnPromotionTests {
 
-    private Game game;
+    private Context context;
     private Board board;
     private PositionFactory pf;
     private MoveGenerator moveGenerator;
+    private Game game;
+    private History history;
 
     @BeforeEach
     void setUp() {
-        game = new ClassicGame();
-        board = game.getBoard();
+        context = new ClassicContext();
+        board = context.getBoard();
         pf = board.getPositionFactory();
-        moveGenerator = game.getMoveGenerator();
+        moveGenerator = context.getMoveGenerator();
+        game = context.getGame();
+        history = context.getHistory();
     }
 
     @Test
@@ -40,10 +41,10 @@ class PawnPromotionTests {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(7, "D"), whitePawn);
         Move promotionMove = moveGenerator
-                .generate(game, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
+                .generate(context, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
                 .orElseThrow();
 
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> game.makeMove(promotionMove));
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> game.makeMove(context, promotionMove));
         assertEquals("Promotion move missing chosen piece.", e.getMessage());
     }
 
@@ -52,11 +53,11 @@ class PawnPromotionTests {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(7, "D"), whitePawn);
         Move promotionMove = moveGenerator
-                .generate(game, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
+                .generate(context, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
                 .orElseThrow();
         promotionMove.getMetadata().put(PROMOTION_PIECE, new Queen(BLACK));
 
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> game.makeMove(promotionMove));
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> game.makeMove(context, promotionMove));
         assertTrue(e.getMessage().contains("Cannot promote to different player"));
     }
 
@@ -65,18 +66,18 @@ class PawnPromotionTests {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(7, "D"), whitePawn);
         Move promotionMove = moveGenerator
-                .generate(game, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
+                .generate(context, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
                 .orElseThrow();
         Queen newPiece = new Queen(WHITE);
         promotionMove.getMetadata().put(PROMOTION_PIECE, newPiece);
 
-        game.makeMove(promotionMove);
+        game.makeMove(context, promotionMove);
 
         assertEquals(WHITE, board.getPiece(pf.create(8, "D")).getPlayer());
         assertInstanceOf(Queen.class, board.getPiece(pf.create(8, "D")));
         assertFalse(board.hasPiece(pf.create(7, "D")));
 
-        Move lastMove = game.getHistory().getLastPlayedMove().orElseThrow();
+        Move lastMove = history.getLastPlayedMove().orElseThrow();
         assertEquals(promotionMove, lastMove);
         Metadata expectedMetadata = new Metadata(PROMOTION)
                 .put(PROMOTION_PIECE, newPiece);
@@ -90,7 +91,7 @@ class PawnPromotionTests {
         board.placePiece(pf.create(6, "D"), whitePawn);
 
         Optional<Move> illegalPromotionAttempt = moveGenerator
-                .generate(game, pf.create(6, "D"), pf.create(7, "D"), PROMOTION);
+                .generate(context, pf.create(6, "D"), pf.create(7, "D"), PROMOTION);
 
         assertTrue(illegalPromotionAttempt.isEmpty());
     }

@@ -23,19 +23,19 @@ import static org.czareg.game.MoveType.INITIAL_DOUBLE_FORWARD;
 public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
         Player player = piece.getPlayer();
         for (IndexChange captureTargetIndexChange : getEndPositionIndexChanges(player)) {
-            generate(game, piece, currentPosition, captureTargetIndexChange).ifPresent(moves::add);
+            generate(context, piece, currentPosition, captureTargetIndexChange).ifPresent(moves::add);
         }
         return moves.stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = piece.getPlayer();
         Index currentPositionIndex = positionFactory.create(currentPosition);
@@ -70,7 +70,7 @@ public class PawnEnPassantMoveGenerator implements PieceMoveGenerator {
             log.debug("Rejecting move because target {} is not of the same type than moving {}.", targetPiece, piece);
             return Optional.empty();
         }
-        History history = game.getHistory();
+        History history = context.getHistory();
         Optional<Move> optionalLastPlayedMove = history.getLastPlayedMove();
         if (optionalLastPlayedMove.isEmpty()) {
             log.debug("Rejecting move because there is no previous move.");

@@ -24,18 +24,18 @@ import static org.czareg.game.Metadata.Key.CASTLING_ROOK_START_POSITION;
 public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRankChecker {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
         for (IndexChange captureTargetIndexChange : getEndPositionIndexChanges()) {
-            generate(game, piece, currentPosition, captureTargetIndexChange).ifPresent(moves::add);
+            generate(context, piece, currentPosition, captureTargetIndexChange).ifPresent(moves::add);
         }
         return moves.stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece king, Position kingCurrentPosition, IndexChange kingEndPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece king, Position kingCurrentPosition, IndexChange kingEndPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", king, kingCurrentPosition, kingEndPositionIndexChange);
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = king.getPlayer();
         Index kingCurrentPositionIndex = positionFactory.create(kingCurrentPosition);
@@ -97,7 +97,7 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
             return Optional.empty();
         }
         Piece rook = board.getPiece(rookStartPosition);
-        History history = game.getHistory();
+        History history = context.getHistory();
         if (history.hasPieceMovedBefore(king) || history.hasPieceMovedBefore(rook)) {
             log.debug("Rejecting move because king or rook has moved before.");
             return Optional.empty();
@@ -110,11 +110,12 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
             return Optional.empty();
         }
         Player opponent = player.getOpponent();
-        if (game.isUnderAttack(rookEndPosition, player, opponent)) {
+        Game game = context.getGame();
+        if (game.isUnderAttack(context, rookEndPosition, player, opponent)) {
             log.debug("Rejecting move because rook end {} is under attack by {}.", rookEndPosition, opponent);
             return Optional.empty();
         }
-        if (game.isUnderAttack(kingEndPosition, player, opponent)) {
+        if (game.isUnderAttack(context, kingEndPosition, player, opponent)) {
             log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
             return Optional.empty();
         }

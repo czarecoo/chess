@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KnightMoveTests {
 
-    private Game game;
+    private Context context;
     private Board board;
     private PositionFactory pf;
     private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
-        game = new ClassicGame();
-        board = game.getBoard();
+        context = new ClassicContext();
+        board = context.getBoard();
         pf = board.getPositionFactory();
         pieceMoveGenerator = new KnightMoveMoveGenerator();
     }
@@ -43,7 +43,7 @@ class KnightMoveTests {
         board.placePiece(position, piece);
 
         Set<Move> moves = pieceMoveGenerator
-                .generate(game, piece, position)
+                .generate(context, piece, position)
                 .collect(Collectors.toSet());
 
         assertEquals(8, moves.size());
@@ -70,7 +70,7 @@ class KnightMoveTests {
         board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
-                .generate(game, piece, position)
+                .generate(context, piece, position)
                 .collect(Collectors.toSet());
 
         assertEquals(8, moves.size());
@@ -97,7 +97,7 @@ class KnightMoveTests {
         board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
-                .generate(game, piece, Position)
+                .generate(context, piece, Position)
                 .collect(Collectors.toSet());
 
         assertEquals(8, moves.size());
@@ -124,7 +124,7 @@ class KnightMoveTests {
         board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
-                .generate(game, piece, position)
+                .generate(context, piece, position)
                 .collect(Collectors.toSet());
 
         assertEquals(8, moves.size());
@@ -151,7 +151,7 @@ class KnightMoveTests {
         board.placePiece(pf.create(2, "E"), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
-                .generate(game, piece, position)
+                .generate(context, piece, position)
                 .collect(Collectors.toSet());
 
         assertEquals(Set.of(), moves);

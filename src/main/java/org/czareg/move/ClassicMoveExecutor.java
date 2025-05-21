@@ -2,7 +2,7 @@ package org.czareg.move;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
+import org.czareg.game.Context;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
@@ -13,8 +13,8 @@ import org.czareg.position.Position;
 public class ClassicMoveExecutor implements MoveExecutor {
 
     @Override
-    public void execute(Move move, Game game) {
-        Board board = game.getBoard();
+    public void execute(Context context, Move move) {
+        Board board = context.getBoard();
         Metadata metadata = move.getMetadata();
         MoveType moveType = metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class).orElseThrow();
         switch (moveType) {

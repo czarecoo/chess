@@ -2,7 +2,7 @@ package org.czareg.move.piece.shared;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
+import org.czareg.game.Context;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
@@ -23,18 +23,18 @@ import java.util.stream.Stream;
 public abstract class SearchMovePieceMoveGenerator implements PieceMoveGenerator, Directional {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
         for (IndexChange direction : getDirections().toList()) {
-            moves.addAll(searchMoves(game, piece, currentPosition, direction));
+            moves.addAll(searchMoves(context, piece, currentPosition, direction));
         }
         return moves.stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
@@ -54,9 +54,9 @@ public abstract class SearchMovePieceMoveGenerator implements PieceMoveGenerator
         return Optional.of(move);
     }
 
-    private List<Move> searchMoves(Game game, Piece piece, Position currentPosition, IndexChange direction) {
+    private List<Move> searchMoves(Context context, Piece piece, Position currentPosition, IndexChange direction) {
         List<Move> moves = new ArrayList<>();
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index checkedPositionIndex = positionFactory.create(currentPosition);
         while (true) {
@@ -73,7 +73,7 @@ public abstract class SearchMovePieceMoveGenerator implements PieceMoveGenerator
             }
             checkedPositionIndex = positionFactory.create(endPosition);
             IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
-            generate(game, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
+            generate(context, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
         }
     }
 

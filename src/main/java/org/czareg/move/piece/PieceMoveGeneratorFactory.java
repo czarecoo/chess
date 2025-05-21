@@ -6,5 +6,5 @@ import java.util.stream.Stream;
 
 public interface PieceMoveGeneratorFactory {
 
-    Stream<PieceMoveGenerator> getMoveGenerator(Piece piece);
+    Stream<PieceMoveGenerator> getPieceMoveGenerators(Piece piece);
 }

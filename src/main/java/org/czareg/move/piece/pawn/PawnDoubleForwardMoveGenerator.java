@@ -19,21 +19,21 @@ import java.util.stream.Stream;
 public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         Player player = piece.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
-        return generate(game, piece, currentPosition, endPositionIndexChange).stream();
+        return generate(context, piece, currentPosition, endPositionIndexChange).stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
-        History history = game.getHistory();
+        History history = context.getHistory();
         if (history.hasPieceMovedBefore(piece)) {
             log.debug("Rejecting move because it was already moved.");
             return Optional.empty();
         }
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);

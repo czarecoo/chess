@@ -2,7 +2,7 @@ package org.czareg.move.piece.pawn;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
+import org.czareg.game.Context;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
@@ -25,19 +25,19 @@ import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 public class PawnCaptureMoveGenerator implements PieceMoveGenerator {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
         Player player = piece.getPlayer();
         for (IndexChange endPositionIndexChange : getEndPositionIndexChanges(player)) {
-            generate(game, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
+            generate(context, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
         }
         return moves.stream();
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = piece.getPlayer();
         Index currentPositionIndex = positionFactory.create(currentPosition);

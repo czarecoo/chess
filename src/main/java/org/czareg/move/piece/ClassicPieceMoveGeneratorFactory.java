@@ -33,7 +33,7 @@ public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFacto
         moveGenerators.put(King.class, createKingMoveGenerators());
     }
 
-    public Stream<PieceMoveGenerator> getMoveGenerator(Piece piece) {
+    public Stream<PieceMoveGenerator> getPieceMoveGenerators(Piece piece) {
         return moveGenerators.getOrDefault(piece.getClass(), List.of()).stream();
     }
 

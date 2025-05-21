@@ -3,7 +3,7 @@ package org.czareg.move;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
+import org.czareg.game.Context;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
@@ -20,39 +20,40 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ClassicMoveGenerator implements MoveGenerator {
 
-    private final PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
-
     @Override
-    public Stream<Move> generate(Game game, Position currentPosition) {
-        Board board = game.getBoard();
+    public Stream<Move> generate(Context context, Position currentPosition) {
+        Board board = context.getBoard();
         if (!board.hasPiece(currentPosition)) {
             return Stream.empty();
         }
         Piece piece = board.getPiece(currentPosition);
-        return pieceMoveGeneratorFactory.getMoveGenerator(piece)
-                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piece, currentPosition));
+        PieceMoveGeneratorFactory pieceMoveGeneratorFactory = context.getPieceMoveGeneratorFactory();
+        return pieceMoveGeneratorFactory.getPieceMoveGenerators(piece)
+                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(context, piece, currentPosition));
     }
 
     @Override
-    public Optional<Move> generate(Game game, Position currentPosition, Position endPosition, MoveType moveType) {
-        Board board = game.getBoard();
+    public Optional<Move> generate(Context context, Position currentPosition, Position endPosition, MoveType moveType) {
+        Board board = context.getBoard();
         if (!board.hasPiece(currentPosition)) {
             return Optional.empty();
         }
         PositionFactory positionFactory = board.getPositionFactory();
         IndexChange indexChange = positionFactory.create(currentPosition, endPosition);
         Piece piece = board.getPiece(currentPosition);
-        return pieceMoveGeneratorFactory.getMoveGenerator(piece)
+        PieceMoveGeneratorFactory pieceMoveGeneratorFactory = context.getPieceMoveGeneratorFactory();
+        return pieceMoveGeneratorFactory.getPieceMoveGenerators(piece)
                 .filter(pieceMoveGenerator -> pieceMoveGenerator.getMoveType() == moveType)
                 .findFirst()
-                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piece, currentPosition, indexChange));
+                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(context, piece, currentPosition, indexChange));
     }
 
     @Override
-    public Stream<Move> generate(Game game, Player attacker) {
-        Board board = game.getBoard();
+    public Stream<Move> generate(Context context, Player attacker) {
+        Board board = context.getBoard();
+        PieceMoveGeneratorFactory pieceMoveGeneratorFactory = context.getPieceMoveGeneratorFactory();
         return board.getAllPiecePositions(attacker)
-                .flatMap(piecePosition -> pieceMoveGeneratorFactory.getMoveGenerator(piecePosition.piece())
-                        .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(game, piecePosition.piece(), piecePosition.position())));
+                .flatMap(piecePosition -> pieceMoveGeneratorFactory.getPieceMoveGenerators(piecePosition.piece())
+                        .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(context, piecePosition.piece(), piecePosition.position())));
     }
 }

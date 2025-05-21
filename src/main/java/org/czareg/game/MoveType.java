@@ -9,6 +9,5 @@ public enum MoveType {
 
     PROMOTION,
     EN_PASSANT,
-
     CASTLING
 }

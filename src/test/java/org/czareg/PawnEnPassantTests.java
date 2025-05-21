@@ -1,10 +1,7 @@
 package org.czareg;
 
 import org.czareg.board.Board;
-import org.czareg.game.ClassicGame;
-import org.czareg.game.Game;
-import org.czareg.game.Metadata;
-import org.czareg.game.Move;
+import org.czareg.game.*;
 import org.czareg.move.MoveGenerator;
 import org.czareg.piece.Pawn;
 import org.czareg.position.PositionFactory;
@@ -21,17 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class PawnEnPassantTests {
 
-    private Game game;
+    private Context context;
     private Board board;
     private PositionFactory pf;
     private MoveGenerator moveGenerator;
+    private Game game;
+    private History history;
 
     @BeforeEach
     void setUp() {
-        game = new ClassicGame();
-        board = game.getBoard();
+        context = new ClassicContext();
+        board = context.getBoard();
         pf = board.getPositionFactory();
-        moveGenerator = game.getMoveGenerator();
+        moveGenerator = context.getMoveGenerator();
+        game = context.getGame();
+        history = context.getHistory();
     }
 
     @Test
@@ -42,17 +43,17 @@ class PawnEnPassantTests {
         board.placePiece(pf.create(2, "D"), whitePawn);
         board.placePiece(pf.create(7, "E"), blackPawnToBeCaptured);
         board.placePiece(pf.create(7, "A"), blackPawnIrrelevantForTest);
-        game.makeMove(new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        game.makeMove(new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
-        game.makeMove(new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(MOVE)));
-        game.makeMove(new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        Move enPassantMove = moveGenerator.generate(game, pf.create(5, "D"), pf.create(6, "E"), EN_PASSANT).orElseThrow();
+        game.makeMove(context, new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        game.makeMove(context, new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
+        game.makeMove(context, new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(MOVE)));
+        game.makeMove(context, new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        Move enPassantMove = moveGenerator.generate(context, pf.create(5, "D"), pf.create(6, "E"), EN_PASSANT).orElseThrow();
 
-        game.makeMove(enPassantMove);
+        game.makeMove(context, enPassantMove);
 
         assertFalse(board.hasPiece(pf.create(5, "E")));
         assertEquals(whitePawn, board.getPiece(pf.create(6, "E")));
-        Move lastMove = game.getHistory().getLastPlayedMove().orElseThrow();
+        Move lastMove = history.getLastPlayedMove().orElseThrow();
         assertEquals(enPassantMove, lastMove);
         Metadata expectedMetadata = new Metadata(EN_PASSANT)
                 .put(CAPTURE_PIECE, blackPawnToBeCaptured)

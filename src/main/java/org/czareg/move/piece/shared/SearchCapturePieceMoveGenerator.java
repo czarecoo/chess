@@ -2,7 +2,7 @@ package org.czareg.move.piece.shared;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
+import org.czareg.game.Context;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
@@ -24,16 +24,16 @@ import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 public abstract class SearchCapturePieceMoveGenerator implements PieceMoveGenerator, Directional {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         return getDirections()
-                .map(direction -> searchCapture(game, piece, currentPosition, direction))
+                .map(direction -> searchCapture(context, piece, currentPosition, direction))
                 .flatMap(Optional::stream);
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Player player = piece.getPlayer();
         Index currentPositionIndex = positionFactory.create(currentPosition);
@@ -59,8 +59,8 @@ public abstract class SearchCapturePieceMoveGenerator implements PieceMoveGenera
         return Optional.of(move);
     }
 
-    private Optional<Move> searchCapture(Game game, Piece piece, Position currentPosition, IndexChange direction) {
-        Board board = game.getBoard();
+    private Optional<Move> searchCapture(Context context, Piece piece, Position currentPosition, IndexChange direction) {
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index checkedPositionIndex = positionFactory.create(currentPosition);
         while (true) {
@@ -76,7 +76,7 @@ public abstract class SearchCapturePieceMoveGenerator implements PieceMoveGenera
                 continue;
             }
             IndexChange endPositionIndexChange = positionFactory.create(currentPosition, endPosition);
-            return generate(game, piece, currentPosition, endPositionIndexChange);
+            return generate(context, piece, currentPosition, endPositionIndexChange);
         }
     }
 

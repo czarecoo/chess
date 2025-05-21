@@ -2,7 +2,7 @@ package org.czareg.move.piece.shared;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Game;
+import org.czareg.game.Context;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
@@ -21,16 +21,16 @@ import java.util.stream.Stream;
 public abstract class JumpMoveMoveGenerator implements PieceMoveGenerator, Directional {
 
     @Override
-    public Stream<Move> generate(Game game, Piece piece, Position currentPosition) {
-        return getDirections().map(endPositionIndexChange -> generate(game, piece, currentPosition, endPositionIndexChange))
+    public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
+        return getDirections().map(endPositionIndexChange -> generate(context, piece, currentPosition, endPositionIndexChange))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
     }
 
     @Override
-    public Optional<Move> generate(Game game, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
+    public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
-        Board board = game.getBoard();
+        Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
