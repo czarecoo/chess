@@ -8,6 +8,7 @@ import org.czareg.move.piece.bishop.BishopCaptureMoveGenerator;
 import org.czareg.piece.Bishop;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
+import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,5 +135,22 @@ class BishopCaptureTests extends BaseTests {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .allMatch(moveType -> moveType == MoveType.CAPTURE));
+    }
+
+    @Test
+    void givenWhiteBishopAndBlackPawn_whenWhiteBishopCapturesBlackPawn_thenBlackPawnIsNotOnTheBoard() {
+        Piece piece = new Bishop(WHITE);
+        Position position = pf.create(6, "A");
+        board.placePiece(position, piece);
+        board.placePiece(pf.create(5, "B"), new Pawn(BLACK));
+        assertEquals(1, board.getAllPiecePositions(WHITE).count());
+        assertEquals(1, board.getAllPiecePositions(BLACK).count());
+
+        Optional<Move> bishopCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
+        assertTrue(bishopCaptureDownAndRight.isPresent());
+        game.makeMove(context, bishopCaptureDownAndRight.get());
+
+        assertEquals(1, board.getAllPiecePositions(WHITE).count());
+        assertEquals(0, board.getAllPiecePositions(BLACK).count());
     }
 }

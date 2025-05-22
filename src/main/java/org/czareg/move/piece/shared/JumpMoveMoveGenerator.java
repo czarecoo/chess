@@ -13,12 +13,17 @@ import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
+import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
 public abstract class JumpMoveMoveGenerator implements PieceMoveGenerator, Directional {
+
+    public boolean isInvalid(Context context, Logger log, Move move) {
+        return false;
+    }
 
     @Override
     public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
@@ -46,6 +51,9 @@ public abstract class JumpMoveMoveGenerator implements PieceMoveGenerator, Direc
         }
         Metadata metadata = new Metadata(getMoveType());
         Move move = new Move(piece, currentPosition, endPosition, metadata);
+        if (isInvalid(context, log, move)) {
+            return Optional.empty();
+        }
         log.debug("Accepted move {}.", move);
         return Optional.of(move);
     }

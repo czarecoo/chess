@@ -5,9 +5,8 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.king.KingCaptureMoveGenerator;
-import org.czareg.piece.King;
-import org.czareg.piece.Pawn;
-import org.czareg.piece.Piece;
+import org.czareg.piece.*;
+import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +64,7 @@ class KingCaptureTests extends BaseTests {
     }
 
     @Test
-    void givenWhiteKingSurroundedByBlackPawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
+    void givenWhiteKingSurroundedByBlackPawns_whenGeneratingMoves_thenSomeMovesAreGenerated() {
         Piece piece = new King(WHITE);
         Position position = pf.create(4, "D");
         board.placePiece(position, piece);
@@ -82,18 +81,15 @@ class KingCaptureTests extends BaseTests {
                 .generate(context, piece, position)
                 .collect(Collectors.toSet());
 
-        assertEquals(8, moves.size());
+        assertEquals(5, moves.size()); // 4C 4E 3D are protected by other pawns
         assertEquals(Set.of(
                 pf.create(3, "C"),
-                pf.create(3, "D"),
                 pf.create(3, "E"),
-                pf.create(4, "C"),
-                pf.create(4, "E"),
                 pf.create(5, "C"),
                 pf.create(5, "D"),
                 pf.create(5, "E")
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
-        assertEquals(8, moves.stream().map(Move::getMetadata)
+        assertEquals(5, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE, Piece.class))
                 .distinct()
                 .count());
@@ -123,5 +119,40 @@ class KingCaptureTests extends BaseTests {
                 .collect(Collectors.toSet());
 
         assertEquals(Set.of(), moves);
+    }
+
+    @Test
+    void givenWhiteKingAttackingThreeKnightsProtectedByAQueen_whenWhiteKingTriesToCaptureAnyOfTheKnights_thenNoMovesAreGenerated() {
+        Piece piece = new King(WHITE);
+        Position position = pf.create(4, "D");
+        board.placePiece(position, piece);
+        board.placePiece(pf.create(5, "C"), new Knight(BLACK));
+        board.placePiece(pf.create(5, "D"), new Knight(BLACK));
+        board.placePiece(pf.create(5, "E"), new Knight(BLACK));
+        board.placePiece(pf.create(6, "D"), new Queen(BLACK));
+
+        Optional<Move> kingCaptureUpAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 1));
+        assertTrue(kingCaptureUpAndRight.isEmpty());
+        Optional<Move> kingCaptureUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
+        assertTrue(kingCaptureUpAndLeft.isEmpty());
+        Optional<Move> kingCaptureUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 0));
+        assertTrue(kingCaptureUp.isEmpty());
+    }
+
+    @Test
+    void givenWhiteKingAndBlackPawn_whenWhiteKingCapturesBlackPawn_thenBlackPawnIsNotOnTheBoard() {
+        Piece piece = new King(WHITE);
+        Position position = pf.create(6, "A");
+        board.placePiece(position, piece);
+        board.placePiece(pf.create(5, "B"), new Pawn(BLACK));
+        assertEquals(1, board.getAllPiecePositions(WHITE).count());
+        assertEquals(1, board.getAllPiecePositions(BLACK).count());
+
+        Optional<Move> kingCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
+        assertTrue(kingCaptureDownAndRight.isPresent());
+        game.makeMove(context, kingCaptureDownAndRight.get());
+
+        assertEquals(1, board.getAllPiecePositions(WHITE).count());
+        assertEquals(0, board.getAllPiecePositions(BLACK).count());
     }
 }

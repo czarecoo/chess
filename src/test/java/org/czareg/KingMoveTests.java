@@ -8,6 +8,7 @@ import org.czareg.move.piece.king.KingMoveMoveGenerator;
 import org.czareg.piece.King;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Piece;
+import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -116,5 +117,20 @@ class KingMoveTests extends BaseTests {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .allMatch(moveType -> moveType == MoveType.MOVE));
+    }
+
+    @Test
+    void givenWhiteKingAndBlackPawn_whenWhiteKingMovesIntoAttackedPosition_thenNoMovesAreGenerated() {
+        Piece piece = new King(WHITE);
+        Position position = pf.create(2, "E");
+        board.placePiece(position, piece);
+        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
+
+        Optional<Move> kingMoveUpAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 1));
+        assertTrue(kingMoveUpAndRight.isEmpty());
+        Optional<Move> kingMoveUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
+        assertTrue(kingMoveUpAndLeft.isEmpty());
+        Optional<Move> kingMoveUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 0));
+        assertTrue(kingMoveUp.isPresent());
     }
 }

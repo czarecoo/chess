@@ -14,6 +14,7 @@ import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
+import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -22,6 +23,10 @@ import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 
 @Slf4j
 public abstract class JumpCaptureMoveGenerator implements PieceMoveGenerator, Directional {
+
+    public boolean isInvalid(Context context, Logger log, Move move) {
+        return false;
+    }
 
     @Override
     public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
@@ -55,6 +60,9 @@ public abstract class JumpCaptureMoveGenerator implements PieceMoveGenerator, Di
         Metadata metadata = new Metadata(getMoveType())
                 .put(CAPTURE_PIECE, targetPiece);
         Move move = new Move(piece, currentPosition, endPosition, metadata);
+        if (isInvalid(context, log, move)) {
+            return Optional.empty();
+        }
         log.debug("Accepted move {}", move);
         return Optional.of(move);
     }
