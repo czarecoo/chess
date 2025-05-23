@@ -2,7 +2,12 @@ package org.czareg;
 
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
-import org.czareg.piece.Pawn;
+import org.czareg.game.MoveType;
+import org.czareg.move.piece.PieceMoveGenerator;
+import org.czareg.move.piece.pawn.PawnCaptureMoveGenerator;
+import org.czareg.move.piece.pawn.PawnDoubleForwardMoveGenerator;
+import org.czareg.piece.*;
+import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
+import static org.czareg.game.Metadata.Key.PROMOTION_PIECE;
 import static org.czareg.game.MoveType.*;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
@@ -58,22 +64,37 @@ class PawnTests extends BaseTests {
     }
 
     @Test
-    void givenWhitePawnOnSeventhRank_whenGettingPossibleMoves_thenOneGeneratedMovesByOneRank() {
+    void givenWhitePawnOnSeventhRank_whenGettingPossibleMoves_thenManyPromotionMovesGenerated() {
         Pawn pawn = new Pawn(WHITE);
         Position start = pf.create(7, "B");
         board.placePiece(start, pawn);
 
         Set<Move> actualMoves = moveGenerator.generate(context, start).collect(Collectors.toSet());
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(8, "B"), new Metadata(PROMOTION)));
-        assertEquals(expectedMoves, actualMoves);
+        assertEquals(4, actualMoves.size());
+        assertEquals(1, actualMoves.stream().map(Move::getEnd).distinct().count());
+        assertTrue(actualMoves.stream().map(Move::getMetadata)
+                .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .allMatch(moveType -> moveType == PROMOTION));
+        assertEquals(
+                Set.of(Knight.class, Bishop.class, Rook.class, Queen.class),
+                actualMoves.stream()
+                        .map(Move::getMetadata)
+                        .map(metadata -> metadata.get(PROMOTION_PIECE, Piece.class))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .map(Object::getClass)
+                        .collect(Collectors.toSet())
+        );
     }
 
     /*
         cannot land on promotion rank from double forward move
      */
     @Test
-    void givenWhitePawnOnSixthRank_whenGettingPossibleMoves_thenOneGeneratedMovesByOneRank() {
+    void givenWhitePawnOnSixthRank_whenGettingPossibleMoves_thenOneMoveGenerated() {
         Pawn pawn = new Pawn(WHITE);
         Position start = pf.create(6, "E");
         board.placePiece(start, pawn);
@@ -110,23 +131,15 @@ class PawnTests extends BaseTests {
     }
 
     @Test
-    void givenEmptyBoard_whenGeneratingMoveForPositionWithoutPiece_thenNoMovesAreReturned() {
-        Position positionWithoutPiece = pf.create(1, "D");
-        Position anotherPositionWithoutPiece = pf.create(2, "D");
-
-        Optional<Move> move = moveGenerator.generate(context, positionWithoutPiece, anotherPositionWithoutPiece, MOVE);
-
-        assertTrue(move.isEmpty());
-    }
-
-    @Test
     void givenWhiteAndBlackPawns_whenWhiteIsDoingDoubleForwardMoveToTheEndPositionOccupiedByBlackPawn_thenNoMovesAreReturned() {
         Position whitePosition = pf.create(2, "E");
-        board.placePiece(whitePosition, new Pawn(WHITE));
+        Pawn whitePawn = new Pawn(WHITE);
+        board.placePiece(whitePosition, whitePawn);
         Position blackPosition = pf.create(4, "E");
         board.placePiece(blackPosition, new Pawn(BLACK));
+        PieceMoveGenerator pieceMoveGenerator = new PawnDoubleForwardMoveGenerator();
 
-        Optional<Move> move = moveGenerator.generate(context, whitePosition, blackPosition, INITIAL_DOUBLE_FORWARD);
+        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, whitePosition, new IndexChange(2, 0));
 
         assertTrue(move.isEmpty());
     }
@@ -134,12 +147,13 @@ class PawnTests extends BaseTests {
     @Test
     void givenWhiteAndBlackPawns_whenWhiteIsDoingDoubleForwardMoveAndBlackPawnIsOnTheWay_thenNoMovesAreReturned() {
         Position whiteStartPosition = pf.create(2, "E");
-        board.placePiece(whiteStartPosition, new Pawn(WHITE));
+        Pawn whitePawn = new Pawn(WHITE);
+        board.placePiece(whiteStartPosition, whitePawn);
         Position blackPosition = pf.create(3, "E");
         board.placePiece(blackPosition, new Pawn(BLACK));
-        Position whiteEndPosition = pf.create(4, "E");
+        PieceMoveGenerator pieceMoveGenerator = new PawnDoubleForwardMoveGenerator();
 
-        Optional<Move> move = moveGenerator.generate(context, whiteStartPosition, whiteEndPosition, INITIAL_DOUBLE_FORWARD);
+        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, whiteStartPosition, new IndexChange(2, 0));
 
         assertTrue(move.isEmpty());
     }
@@ -147,11 +161,13 @@ class PawnTests extends BaseTests {
     @Test
     void givenTwoWhitePawns_whenOnePawnIsTryingToCaptureAnother_thenNoMovesAreReturned() {
         Position firstWhitePosition = pf.create(3, "B");
-        board.placePiece(firstWhitePosition, new Pawn(WHITE));
+        Pawn whitePawn = new Pawn(WHITE);
+        board.placePiece(firstWhitePosition, whitePawn);
         Position secondWhitePosition = pf.create(4, "A");
         board.placePiece(secondWhitePosition, new Pawn(WHITE));
+        PieceMoveGenerator pieceMoveGenerator = new PawnCaptureMoveGenerator();
 
-        Optional<Move> move = moveGenerator.generate(context, firstWhitePosition, secondWhitePosition, CAPTURE);
+        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, firstWhitePosition, new IndexChange(1, -1));
 
         assertTrue(move.isEmpty());
     }

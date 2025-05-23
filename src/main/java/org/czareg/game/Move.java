@@ -5,7 +5,7 @@ import org.czareg.piece.Piece;
 import org.czareg.position.Position;
 
 @Value
-public class Move {
+public class Move implements Duplicatable<Move> {
 
     Piece piece;
     Position start;
@@ -20,5 +20,10 @@ public class Move {
         this.end = end;
         this.start = start;
         this.metadata = metadata;
+    }
+
+    @Override
+    public Move duplicate() {
+        return new Move(piece, start, end, metadata.duplicate());
     }
 }

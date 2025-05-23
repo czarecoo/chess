@@ -8,24 +8,35 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.shared.PromotionRankChecker;
-import org.czareg.piece.Piece;
-import org.czareg.piece.Player;
+import org.czareg.piece.*;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.czareg.game.Metadata.Key.PROMOTION_PIECE;
 
 @Slf4j
 public class PawnPromotionMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
 
     @Override
     public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
+        List<Move> moves = new ArrayList<>();
         Player player = piece.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
-        return generate(context, piece, currentPosition, endPositionIndexChange).stream();
+        for (Piece promotionPiece : getPossiblePromotionPieces(player)) {
+            generate(context, piece, currentPosition, endPositionIndexChange)
+                    .ifPresent(move -> {
+                        move.getMetadata().put(PROMOTION_PIECE, promotionPiece);
+                        moves.add(move);
+                    });
+        }
+        return moves.stream();
     }
 
     @Override
@@ -66,5 +77,9 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator, Promotion
     @Override
     public MoveType getMoveType() {
         return MoveType.PROMOTION;
+    }
+
+    private List<Piece> getPossiblePromotionPieces(Player player) {
+        return List.of(new Knight(player), new Bishop(player), new Rook(player), new Queen(player));
     }
 }

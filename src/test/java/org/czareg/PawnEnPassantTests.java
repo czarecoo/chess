@@ -2,7 +2,11 @@ package org.czareg;
 
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
+import org.czareg.move.piece.PieceMoveGenerator;
+import org.czareg.move.piece.pawn.PawnEnPassantMoveGenerator;
 import org.czareg.piece.Pawn;
+import org.czareg.position.IndexChange;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
@@ -14,6 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class PawnEnPassantTests extends BaseTests {
+
+    private PieceMoveGenerator pieceMoveGenerator;
+
+    @BeforeEach
+    void setUp() {
+        pieceMoveGenerator = new PawnEnPassantMoveGenerator();
+    }
 
     @Test
     void givenWhitePawnAndTwoBlackPawns_whenEnPassantConditionsAreMet_thenEnPassantIsGeneratedAndExecutedCorrectly() {
@@ -27,7 +38,7 @@ class PawnEnPassantTests extends BaseTests {
         game.makeMove(context, new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
         game.makeMove(context, new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(MOVE)));
         game.makeMove(context, new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        Move enPassantMove = moveGenerator.generate(context, pf.create(5, "D"), pf.create(6, "E"), EN_PASSANT).orElseThrow();
+        Move enPassantMove = pieceMoveGenerator.generate(context, whitePawn, pf.create(5, "D"), new IndexChange(1, 1)).orElseThrow();
 
         game.makeMove(context, enPassantMove);
 

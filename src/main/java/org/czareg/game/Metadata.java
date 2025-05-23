@@ -12,7 +12,7 @@ import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
 @EqualsAndHashCode
 @ToString
-public class Metadata {
+public class Metadata implements Duplicatable<Metadata> {
 
     public enum Key {
         MOVE_TYPE,
@@ -25,8 +25,12 @@ public class Metadata {
 
     private final Map<Key, Object> data;
 
-    public Metadata(MoveType moveType) {
+    public Metadata() {
         data = new EnumMap<>(Key.class);
+    }
+
+    public Metadata(MoveType moveType) {
+        this();
         data.put(MOVE_TYPE, Objects.requireNonNull(moveType));
     }
 
@@ -53,5 +57,12 @@ public class Metadata {
 
     public boolean containsAll(Metadata metadataToCheck) {
         return data.entrySet().containsAll(metadataToCheck.data.entrySet());
+    }
+
+    @Override
+    public Metadata duplicate() {
+        Metadata metadata = new Metadata();
+        metadata.data.putAll(data);
+        return metadata;
     }
 }

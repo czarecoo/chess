@@ -2,8 +2,12 @@ package org.czareg;
 
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
+import org.czareg.move.piece.PieceMoveGenerator;
+import org.czareg.move.piece.pawn.PawnPromotionMoveGenerator;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Queen;
+import org.czareg.position.IndexChange;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -16,12 +20,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PawnPromotionTests extends BaseTests {
 
+    private PieceMoveGenerator pieceMoveGenerator;
+
+    @BeforeEach
+    void setUp() {
+        pieceMoveGenerator = new PawnPromotionMoveGenerator();
+    }
+
     @Test
     void givenWhitePawnOnSeventhRank_whenMovingForwardToEighthWithoutChoosingPromotionPiece_thenExceptionIsThrown() {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(7, "D"), whitePawn);
-        Move promotionMove = moveGenerator
-                .generate(context, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
+        Move promotionMove = pieceMoveGenerator
+                .generate(context, whitePawn, pf.create(7, "D"), new IndexChange(1, 0))
                 .orElseThrow();
 
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> game.makeMove(context, promotionMove));
@@ -32,8 +43,8 @@ class PawnPromotionTests extends BaseTests {
     void givenWhitePawnOnSeventhRank_whenMovingForwardToEighthAndChoosingPromotionPieceWithDifferentPlayer_thenExceptionIsThrown() {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(7, "D"), whitePawn);
-        Move promotionMove = moveGenerator
-                .generate(context, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
+        Move promotionMove = pieceMoveGenerator
+                .generate(context, whitePawn, pf.create(7, "D"), new IndexChange(1, 0))
                 .orElseThrow();
         promotionMove.getMetadata().put(PROMOTION_PIECE, new Queen(BLACK));
 
@@ -45,8 +56,8 @@ class PawnPromotionTests extends BaseTests {
     void givenWhitePawnOnSeventhRank_whenMovingForwardToEighth_thenPromotionIsGeneratedAndExecuted() {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(7, "D"), whitePawn);
-        Move promotionMove = moveGenerator
-                .generate(context, pf.create(7, "D"), pf.create(8, "D"), PROMOTION)
+        Move promotionMove = pieceMoveGenerator
+                .generate(context, whitePawn, pf.create(7, "D"), new IndexChange(1, 0))
                 .orElseThrow();
         Queen newPiece = new Queen(WHITE);
         promotionMove.getMetadata().put(PROMOTION_PIECE, newPiece);
@@ -70,8 +81,8 @@ class PawnPromotionTests extends BaseTests {
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(pf.create(6, "D"), whitePawn);
 
-        Optional<Move> illegalPromotionAttempt = moveGenerator
-                .generate(context, pf.create(6, "D"), pf.create(7, "D"), PROMOTION);
+        Optional<Move> illegalPromotionAttempt = pieceMoveGenerator
+                .generate(context, whitePawn, pf.create(6, "D"), new IndexChange(1, 0));
 
         assertTrue(illegalPromotionAttempt.isEmpty());
     }
