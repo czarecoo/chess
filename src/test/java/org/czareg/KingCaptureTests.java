@@ -150,7 +150,7 @@ class KingCaptureTests extends BaseTests {
 
         Optional<Move> kingCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
         assertTrue(kingCaptureDownAndRight.isPresent());
-        game.makeMove(context, kingCaptureDownAndRight.get());
+        moveMaker.make(context, kingCaptureDownAndRight.get());
 
         assertEquals(1, board.getAllPiecePositions(WHITE).count());
         assertEquals(0, board.getAllPiecePositions(BLACK).count());

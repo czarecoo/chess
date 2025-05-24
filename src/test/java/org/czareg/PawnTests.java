@@ -44,7 +44,7 @@ class PawnTests extends BaseTests {
         Pawn pawn = new Pawn(WHITE);
         Position whiteStart = pf.create(2, "D");
         board.placePiece(whiteStart, pawn);
-        game.makeMove(context, new Move(pawn, whiteStart, pf.create(3, "D"), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(pawn, whiteStart, pf.create(3, "D"), new Metadata(MOVE)));
 
         Set<Move> actualMoves = moveGenerator.generate(context, pf.create(3, "D")).collect(Collectors.toSet());
 
@@ -108,7 +108,7 @@ class PawnTests extends BaseTests {
     void givenEmptyBoard_whenBlackPawnIsMakingMove_thenExceptionIsThrown() {
         Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(context, move));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, move));
         assertEquals("Now moving player WHITE not player BLACK", e.getMessage());
     }
 
@@ -116,7 +116,7 @@ class PawnTests extends BaseTests {
     void givenEmptyBoard_whenWhitePawnIsMakingMove_thenExceptionIsThrown() {
         Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(context, move));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, move));
         assertTrue(e.getMessage().contains("is not one of the generated legal moves []"));
     }
 
@@ -178,10 +178,10 @@ class PawnTests extends BaseTests {
         Pawn blackPawn = new Pawn(BLACK);
         board.placePiece(pf.create(8, "C"), blackPawn);
 
-        game.makeMove(context, new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        game.makeMove(context, new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        game.makeMove(context, new Move(whitePawn, pf.create(3, "C"), pf.create(4, "C"), new Metadata(MOVE)));
-        game.makeMove(context, new Move(blackPawn, pf.create(6, "C"), pf.create(5, "C"), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        moveMaker.make(context, new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        moveMaker.make(context, new Move(whitePawn, pf.create(3, "C"), pf.create(4, "C"), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(blackPawn, pf.create(6, "C"), pf.create(5, "C"), new Metadata(MOVE)));
 
         assertEquals(Set.of(), moveGenerator.generate(context, pf.create(4, "C")).collect(Collectors.toSet()));
         assertEquals(Set.of(), moveGenerator.generate(context, pf.create(5, "C")).collect(Collectors.toSet()));

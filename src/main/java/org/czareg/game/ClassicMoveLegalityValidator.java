@@ -36,8 +36,8 @@ public class ClassicMoveLegalityValidator implements MoveLegalityValidator {
             Context duplicatedContext = context.duplicate();
             MoveExecutor executor = duplicatedContext.getMoveExecutor();
             executor.execute(duplicatedContext, move);
-            Game game = context.getGame();
-            return !game.isInCheck(duplicatedContext, move.getPiece().getPlayer());
+            ThreatAnalyzer threatAnalyzer = duplicatedContext.getThreatAnalyzer();
+            return !threatAnalyzer.isInCheck(duplicatedContext, move.getPiece().getPlayer());
         };
     }
 }

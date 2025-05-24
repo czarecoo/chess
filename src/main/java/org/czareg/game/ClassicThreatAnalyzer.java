@@ -1,10 +1,8 @@
 package org.czareg.game;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.PiecePosition;
-import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
 import org.czareg.piece.King;
 import org.czareg.piece.Piece;
@@ -14,24 +12,7 @@ import org.czareg.position.Position;
 import java.util.List;
 
 @Slf4j
-@Getter
-public class ClassicGame implements Game {
-
-    @Override
-    public void makeMove(Context context, Move move) {
-        PlayerTurnValidator playerTurnValidator = context.getPlayerTurnValidator();
-        Player player = move.getPiece().getPlayer();
-        playerTurnValidator.validate(context, player);
-
-        MoveLegalityValidator moveLegalityValidator = context.getMoveLegalityValidator();
-        moveLegalityValidator.validate(context, move);
-
-        MoveExecutor moveExecutor = context.getMoveExecutor();
-        moveExecutor.execute(context, move);
-
-        History history = context.getHistory();
-        history.save(move);
-    }
+public class ClassicThreatAnalyzer implements ThreatAnalyzer {
 
     @Override
     public boolean isUnderAttack(Context context, Position position, Player defender, Player attacker) {

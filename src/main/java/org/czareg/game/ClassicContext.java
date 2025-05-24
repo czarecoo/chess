@@ -19,23 +19,25 @@ public class ClassicContext implements Context {
 
     Board board;
     History history;
-    Game game;
+    MoveMaker moveMaker;
     MoveGenerator moveGenerator;
     PlayerTurnValidator playerTurnValidator;
     MoveExecutor moveExecutor;
     PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
     MoveLegalityValidator moveLegalityValidator;
+    ThreatAnalyzer threatAnalyzer;
 
     public ClassicContext() {
         this(
                 new ClassicBoard(8, 8),
                 new ClassicHistory(),
-                new ClassicGame(),
+                new ClassicMoveMaker(),
                 new ClassicMoveGenerator(),
                 new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),
-                new ClassicMoveLegalityValidator()
+                new ClassicMoveLegalityValidator(),
+                new ClassicThreatAnalyzer()
         );
     }
 
@@ -44,12 +46,13 @@ public class ClassicContext implements Context {
         return new ClassicContext(
                 board.duplicate(),
                 history.duplicate(),
-                game,
+                moveMaker,
                 moveGenerator,
                 playerTurnValidator,
                 moveExecutor,
                 pieceMoveGeneratorFactory,
-                moveLegalityValidator
+                moveLegalityValidator,
+                threatAnalyzer
         );
     }
 }

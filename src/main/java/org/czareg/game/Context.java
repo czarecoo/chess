@@ -11,7 +11,7 @@ public interface Context extends Duplicatable<Context> {
 
     History getHistory();
 
-    Game getGame();
+    MoveMaker getMoveMaker();
 
     MoveGenerator getMoveGenerator();
 
@@ -22,4 +22,6 @@ public interface Context extends Duplicatable<Context> {
     PieceMoveGeneratorFactory getPieceMoveGeneratorFactory();
 
     MoveLegalityValidator getMoveLegalityValidator();
+
+    ThreatAnalyzer getThreatAnalyzer();
 }

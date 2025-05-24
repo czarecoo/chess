@@ -148,7 +148,7 @@ class BishopCaptureTests extends BaseTests {
 
         Optional<Move> bishopCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
         assertTrue(bishopCaptureDownAndRight.isPresent());
-        game.makeMove(context, bishopCaptureDownAndRight.get());
+        moveMaker.make(context, bishopCaptureDownAndRight.get());
 
         assertEquals(1, board.getAllPiecePositions(WHITE).count());
         assertEquals(0, board.getAllPiecePositions(BLACK).count());

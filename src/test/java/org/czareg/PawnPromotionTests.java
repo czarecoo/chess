@@ -34,7 +34,7 @@ class PawnPromotionTests extends BaseTests {
                 .generate(context, whitePawn, pf.create(7, "D"), new IndexChange(1, 0))
                 .orElseThrow();
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(context, promotionMove));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, promotionMove));
         String message = e.getMessage();
         assertNotNull(message);
         assertTrue(message.contains("is not one of the generated legal moves"));
@@ -49,7 +49,7 @@ class PawnPromotionTests extends BaseTests {
                 .orElseThrow();
         promotionMove.getMetadata().put(PROMOTION_PIECE_CLASS, Queen.class);
 
-        game.makeMove(context, promotionMove);
+        moveMaker.make(context, promotionMove);
 
         assertEquals(WHITE, board.getPiece(pf.create(8, "D")).getPlayer());
         assertInstanceOf(Queen.class, board.getPiece(pf.create(8, "D")));

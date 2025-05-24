@@ -115,15 +115,15 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
                 .put(CASTLING_ROOK_END_POSITION, rookEndPosition);
         Move move = new Move(king, kingCurrentPosition, kingEndPosition, metadata);
         Player opponent = player.getOpponent();
-        Game game = context.getGame();
         Context duplicatedContext = context.duplicate();
-        MoveExecutor moveExecutor = context.getMoveExecutor();
+        MoveExecutor moveExecutor = duplicatedContext.getMoveExecutor();
         moveExecutor.execute(duplicatedContext, move);
-        if (game.isUnderAttack(duplicatedContext, rookEndPosition, player, opponent)) {
+        ThreatAnalyzer threatAnalyzer = duplicatedContext.getThreatAnalyzer();
+        if (threatAnalyzer.isUnderAttack(duplicatedContext, rookEndPosition, player, opponent)) {
             log.debug("Rejecting move because king pass through {} is under attack by {}.", rookEndPosition, opponent);
             return Optional.empty();
         }
-        if (game.isUnderAttack(duplicatedContext, kingEndPosition, player, opponent)) {
+        if (threatAnalyzer.isUnderAttack(duplicatedContext, kingEndPosition, player, opponent)) {
             log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
             return Optional.empty();
         }
