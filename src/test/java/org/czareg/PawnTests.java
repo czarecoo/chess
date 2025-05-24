@@ -117,7 +117,7 @@ class PawnTests extends BaseTests {
         Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(context, move));
-        assertTrue(e.getMessage().contains("is not one of the generated moves []"));
+        assertTrue(e.getMessage().contains("is not one of the generated legal moves []"));
     }
 
     @Test

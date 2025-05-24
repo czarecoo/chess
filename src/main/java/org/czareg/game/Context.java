@@ -20,4 +20,6 @@ public interface Context extends Duplicatable<Context> {
     MoveExecutor getMoveExecutor();
 
     PieceMoveGeneratorFactory getPieceMoveGeneratorFactory();
+
+    MoveLegalityChecker getMoveLegalityChecker();
 }

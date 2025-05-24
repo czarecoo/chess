@@ -24,6 +24,7 @@ public class ClassicContext implements Context {
     Order order;
     MoveExecutor moveExecutor;
     PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
+    MoveLegalityChecker moveLegalityChecker;
 
     public ClassicContext() {
         this(
@@ -33,7 +34,8 @@ public class ClassicContext implements Context {
                 new ClassicMoveGenerator(),
                 new ClassicOrder(),
                 new ClassicMoveExecutor(),
-                new ClassicPieceMoveGeneratorFactory()
+                new ClassicPieceMoveGeneratorFactory(),
+                new ClassicMoveLegalityChecker()
         );
     }
 
@@ -46,7 +48,8 @@ public class ClassicContext implements Context {
                 moveGenerator,
                 order,
                 moveExecutor,
-                pieceMoveGeneratorFactory
+                pieceMoveGeneratorFactory,
+                moveLegalityChecker
         );
     }
 }

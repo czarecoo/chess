@@ -15,4 +15,17 @@ public class ClassicOrder implements Order {
     public Player startingPlayer() {
         return WHITE;
     }
+
+    @Override
+    public void checkIfPlayersTurn(Context context, Move move) {
+        History history = context.getHistory();
+        Order order = context.getOrder();
+        Player nowMovingPlayer = history.getLastMovingPlayer()
+                .map(order::getNowMovingPlayer)
+                .orElse(order.startingPlayer());
+        Player requestingPlayer = move.getPiece().getPlayer();
+        if (requestingPlayer != nowMovingPlayer) {
+            throw new IllegalArgumentException("Now moving player %s not player %s".formatted(nowMovingPlayer, requestingPlayer));
+        }
+    }
 }

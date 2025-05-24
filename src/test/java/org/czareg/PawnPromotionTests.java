@@ -37,7 +37,7 @@ class PawnPromotionTests extends BaseTests {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> game.makeMove(context, promotionMove));
         String message = e.getMessage();
         assertNotNull(message);
-        assertTrue(message.contains("is not one of the generated moves"));
+        assertTrue(message.contains("is not one of the generated legal moves"));
     }
 
     @Test

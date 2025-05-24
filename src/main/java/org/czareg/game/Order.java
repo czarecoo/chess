@@ -7,4 +7,6 @@ public interface Order {
     Player getNowMovingPlayer(Player lastMovingPlayer);
 
     Player startingPlayer();
+
+    void checkIfPlayersTurn(Context context, Move move);
 }
