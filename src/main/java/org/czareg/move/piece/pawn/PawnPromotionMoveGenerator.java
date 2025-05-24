@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.czareg.game.Metadata.Key.PROMOTION_PIECE;
+import static org.czareg.game.Metadata.Key.PROMOTION_PIECE_CLASS;
 
 @Slf4j
 public class PawnPromotionMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
@@ -29,10 +29,10 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator, Promotion
         List<Move> moves = new ArrayList<>();
         Player player = piece.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
-        for (Piece promotionPiece : getPossiblePromotionPieces(player)) {
+        for (Class<? extends Piece> promotionPieceClass : getAllowedPiecePromotionClasses()) {
             generate(context, piece, currentPosition, endPositionIndexChange)
                     .ifPresent(move -> {
-                        move.getMetadata().put(PROMOTION_PIECE, promotionPiece);
+                        move.getMetadata().put(PROMOTION_PIECE_CLASS, promotionPieceClass);
                         moves.add(move);
                     });
         }
@@ -79,7 +79,7 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator, Promotion
         return MoveType.PROMOTION;
     }
 
-    private List<Piece> getPossiblePromotionPieces(Player player) {
-        return List.of(new Knight(player), new Bishop(player), new Rook(player), new Queen(player));
+    private List<Class<? extends Piece>> getAllowedPiecePromotionClasses() {
+        return List.of(Knight.class, Bishop.class, Rook.class, Queen.class);
     }
 }

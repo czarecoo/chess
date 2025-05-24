@@ -16,7 +16,7 @@ public class Metadata implements Duplicatable<Metadata> {
 
     public enum Key {
         MOVE_TYPE,
-        PROMOTION_PIECE,
+        PROMOTION_PIECE_CLASS,
         CASTLING_ROOK_START_POSITION,
         CASTLING_ROOK_END_POSITION,
         CAPTURE_PIECE,
@@ -48,15 +48,20 @@ public class Metadata implements Duplicatable<Metadata> {
                 .map(type::cast);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> Optional<Class<T>> getClass(Key key, Class<T> expectedType) {
+        Object value = data.get(key);
+        if (value instanceof Class<?> clazz && expectedType.isAssignableFrom(clazz)) {
+            return Optional.of((Class<T>) clazz);
+        }
+        return Optional.empty();
+    }
+
     public <T> boolean isExactly(Key key, T typeValueToCheck) {
         Class<?> typeClass = typeValueToCheck.getClass();
         return get(key, typeClass)
                 .filter(typeValue -> typeValue == typeValueToCheck)
                 .isPresent();
-    }
-
-    public boolean containsAll(Metadata metadataToCheck) {
-        return data.entrySet().containsAll(metadataToCheck.data.entrySet());
     }
 
     @Override

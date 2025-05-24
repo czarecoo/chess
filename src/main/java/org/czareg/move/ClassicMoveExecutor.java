@@ -7,6 +7,7 @@ import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.Position;
 
 import static org.czareg.game.Metadata.Key.*;
@@ -30,16 +31,15 @@ public class ClassicMoveExecutor implements MoveExecutor {
     }
 
     private void executePromotion(Move move, Board board) {
-        Piece promotedPiece = move.getMetadata()
-                .get(PROMOTION_PIECE, Piece.class)
-                .orElseThrow(() -> new IllegalStateException("Promotion move missing chosen piece."));
+        Class<Piece> promotionPieceClass = move.getMetadata()
+                .getClass(PROMOTION_PIECE_CLASS, Piece.class)
+                .orElseThrow(() -> new IllegalStateException("Promotion move missing chosen piece class."));
         Piece oldPiece = move.getPiece();
-        if (oldPiece.getPlayer() != promotedPiece.getPlayer()) {
-            throw new IllegalStateException("Cannot promote to different player %s %s".formatted(oldPiece, promotedPiece));
-        }
+        Player player = oldPiece.getPlayer();
+        Piece promotionPiece = Piece.create(promotionPieceClass, player);
         log.debug("Executing promotion {}", move);
         board.removePiece(move.getStart());
-        board.placePiece(move.getEnd(), promotedPiece);
+        board.placePiece(move.getEnd(), promotionPiece);
     }
 
     private void executeEnPassant(Move move, Board board) {

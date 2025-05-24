@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
-import static org.czareg.game.Metadata.Key.PROMOTION_PIECE;
+import static org.czareg.game.Metadata.Key.PROMOTION_PIECE_CLASS;
 import static org.czareg.game.MoveType.*;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
@@ -82,10 +82,9 @@ class PawnTests extends BaseTests {
                 Set.of(Knight.class, Bishop.class, Rook.class, Queen.class),
                 actualMoves.stream()
                         .map(Move::getMetadata)
-                        .map(metadata -> metadata.get(PROMOTION_PIECE, Piece.class))
+                        .map(metadata -> metadata.getClass(PROMOTION_PIECE_CLASS, Piece.class))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .map(Object::getClass)
                         .collect(Collectors.toSet())
         );
     }

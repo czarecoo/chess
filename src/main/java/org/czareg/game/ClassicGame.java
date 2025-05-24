@@ -88,7 +88,7 @@ public class ClassicGame implements Game {
                 .filter(generatedMove -> Objects.equals(move.getStart(), generatedMove.getStart()))
                 .filter(generatedMove -> Objects.equals(move.getEnd(), generatedMove.getEnd()))
                 .filter(generatedMove -> move.getPiece() == generatedMove.getPiece())
-                .filter(generatedMove -> move.getMetadata().containsAll(generatedMove.getMetadata())) // allow extra metadata e.g. user chosen PROMOTION_PIECE
+                .filter(generatedMove -> move.getMetadata().equals(generatedMove.getMetadata()))
                 .findAny()
                 .isEmpty();
         if (noMatchingGeneratedMoveFound) {
