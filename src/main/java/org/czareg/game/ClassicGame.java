@@ -19,12 +19,16 @@ public class ClassicGame implements Game {
 
     @Override
     public void makeMove(Context context, Move move) {
-        Order order = context.getOrder();
-        order.checkIfPlayersTurn(context, move);
-        MoveLegalityChecker moveLegalityChecker = context.getMoveLegalityChecker();
-        moveLegalityChecker.check(context, move);
+        PlayerTurnValidator playerTurnValidator = context.getPlayerTurnValidator();
+        Player player = move.getPiece().getPlayer();
+        playerTurnValidator.validate(context, player);
+
+        MoveLegalityValidator moveLegalityValidator = context.getMoveLegalityValidator();
+        moveLegalityValidator.validate(context, move);
+
         MoveExecutor moveExecutor = context.getMoveExecutor();
         moveExecutor.execute(context, move);
+
         History history = context.getHistory();
         history.save(move);
     }

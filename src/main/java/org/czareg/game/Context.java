@@ -15,11 +15,11 @@ public interface Context extends Duplicatable<Context> {
 
     MoveGenerator getMoveGenerator();
 
-    Order getOrder();
+    PlayerTurnValidator getPlayerTurnValidator();
 
     MoveExecutor getMoveExecutor();
 
     PieceMoveGeneratorFactory getPieceMoveGeneratorFactory();
 
-    MoveLegalityChecker getMoveLegalityChecker();
+    MoveLegalityValidator getMoveLegalityValidator();
 }

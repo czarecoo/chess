@@ -21,10 +21,10 @@ public class ClassicContext implements Context {
     History history;
     Game game;
     MoveGenerator moveGenerator;
-    Order order;
+    PlayerTurnValidator playerTurnValidator;
     MoveExecutor moveExecutor;
     PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
-    MoveLegalityChecker moveLegalityChecker;
+    MoveLegalityValidator moveLegalityValidator;
 
     public ClassicContext() {
         this(
@@ -32,10 +32,10 @@ public class ClassicContext implements Context {
                 new ClassicHistory(),
                 new ClassicGame(),
                 new ClassicMoveGenerator(),
-                new ClassicOrder(),
+                new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),
-                new ClassicMoveLegalityChecker()
+                new ClassicMoveLegalityValidator()
         );
     }
 
@@ -46,10 +46,10 @@ public class ClassicContext implements Context {
                 history.duplicate(),
                 game,
                 moveGenerator,
-                order,
+                playerTurnValidator,
                 moveExecutor,
                 pieceMoveGeneratorFactory,
-                moveLegalityChecker
+                moveLegalityValidator
         );
     }
 }

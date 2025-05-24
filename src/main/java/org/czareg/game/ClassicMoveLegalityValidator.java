@@ -10,10 +10,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class ClassicMoveLegalityChecker implements MoveLegalityChecker {
+public class ClassicMoveLegalityValidator implements MoveLegalityValidator {
 
     @Override
-    public void check(Context context, Move move) {
+    public void validate(Context context, Move move) {
         MoveGenerator moveGenerator = context.getMoveGenerator();
         Set<Move> moves = moveGenerator.generate(context, move.getStart())
                 .filter(isKingNotInCheckAfterMove(context))
