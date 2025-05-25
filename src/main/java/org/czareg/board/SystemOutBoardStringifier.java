@@ -36,8 +36,7 @@ public class SystemOutBoardStringifier implements BoardStringifier {
         for (int rankIndex = maxRank - 1; rankIndex >= 0; rankIndex--) {
             for (int fileIndex = 0; fileIndex < maxFile; fileIndex++) {
                 Position position = positionFactory.create(rankIndex, fileIndex);
-                boolean hasPiece = board.hasPiece(position);
-                if (hasPiece) {
+                if (board.hasPiece(position)) {
                     Piece piece = board.getPiece(position);
                     Player player = piece.getPlayer();
                     Class<? extends Piece> pieceClass = piece.getClass();
@@ -46,7 +45,7 @@ public class SystemOutBoardStringifier implements BoardStringifier {
                             .getOrDefault(pieceClass, "?");
                     boardStringBuilder.append(symbol);
                 } else {
-                    boardStringBuilder.append("　"); // U+3000 IDEOGRAPHIC SPACE
+                    boardStringBuilder.append("　"); // U+3000 ideographic space to match unicode pieces
                 }
                 boardStringBuilder.append(" ");
             }
