@@ -127,9 +127,9 @@ class KingMoveTests extends BaseTests {
         board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
 
         Optional<Move> kingMoveUpAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 1));
-        assertTrue(kingMoveUpAndRight.isEmpty());
+        assertTrue(kingMoveUpAndRight.isPresent());
         Optional<Move> kingMoveUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
-        assertTrue(kingMoveUpAndLeft.isEmpty());
+        assertTrue(kingMoveUpAndLeft.isPresent());
         Optional<Move> kingMoveUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 0));
         assertTrue(kingMoveUp.isPresent());
     }

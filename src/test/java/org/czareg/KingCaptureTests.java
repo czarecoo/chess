@@ -81,15 +81,18 @@ class KingCaptureTests extends BaseTests {
                 .generate(context, piece, position)
                 .collect(Collectors.toSet());
 
-        assertEquals(5, moves.size()); // 4C 4E 3D are protected by other pawns
+        assertEquals(8, moves.size());
         assertEquals(Set.of(
                 pf.create(3, "C"),
+                pf.create(3, "D"),
                 pf.create(3, "E"),
+                pf.create(4, "C"),
+                pf.create(4, "E"),
                 pf.create(5, "C"),
                 pf.create(5, "D"),
                 pf.create(5, "E")
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
-        assertEquals(5, moves.stream().map(Move::getMetadata)
+        assertEquals(8, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(Metadata.Key.CAPTURE_PIECE, Piece.class))
                 .distinct()
                 .count());
@@ -132,11 +135,11 @@ class KingCaptureTests extends BaseTests {
         board.placePiece(pf.create(6, "D"), new Queen(BLACK));
 
         Optional<Move> kingCaptureUpAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 1));
-        assertTrue(kingCaptureUpAndRight.isEmpty());
+        assertTrue(kingCaptureUpAndRight.isPresent());
         Optional<Move> kingCaptureUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
-        assertTrue(kingCaptureUpAndLeft.isEmpty());
+        assertTrue(kingCaptureUpAndLeft.isPresent());
         Optional<Move> kingCaptureUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 0));
-        assertTrue(kingCaptureUp.isEmpty());
+        assertTrue(kingCaptureUp.isPresent());
     }
 
     @Test

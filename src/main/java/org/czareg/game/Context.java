@@ -24,4 +24,6 @@ public interface Context extends Duplicatable<Context> {
     MoveLegalityValidator getMoveLegalityValidator();
 
     ThreatAnalyzer getThreatAnalyzer();
+
+    StateAnalyzer getStateAnalyzer();
 }

@@ -8,6 +8,7 @@ import org.czareg.piece.Player;
 import org.czareg.position.Position;
 import org.slf4j.Logger;
 
+@Deprecated // TODO is this needed?
 public interface KingMoveValidator {
 
     default boolean isInvalid(Context context, Logger log, Move move) {
