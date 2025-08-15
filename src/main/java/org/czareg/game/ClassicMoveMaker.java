@@ -15,6 +15,11 @@ public class ClassicMoveMaker implements MoveMaker {
         Player player = move.getPiece().getPlayer();
         playerTurnValidator.validate(context, player);
 
+        StateAnalyzer stateAnalyzer = context.getStateAnalyzer();
+        if (stateAnalyzer.isOver(context)) {
+            throw new IllegalStateException("Game is over");
+        }
+
         MoveLegalityValidator moveLegalityValidator = context.getMoveLegalityValidator();
         moveLegalityValidator.validate(context, move);
 

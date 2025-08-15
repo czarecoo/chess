@@ -37,7 +37,7 @@ public class ClassicContext implements Context {
                 new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),
-                new ClassicMoveLegalityValidator(),
+                new ClassicMoveLegalityValidator(new KingMoveValidator()),
                 new ClassicThreatAnalyzer(),
                 new ClassicStateAnalyzer()
         );

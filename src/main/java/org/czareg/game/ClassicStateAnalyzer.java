@@ -19,7 +19,7 @@ public class ClassicStateAnalyzer implements StateAnalyzer {
         Player currentPlayer = context.getHistory().getLastMovingPlayer().map(Player::getOpponent).orElse(Player.WHITE);
         ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
 
-        if (!threatAnalyzer.isInCheck(context, currentPlayer)) {
+        if (threatAnalyzer.isNotInCheck(context, currentPlayer)) {
             log.debug("Not in check so it can't be checkmate");
             return false;
         }
@@ -30,7 +30,7 @@ public class ClassicStateAnalyzer implements StateAnalyzer {
                     Context cloned = context.duplicate();
                     MoveExecutor moveExecutor = cloned.getMoveExecutor();
                     moveExecutor.execute(cloned, move);
-                    return !threatAnalyzer.isInCheck(cloned, currentPlayer);
+                    return threatAnalyzer.isNotInCheck(cloned, currentPlayer);
                 }).toList();
         log.debug("Found {} moves after which {} would not be in check anymore. Moves: {}", movesThatEscapeCheckMate.size(), currentPlayer, movesThatEscapeCheckMate);
         return movesThatEscapeCheckMate.isEmpty();

@@ -1,6 +1,5 @@
 package org.czareg;
 
-import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
@@ -17,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +44,7 @@ class KingMoveTests extends BaseTests {
         assertEquals(8, moves.size());
         assertEquals(8, moves.stream().map(Move::getEnd).distinct().count());
         assertTrue(moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
+                .map(metadata -> metadata.get(MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .allMatch(moveType -> moveType == MoveType.MOVE));
@@ -113,7 +113,7 @@ class KingMoveTests extends BaseTests {
         assertEquals(8, moves.size());
         assertEquals(8, moves.stream().map(Move::getEnd).distinct().count());
         assertTrue(moves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
+                .map(metadata -> metadata.get(MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .allMatch(moveType -> moveType == MoveType.MOVE));

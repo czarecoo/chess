@@ -11,20 +11,24 @@ import org.czareg.position.Position;
 
 import java.util.List;
 
+import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
+import static org.czareg.game.Metadata.Key.MOVE_TYPE;
+
 @Slf4j
 public class ClassicThreatAnalyzer implements ThreatAnalyzer {
 
     @Override
-    public boolean isUnderAttack(Context context, Position position, Player defender, Player attacker) {
+    public boolean isUnderAttack(Context context, Position position, Player player) {
         MoveGenerator moveGenerator = context.getMoveGenerator();
+        Player attacker = player.getOpponent();
         List<Move> attackMoves = moveGenerator.generate(context, attacker)
                 .filter(move -> move.getEnd().equals(position))
-                .filter(move -> move.getMetadata().isExactly(Metadata.Key.MOVE_TYPE, MoveType.CAPTURE))
-                .filter(move -> move.getMetadata().get(Metadata.Key.CAPTURE_PIECE, Piece.class)
-                        .filter(piece -> piece.getPlayer() == defender)
+                .filter(move -> move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE))
+                .filter(move -> move.getMetadata().get(CAPTURE_PIECE, Piece.class)
+                        .filter(piece -> piece.getPlayer() == player)
                         .isPresent()
                 ).toList();
-        log.debug("Generated {} moves that attack {} where defender {} and attacker {}", attackMoves.size(), position, defender, attacker);
+        log.debug("Generated {} moves that attack {} where defender {} and attacker {}", attackMoves.size(), position, player, attacker);
         return !attackMoves.isEmpty();
     }
 
@@ -43,7 +47,6 @@ public class ClassicThreatAnalyzer implements ThreatAnalyzer {
             throw new IllegalStateException("More than one king found for player " + player);
         }
         Position kingPosition = kingPositions.getFirst();
-        Player opponent = player.getOpponent();
-        return isUnderAttack(context, kingPosition, player, opponent);
+        return isUnderAttack(context, kingPosition, player);
     }
 }

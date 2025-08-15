@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SystemOutBoardStringifierTest {
+class UnicodeBoardStringifierTest {
 
     @Test
     void shouldPrintAllPiecesOnStartingPlacesOnBoard() {
@@ -13,7 +13,7 @@ class SystemOutBoardStringifierTest {
         Board board = classicContext.getBoard();
         PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
         piecePlacer.place(board);
-        BoardStringifier boardStringifier = new SystemOutBoardStringifier();
+        BoardStringifier boardStringifier = new UnicodeBoardStringifier();
 
         String stringifiedBoard = boardStringifier.stringify(board);
 

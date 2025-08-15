@@ -6,9 +6,11 @@ import org.czareg.position.PositionFactory;
 
 import java.util.Map;
 
-public class SystemOutBoardStringifier implements BoardStringifier {
+import static java.util.Objects.requireNonNull;
 
-    private final Map<Player, Map<Class<? extends Piece>, String>> pieceSymbols = Map.of(
+public class UnicodeBoardStringifier implements BoardStringifier {
+
+    private static final Map<Player, Map<Class<? extends Piece>, String>> PIECE_SYMBOLS = Map.of(
             Player.WHITE, Map.of(
                     Pawn.class, "♙",
                     Knight.class, "♘",
@@ -40,9 +42,8 @@ public class SystemOutBoardStringifier implements BoardStringifier {
                     Piece piece = board.getPiece(position);
                     Player player = piece.getPlayer();
                     Class<? extends Piece> pieceClass = piece.getClass();
-                    String symbol = pieceSymbols
-                            .getOrDefault(player, Map.of())
-                            .getOrDefault(pieceClass, "?");
+                    Map<Class<? extends Piece>, String> symbolsForPlayer = requireNonNull(PIECE_SYMBOLS.get(player));
+                    String symbol = requireNonNull(symbolsForPlayer.get(pieceClass));
                     boardStringBuilder.append(symbol);
                 } else {
                     boardStringBuilder.append("　"); // U+3000 ideographic space to match unicode pieces

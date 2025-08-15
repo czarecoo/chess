@@ -156,12 +156,14 @@ class KingCastlingTests extends BaseTests {
         Piece rook = new Rook(WHITE);
         Position rookPosition = pf.create(1, "A");
         board.placePiece(rookPosition, rook);
-
         List<Move> moves = pieceMoveGenerator
                 .generate(context, king, kingPosition)
                 .toList();
+        assertEquals(1, moves.size());
 
-        assertEquals(0, moves.size());
+        Exception e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, moves.getFirst()));
+
+        assertEquals("King would be in check after moving to Position(rank=1, file=C) that is under attack by BLACK.", e.getMessage());
     }
 
     @Test
@@ -178,6 +180,10 @@ class KingCastlingTests extends BaseTests {
                 .generate(context, king, kingPosition)
                 .toList();
 
-        assertEquals(0, moves.size());
+        assertEquals(1, moves.size());
+
+        Exception e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, moves.getFirst()));
+
+        assertEquals("King would pass through Position(rank=1, file=D) that is under attack by BLACK.", e.getMessage());
     }
 }

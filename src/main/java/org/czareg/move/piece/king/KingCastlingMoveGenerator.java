@@ -3,7 +3,6 @@ package org.czareg.move.piece.king;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.game.*;
-import org.czareg.move.MoveExecutor;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.shared.StartingRankChecker;
 import org.czareg.piece.Piece;
@@ -104,7 +103,7 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
             return Optional.empty();
         }
         Index rookStartPositionIndex = positionFactory.create(rookStartPosition);
-        List<Position> positionsBetween = getPositionsBetween(kingCurrentPositionIndex, rookStartPositionIndex, positionFactory);
+        List<Position> positionsBetween = positionFactory.between(kingCurrentPositionIndex, rookStartPositionIndex);
         List<Position> positionsWithPiecesBetween = positionsBetween.stream().filter(board::hasPiece).toList();
         if (!positionsWithPiecesBetween.isEmpty()) {
             log.debug("Rejecting move because there are pieces between king and rook at {}.", positionsWithPiecesBetween);
@@ -114,19 +113,8 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
                 .put(CASTLING_ROOK_START_POSITION, rookStartPosition)
                 .put(CASTLING_ROOK_END_POSITION, rookEndPosition);
         Move move = new Move(king, kingCurrentPosition, kingEndPosition, metadata);
-        Player opponent = player.getOpponent();
-        Context duplicatedContext = context.duplicate();
-        MoveExecutor moveExecutor = duplicatedContext.getMoveExecutor();
-        moveExecutor.execute(duplicatedContext, move);
-        ThreatAnalyzer threatAnalyzer = duplicatedContext.getThreatAnalyzer();
-        if (threatAnalyzer.isUnderAttack(duplicatedContext, rookEndPosition, player, opponent)) {
-            log.debug("Rejecting move because king pass through {} is under attack by {}.", rookEndPosition, opponent);
-            return Optional.empty();
-        }
-        if (threatAnalyzer.isUnderAttack(duplicatedContext, kingEndPosition, player, opponent)) {
-            log.debug("Rejecting move because king end {} is under attack by {}.", kingEndPosition, opponent);
-            return Optional.empty();
-        }
+        // no validation for rookEndPosition (aka kingPassThroughPosition) and kingEndPosition, this is handled by KingMoveValidator
+        // the reason is during move generation we cannot check for isUnderAttack because that requires move generation
         log.debug("Accepted move {}", move);
         return Optional.of(move);
     }
@@ -141,18 +129,5 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
     @Override
     public MoveType getMoveType() {
         return MoveType.CASTLING;
-    }
-
-    private List<Position> getPositionsBetween(Index start, Index end, PositionFactory factory) {
-        List<Position> between = new ArrayList<>();
-        int startFile = start.getFile();
-        int endFile = end.getFile();
-        int rank = start.getRank();
-        int min = Math.min(startFile, endFile);
-        int max = Math.max(startFile, endFile);
-        for (int file = min + 1; file < max; file++) {
-            between.add(factory.create(rank, file));
-        }
-        return between;
     }
 }

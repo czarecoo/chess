@@ -8,6 +8,7 @@ import org.czareg.piece.Knight;
 import org.czareg.position.Position;
 import org.junit.jupiter.api.Test;
 
+import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 import static org.czareg.game.MoveType.*;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
@@ -27,11 +28,10 @@ class ClassicStateAnalyzerTest extends BaseTests {
         Knight whiteKnight = new Knight(WHITE);
         board.placePiece(knightStartingPosition, whiteKnight);
         Position knightEndPosition = pf.create(7, "C");
+        assertFalse(stateAnalyzer.isCheckMate(context));
         moveMaker.make(context, new Move(whiteKnight, knightStartingPosition, knightEndPosition, new Metadata(MOVE)));
 
-        boolean isCheckMate = stateAnalyzer.isCheckMate(context);
-
-        assertTrue(isCheckMate);
+        assertTrue(stateAnalyzer.isCheckMate(context));
     }
 
     @Test
@@ -52,7 +52,8 @@ class ClassicStateAnalyzerTest extends BaseTests {
         assertFalse(stateAnalyzer.isCheckMate(context));
         moveMaker.make(context, new Move(board.getPiece(pf.create(7, "A")), pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
         assertFalse(stateAnalyzer.isCheckMate(context));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(3, "F")), pf.create(3, "F"), pf.create(7, "F"), new Metadata(CAPTURE).put(Metadata.Key.CAPTURE_PIECE, board.getPiece(pf.create(7, "F")))));
+        moveMaker.make(context, new Move(board.getPiece(pf.create(3, "F")), pf.create(3, "F"), pf.create(7, "F"), new Metadata(CAPTURE).put(CAPTURE_PIECE, board.getPiece(pf.create(7, "F")))));
+
         assertTrue(stateAnalyzer.isCheckMate(context));
     }
 }

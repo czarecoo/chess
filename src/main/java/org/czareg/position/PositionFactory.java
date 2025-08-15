@@ -2,6 +2,7 @@ package org.czareg.position;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -80,6 +81,40 @@ public class PositionFactory {
         int rankChange = endIndex.getRank() - currentIndex.getRank();
         int fileChange = endIndex.getFile() - currentIndex.getFile();
         return new IndexChange(rankChange, fileChange);
+    }
+
+    public List<Position> between(Index start, Index end) {
+        List<Position> between = new ArrayList<>();
+        int startFile = start.getFile();
+        int endFile = end.getFile();
+        int startRank = start.getRank();
+        int endRank = end.getRank();
+
+        int fileDiff = Math.abs(startFile - endFile);
+        int rankDiff = Math.abs(startRank - endRank);
+
+        boolean isOrthogonal = (startRank == endRank) || (startFile == endFile);
+        boolean isDiagonal = (fileDiff == rankDiff);
+
+        if (!isOrthogonal && !isDiagonal) {
+            throw new IllegalArgumentException(
+                    "Indexes are neither orthogonal nor diagonal: " + start + " -> " + end
+            );
+        }
+
+        int fileStep = Integer.compare(endFile, startFile);
+        int rankStep = Integer.compare(endRank, startRank);
+
+        int file = startFile + fileStep;
+        int rank = startRank + rankStep;
+
+        while (file != endFile || rank != endRank) {
+            between.add(create(rank, file));
+            file += fileStep;
+            rank += rankStep;
+        }
+
+        return between;
     }
 
     private boolean isRankIndexInvalid(int rankIndex) {

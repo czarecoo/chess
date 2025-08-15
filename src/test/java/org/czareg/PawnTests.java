@@ -15,8 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
-import static org.czareg.game.Metadata.Key.PROMOTION_PIECE_CLASS;
+import static org.czareg.game.Metadata.Key.*;
 import static org.czareg.game.MoveType.*;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
@@ -74,7 +73,7 @@ class PawnTests extends BaseTests {
         assertEquals(4, actualMoves.size());
         assertEquals(1, actualMoves.stream().map(Move::getEnd).distinct().count());
         assertTrue(actualMoves.stream().map(Move::getMetadata)
-                .map(metadata -> metadata.get(Metadata.Key.MOVE_TYPE, MoveType.class))
+                .map(metadata -> metadata.get(MOVE_TYPE, MoveType.class))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .allMatch(moveType -> moveType == PROMOTION));

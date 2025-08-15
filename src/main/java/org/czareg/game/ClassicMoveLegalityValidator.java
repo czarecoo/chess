@@ -1,7 +1,6 @@
 package org.czareg.game;
 
 import lombok.extern.slf4j.Slf4j;
-import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
 
 import java.util.Set;
@@ -9,6 +8,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class ClassicMoveLegalityValidator implements MoveLegalityValidator {
+
+    private final KingMoveValidator kingMoveValidator;
+
+    public ClassicMoveLegalityValidator(KingMoveValidator kingMoveValidator) {
+        this.kingMoveValidator = kingMoveValidator;
+    }
 
     @Override
     public void validate(Context context, Move move) {
@@ -22,16 +27,6 @@ public class ClassicMoveLegalityValidator implements MoveLegalityValidator {
         if (!moves.contains(move)) {
             throw new IllegalArgumentException("%s does not match any generated legal moves %s".formatted(move, moves));
         }
-        if (isKingInCheckAfterMove(context, move)) {
-            throw new IllegalArgumentException("King would be in check after move %s".formatted(move));
-        }
-    }
-
-    private boolean isKingInCheckAfterMove(Context context, Move move) {
-        Context duplicatedContext = context.duplicate();
-        MoveExecutor executor = duplicatedContext.getMoveExecutor();
-        executor.execute(duplicatedContext, move);
-        ThreatAnalyzer threatAnalyzer = duplicatedContext.getThreatAnalyzer();
-        return threatAnalyzer.isInCheck(duplicatedContext, move.getPiece().getPlayer());
+        kingMoveValidator.validate(context, move);
     }
 }
