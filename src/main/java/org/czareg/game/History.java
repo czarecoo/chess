@@ -3,6 +3,7 @@ package org.czareg.game;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface History extends Duplicatable<History> {
@@ -14,4 +15,8 @@ public interface History extends Duplicatable<History> {
     Optional<Player> getLastMovingPlayer();
 
     Optional<Move> getLastPlayedMove();
+
+    int movesCount();
+
+    List<Move> getLastXMoves(int count);
 }

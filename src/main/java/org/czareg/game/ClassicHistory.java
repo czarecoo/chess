@@ -48,4 +48,16 @@ public class ClassicHistory implements History {
     public ClassicHistory duplicate() {
         return new ClassicHistory(new ArrayList<>(history));
     }
+
+    @Override
+    public int movesCount() {
+        return history.size();
+    }
+
+    @Override
+    public List<Move> getLastXMoves(int count) {
+        int start = Math.max(0, history.size() - count);
+        List<Move> subList = history.subList(start, history.size());
+        return List.copyOf(subList);
+    }
 }

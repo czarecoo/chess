@@ -5,6 +5,7 @@ import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
 import org.czareg.piece.King;
 import org.czareg.piece.Knight;
+import org.czareg.piece.Piece;
 import org.czareg.position.Position;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +13,13 @@ import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
 import static org.czareg.game.MoveType.*;
 import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ClassicStateValidatorTest extends BaseTests {
+class StateValidationTest extends BaseTests {
 
     @Test
-    void givenBlackKingSurroundedByBlackKnightsInTheCorner_whenWhiteKnightAttacks_thenItsCheckMate() {
+    void givenBlackCheckmated_whenTryingToMoveAfter_thenValidationThrowsCheckMate() {
         board.placePiece(pf.create(1, "H"), new King(WHITE));
         board.placePiece(pf.create(8, "A"), new King(BLACK));
         board.placePiece(pf.create(7, "A"), new Knight(BLACK));
@@ -27,10 +29,11 @@ class ClassicStateValidatorTest extends BaseTests {
         Knight whiteKnight = new Knight(WHITE);
         board.placePiece(knightStartingPosition, whiteKnight);
         Position knightEndPosition = pf.create(7, "C");
-        assertDoesNotThrow(() -> stateValidator.validate(context));
-        moveMaker.make(context, new Move(whiteKnight, knightStartingPosition, knightEndPosition, new Metadata(MOVE)));
+        Move checkMatingMove = new Move(whiteKnight, knightStartingPosition, knightEndPosition, new Metadata(MOVE));
+        moveMaker.make(context, checkMatingMove);
 
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> stateValidator.validate(context));
+        Move afterCheckMate = new Move(board.getPiece(pf.create(7, "A")), pf.create(7, "A"), pf.create(5, "B"), new Metadata(MOVE));
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, afterCheckMate));
         assertEquals("Checkmate", e.getMessage());
     }
 
@@ -46,8 +49,34 @@ class ClassicStateValidatorTest extends BaseTests {
         moveMaker.make(context, new Move(board.getPiece(pf.create(7, "A")), pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
         moveMaker.make(context, new Move(board.getPiece(pf.create(3, "F")), pf.create(3, "F"), pf.create(7, "F"), new Metadata(CAPTURE).put(CAPTURE_PIECE, board.getPiece(pf.create(7, "F")))));
 
-        Move move = new Move(board.getPiece(pf.create(6, "A")), pf.create(6, "A"), pf.create(5, "A"), new Metadata(MOVE));
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, move));
+        Move afterCheckMate = new Move(board.getPiece(pf.create(6, "A")), pf.create(6, "A"), pf.create(5, "A"), new Metadata(MOVE));
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, afterCheckMate));
         assertEquals("Checkmate", e.getMessage());
+    }
+
+    @Test
+    void givenBothPlayersMoveOnlyKnights_whenOver100TotalMovesAreDone_thenDrawByInsufficientMaterial() {
+        PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
+        piecePlacer.place(board);
+        Position b1 = pf.create(1, "B");
+        Position a3 = pf.create(3, "A");
+        Position b8 = pf.create(8, "B");
+        Position a6 = pf.create(6, "A");
+        Piece whiteKnight = board.getPiece(b1);
+        Move whiteKnightMoveForward = new Move(whiteKnight, b1, a3, new Metadata(MOVE));
+        Move whiteKnightMoveBackward = new Move(whiteKnight, a3, b1, new Metadata(MOVE));
+        Piece blackKnight = board.getPiece(b8);
+        Move blackKnightMoveForward = new Move(blackKnight, b8, a6, new Metadata(MOVE));
+        Move blackKnightMoveBackward = new Move(blackKnight, a6, b8, new Metadata(MOVE));
+        for (int i = 0; i < 25; i++) {
+            moveMaker.make(context, whiteKnightMoveForward);
+            moveMaker.make(context, blackKnightMoveForward);
+            moveMaker.make(context, whiteKnightMoveBackward);
+            moveMaker.make(context, blackKnightMoveBackward);
+        }
+
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, whiteKnightMoveForward));
+
+        assertEquals("Drawn by 50 move rule.", e.getMessage());
     }
 }

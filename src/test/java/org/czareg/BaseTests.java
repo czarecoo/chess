@@ -1,7 +1,10 @@
 package org.czareg;
 
 import org.czareg.board.Board;
-import org.czareg.game.*;
+import org.czareg.game.ClassicContext;
+import org.czareg.game.Context;
+import org.czareg.game.History;
+import org.czareg.game.MoveMaker;
 import org.czareg.move.MoveGenerator;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
 import org.czareg.position.PositionFactory;
@@ -16,7 +19,6 @@ public abstract class BaseTests {
     protected MoveMaker moveMaker;
     protected History history;
     protected PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
-    protected StateValidator stateValidator;
 
     @BeforeEach
     protected void init() {
@@ -27,6 +29,5 @@ public abstract class BaseTests {
         moveMaker = context.getMoveMaker();
         history = context.getHistory();
         pieceMoveGeneratorFactory = context.getPieceMoveGeneratorFactory();
-        stateValidator = context.getStateValidator();
     }
 }

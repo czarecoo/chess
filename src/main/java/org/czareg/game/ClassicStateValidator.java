@@ -3,7 +3,12 @@ package org.czareg.game;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
+import org.czareg.piece.Pawn;
 import org.czareg.piece.Player;
+
+import java.util.List;
+
+import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
 @Slf4j
 public class ClassicStateValidator implements StateValidator {
@@ -49,7 +54,21 @@ public class ClassicStateValidator implements StateValidator {
     }
 
     private boolean isDrawnBy50MoveRule(History history) {
-        return false;
+        if (history.movesCount() < 100) {
+            return false;
+        }
+
+        List<Move> last100Moves = history.getLastXMoves(100);
+
+        return last100Moves.stream()
+                .noneMatch(move -> {
+                    MoveType moveType = move.getMetadata().get(MOVE_TYPE, MoveType.class).orElseThrow();
+                    return move.getPiece() instanceof Pawn
+                            || moveType == MoveType.CAPTURE
+                            || moveType == MoveType.INITIAL_DOUBLE_FORWARD
+                            || moveType == MoveType.PROMOTION
+                            || moveType == MoveType.EN_PASSANT;
+                });
     }
 
     /*
