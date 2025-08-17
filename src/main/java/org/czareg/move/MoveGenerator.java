@@ -1,15 +1,11 @@
 package org.czareg.move;
 
 import org.czareg.game.Context;
-import org.czareg.game.Move;
-import org.czareg.piece.Player;
-import org.czareg.position.Position;
-
-import java.util.stream.Stream;
+import org.czareg.game.GeneratedMoves;
 
 public interface MoveGenerator {
 
-    Stream<Move> generate(Context context, Position currentPosition);
+    GeneratedMoves generateLegal(Context context);
 
-    Stream<Move> generate(Context context, Player attacker);
+    GeneratedMoves generatePseudoLegal(Context context);
 }

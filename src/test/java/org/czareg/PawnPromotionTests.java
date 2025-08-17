@@ -35,9 +35,7 @@ class PawnPromotionTests extends BaseTests {
                 .orElseThrow();
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, promotionMove));
-        String message = e.getMessage();
-        assertNotNull(message);
-        assertTrue(message.contains("does not match any generated legal moves"));
+        assertEquals("Move is not legal Move(piece=Pawn(player=WHITE), start=Position(rank=7, file=D), end=Position(rank=8, file=D), metadata=Metadata(data={MOVE_TYPE=PROMOTION}))", e.getMessage());
     }
 
     @Test

@@ -6,7 +6,7 @@ import org.czareg.piece.Player;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public interface Board extends Duplicatable<Board> {
 
@@ -22,5 +22,11 @@ public interface Board extends Duplicatable<Board> {
 
     Piece removePiece(Position position);
 
-    Stream<PiecePosition> getAllPiecePositions(Player player);
+    List<PiecePosition> getAllPiecePositions();
+
+    default List<PiecePosition> getAllPiecePositions(Player player) {
+        return getAllPiecePositions().stream()
+                .filter(piecePosition -> piecePosition.piece().getPlayer() == player)
+                .toList();
+    }
 }

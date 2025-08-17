@@ -5,10 +5,7 @@ import lombok.Value;
 import lombok.With;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicBoard;
-import org.czareg.move.ClassicMoveExecutor;
-import org.czareg.move.ClassicMoveGenerator;
-import org.czareg.move.MoveExecutor;
-import org.czareg.move.MoveGenerator;
+import org.czareg.move.*;
 import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
 
@@ -26,20 +23,20 @@ public class ClassicContext implements Context {
     PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
     MoveLegalityValidator moveLegalityValidator;
     ThreatAnalyzer threatAnalyzer;
-    StateAnalyzer stateAnalyzer;
+    StateValidator stateValidator;
 
     public ClassicContext() {
         this(
                 new ClassicBoard(8, 8),
                 new ClassicHistory(),
                 new ClassicMoveMaker(),
-                new ClassicMoveGenerator(),
+                new ClassicMoveGenerator(new CachingLegalMoveGenerator(new LegalMoveGenerator(new PseudoLegalMoveGenerator(), new ClassicOnlyValidKingMoveFilter())), new PseudoLegalMoveGenerator()),
                 new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),
-                new ClassicMoveLegalityValidator(new KingMoveValidator()),
+                new ClassicMoveLegalityValidator(),
                 new ClassicThreatAnalyzer(),
-                new ClassicStateAnalyzer()
+                new ClassicStateValidator()
         );
     }
 
@@ -55,7 +52,7 @@ public class ClassicContext implements Context {
                 pieceMoveGeneratorFactory,
                 moveLegalityValidator,
                 threatAnalyzer,
-                stateAnalyzer
+                stateValidator
         );
     }
 }

@@ -163,7 +163,7 @@ class KingCastlingTests extends BaseTests {
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, moves.getFirst()));
 
-        assertEquals("King would be in check after moving to Position(rank=1, file=C) that is under attack by BLACK.", e.getMessage());
+        assertEquals("Move is not legal Move(piece=King(player=WHITE), start=Position(rank=1, file=E), end=Position(rank=1, file=C), metadata=Metadata(data={MOVE_TYPE=CASTLING, CASTLING_ROOK_START_POSITION=Position(rank=1, file=A), CASTLING_ROOK_END_POSITION=Position(rank=1, file=D)}))", e.getMessage());
     }
 
     @Test
@@ -184,6 +184,6 @@ class KingCastlingTests extends BaseTests {
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, moves.getFirst()));
 
-        assertEquals("King would pass through Position(rank=1, file=D) that is under attack by BLACK.", e.getMessage());
+        assertEquals("Move is not legal Move(piece=King(player=WHITE), start=Position(rank=1, file=E), end=Position(rank=1, file=C), metadata=Metadata(data={MOVE_TYPE=CASTLING, CASTLING_ROOK_START_POSITION=Position(rank=1, file=A), CASTLING_ROOK_END_POSITION=Position(rank=1, file=D)}))", e.getMessage());
     }
 }

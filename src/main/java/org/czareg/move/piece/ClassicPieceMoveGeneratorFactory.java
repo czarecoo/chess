@@ -17,7 +17,6 @@ import org.czareg.piece.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFactory {
 
@@ -33,8 +32,8 @@ public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFacto
         moveGenerators.put(King.class, createKingMoveGenerators());
     }
 
-    public Stream<PieceMoveGenerator> getPieceMoveGenerators(Piece piece) {
-        return moveGenerators.getOrDefault(piece.getClass(), List.of()).stream();
+    public List<PieceMoveGenerator> getPieceMoveGenerators(Piece piece) {
+        return moveGenerators.getOrDefault(piece.getClass(), List.of());
     }
 
     private List<PieceMoveGenerator> createPawnMoveGenerators() {

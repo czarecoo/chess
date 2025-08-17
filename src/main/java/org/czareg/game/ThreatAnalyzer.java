@@ -7,9 +7,7 @@ public interface ThreatAnalyzer {
 
     boolean isUnderAttack(Context context, Position position, Player player);
 
-    boolean isInCheck(Context context, Player player);
+    boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player);
 
-    default boolean isNotInCheck(Context context, Player player) {
-        return !isInCheck(context, player);
-    }
+    boolean isInCheck(Context context, Player player);
 }

@@ -1,19 +1,21 @@
 package org.czareg.board;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.piece.Piece;
-import org.czareg.piece.Player;
 import org.czareg.position.Index;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class ClassicBoard implements Board {
 
     private final Piece[][] board;
@@ -65,18 +67,18 @@ public class ClassicBoard implements Board {
     }
 
     @Override
-    public Stream<PiecePosition> getAllPiecePositions(Player player) {
-        Stream.Builder<PiecePosition> stream = Stream.builder();
+    public List<PiecePosition> getAllPiecePositions() {
+        List<PiecePosition> piecePositions = new ArrayList<>();
         for (int rankIndex = 0; rankIndex < board.length; rankIndex++) {
             for (int fileIndex = 0; fileIndex < board[rankIndex].length; fileIndex++) {
                 Piece piece = board[rankIndex][fileIndex];
-                if (piece != null && piece.getPlayer() == player) {
+                if (piece != null) {
                     Position position = positionFactory.create(rankIndex, fileIndex);
-                    stream.accept(new PiecePosition(piece, position));
+                    piecePositions.add(new PiecePosition(piece, position));
                 }
             }
         }
-        return stream.build();
+        return piecePositions;
     }
 
     @Override

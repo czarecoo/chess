@@ -19,24 +19,42 @@ public class ClassicThreatAnalyzer implements ThreatAnalyzer {
 
     @Override
     public boolean isUnderAttack(Context context, Position position, Player player) {
-        MoveGenerator moveGenerator = context.getMoveGenerator();
         Player attacker = player.getOpponent();
-        List<Move> attackMoves = moveGenerator.generate(context, attacker)
-                .filter(move -> move.getEnd().equals(position))
-                .filter(move -> move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE))
-                .filter(move -> move.getMetadata().get(CAPTURE_PIECE, Piece.class)
-                        .filter(piece -> piece.getPlayer() == player)
-                        .isPresent()
-                ).toList();
-        log.debug("Generated {} moves that attack {} where defender {} and attacker {}", attackMoves.size(), position, player, attacker);
-        return !attackMoves.isEmpty();
+        MoveGenerator moveGenerator = context.getMoveGenerator();
+        return moveGenerator.generateLegal(context)
+                .getMoves(attacker)
+                .stream()
+                .anyMatch(move ->
+                        move.getEnd().equals(position) &&
+                                move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE) &&
+                                move.getMetadata().get(CAPTURE_PIECE, Piece.class)
+                                        .map(piece -> piece.getPlayer() == player)
+                                        .orElse(false)
+                );
+    }
+
+    @Override
+    public boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
+        Player attacker = player.getOpponent();
+        return generatedMoves
+                .getMoves(attacker)
+                .stream()
+                .anyMatch(move ->
+                        move.getEnd().equals(position) &&
+                                move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE) &&
+                                move.getMetadata().get(CAPTURE_PIECE, Piece.class)
+                                        .map(piece -> piece.getPlayer() == player)
+                                        .orElse(false)
+                );
     }
 
     @Override
     public boolean isInCheck(Context context, Player player) {
         Board board = context.getBoard();
-        List<Position> kingPositions = board.getAllPiecePositions(player)
+        List<Position> kingPositions = board.getAllPiecePositions()
+                .stream()
                 .filter(piecePosition -> piecePosition.piece() instanceof King)
+                .filter(piecePosition -> piecePosition.piece().getPlayer() == player)
                 .map(PiecePosition::position)
                 .toList();
         if (kingPositions.isEmpty()) {

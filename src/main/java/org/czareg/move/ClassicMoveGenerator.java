@@ -1,39 +1,30 @@
 package org.czareg.move;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.czareg.board.Board;
+import lombok.extern.slf4j.Slf4j;
 import org.czareg.game.Context;
-import org.czareg.game.Move;
-import org.czareg.move.piece.PieceMoveGeneratorFactory;
-import org.czareg.piece.Piece;
-import org.czareg.piece.Player;
-import org.czareg.position.Position;
+import org.czareg.game.GeneratedMoves;
 
-import java.util.stream.Stream;
-
-@Getter
+@Slf4j
 @RequiredArgsConstructor
 public class ClassicMoveGenerator implements MoveGenerator {
 
+    private final CachingLegalMoveGenerator cachingLegalMoveGenerator;
+    private final PseudoLegalMoveGenerator pseudoLegalMoveGenerator;
+
     @Override
-    public Stream<Move> generate(Context context, Position currentPosition) {
-        Board board = context.getBoard();
-        if (!board.hasPiece(currentPosition)) {
-            return Stream.empty();
-        }
-        Piece piece = board.getPiece(currentPosition);
-        PieceMoveGeneratorFactory pieceMoveGeneratorFactory = context.getPieceMoveGeneratorFactory();
-        return pieceMoveGeneratorFactory.getPieceMoveGenerators(piece)
-                .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(context, piece, currentPosition));
+    public GeneratedMoves generateLegal(Context context) {
+        log.info("Start generate legal moves");
+        GeneratedMoves generatedMoves = cachingLegalMoveGenerator.generate(context);
+        log.info("End generate legal moves");
+        return generatedMoves;
     }
 
     @Override
-    public Stream<Move> generate(Context context, Player attacker) {
-        Board board = context.getBoard();
-        PieceMoveGeneratorFactory pieceMoveGeneratorFactory = context.getPieceMoveGeneratorFactory();
-        return board.getAllPiecePositions(attacker)
-                .flatMap(piecePosition -> pieceMoveGeneratorFactory.getPieceMoveGenerators(piecePosition.piece())
-                        .flatMap(pieceMoveGenerator -> pieceMoveGenerator.generate(context, piecePosition.piece(), piecePosition.position())));
+    public GeneratedMoves generatePseudoLegal(Context context) {
+        log.info("Start generate pseudo legal moves");
+        GeneratedMoves generatedMoves = pseudoLegalMoveGenerator.generate(context);
+        log.info("End generate psuedo legal moves");
+        return generatedMoves;
     }
 }

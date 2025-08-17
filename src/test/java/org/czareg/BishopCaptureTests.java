@@ -145,14 +145,14 @@ class BishopCaptureTests extends BaseTests {
         Position position = pf.create(6, "A");
         board.placePiece(position, piece);
         board.placePiece(pf.create(5, "B"), new Pawn(BLACK));
-        assertEquals(1, board.getAllPiecePositions(WHITE).count());
-        assertEquals(1, board.getAllPiecePositions(BLACK).count());
+        assertEquals(1, board.getAllPiecePositions(WHITE).size());
+        assertEquals(1, board.getAllPiecePositions(BLACK).size());
 
         Optional<Move> bishopCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
         assertTrue(bishopCaptureDownAndRight.isPresent());
         moveMaker.make(context, bishopCaptureDownAndRight.get());
 
-        assertEquals(1, board.getAllPiecePositions(WHITE).count());
-        assertEquals(0, board.getAllPiecePositions(BLACK).count());
+        assertEquals(1, board.getAllPiecePositions(WHITE).size());
+        assertEquals(0, board.getAllPiecePositions(BLACK).size());
     }
 }
