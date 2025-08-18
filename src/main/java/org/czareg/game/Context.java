@@ -26,4 +26,6 @@ public interface Context extends Duplicatable<Context> {
     ThreatAnalyzer getThreatAnalyzer();
 
     StateValidator getStateValidator();
+
+    BoardValidator getBoardValidator();
 }

@@ -24,6 +24,7 @@ public class ClassicContext implements Context {
     MoveLegalityValidator moveLegalityValidator;
     ThreatAnalyzer threatAnalyzer;
     StateValidator stateValidator;
+    BoardValidator boardValidator;
 
     public ClassicContext() {
         this(
@@ -36,7 +37,8 @@ public class ClassicContext implements Context {
                 new ClassicPieceMoveGeneratorFactory(),
                 new ClassicMoveLegalityValidator(),
                 new ClassicThreatAnalyzer(),
-                new ClassicStateValidator()
+                new ClassicStateValidator(),
+                new ClassicBoardValidator()
         );
     }
 
@@ -52,7 +54,8 @@ public class ClassicContext implements Context {
                 pieceMoveGeneratorFactory,
                 moveLegalityValidator,
                 threatAnalyzer,
-                stateValidator
+                stateValidator,
+                boardValidator
         );
     }
 }

@@ -3,7 +3,6 @@ package org.czareg.game;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.PiecePosition;
-import org.czareg.move.MoveGenerator;
 import org.czareg.piece.King;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -16,37 +15,6 @@ import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
 @Slf4j
 public class ClassicThreatAnalyzer implements ThreatAnalyzer {
-
-    @Override
-    public boolean isUnderAttack(Context context, Position position, Player player) {
-        Player attacker = player.getOpponent();
-        MoveGenerator moveGenerator = context.getMoveGenerator();
-        return moveGenerator.generateLegal(context)
-                .getMoves(attacker)
-                .stream()
-                .anyMatch(move ->
-                        move.getEnd().equals(position) &&
-                                move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE) &&
-                                move.getMetadata().get(CAPTURE_PIECE, Piece.class)
-                                        .map(piece -> piece.getPlayer() == player)
-                                        .orElse(false)
-                );
-    }
-
-    @Override
-    public boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
-        Player attacker = player.getOpponent();
-        return generatedMoves
-                .getMoves(attacker)
-                .stream()
-                .anyMatch(move ->
-                        move.getEnd().equals(position) &&
-                                move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE) &&
-                                move.getMetadata().get(CAPTURE_PIECE, Piece.class)
-                                        .map(piece -> piece.getPlayer() == player)
-                                        .orElse(false)
-                );
-    }
 
     @Override
     public boolean isInCheck(Context context, Player player) {
@@ -66,5 +34,32 @@ public class ClassicThreatAnalyzer implements ThreatAnalyzer {
         }
         Position kingPosition = kingPositions.getFirst();
         return isUnderAttack(context, kingPosition, player);
+    }
+
+    @Override
+    public boolean isUnderAttack(Context context, Position position, Player player) {
+        GeneratedMoves generatedMoves = context.getMoveGenerator().generateLegal(context);
+        return checkIfUnderAttack(generatedMoves, position, player);
+    }
+
+    @Override
+    public boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
+        return checkIfUnderAttack(generatedMoves, position, player);
+    }
+
+    private boolean checkIfUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
+        Player attacker = player.getOpponent();
+        return generatedMoves
+                .getMoves(attacker)
+                .stream()
+                .anyMatch(move -> isCapture(position, player, move));
+    }
+
+    private boolean isCapture(Position position, Player player, Move move) {
+        return move.getEnd().equals(position) &&
+                move.getMetadata().isExactly(MOVE_TYPE, MoveType.CAPTURE) &&
+                move.getMetadata().get(CAPTURE_PIECE, Piece.class)
+                        .map(piece -> piece.getPlayer() == player)
+                        .orElse(false);
     }
 }

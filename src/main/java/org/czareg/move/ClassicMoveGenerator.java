@@ -24,7 +24,7 @@ public class ClassicMoveGenerator implements MoveGenerator {
     public GeneratedMoves generatePseudoLegal(Context context) {
         log.info("Start generate pseudo legal moves");
         GeneratedMoves generatedMoves = pseudoLegalMoveGenerator.generate(context);
-        log.info("End generate psuedo legal moves");
+        log.info("End generate pseudo legal moves");
         return generatedMoves;
     }
 }

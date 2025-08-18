@@ -11,6 +11,10 @@ public class ClassicMoveMaker implements MoveMaker {
 
     @Override
     public void make(Context context, Move move) {
+//        BoardValidator boardValidator = context.getBoardValidator();
+//        Board board = context.getBoard();
+//        boardValidator.validate(board);
+
         StateValidator stateValidator = context.getStateValidator();
         stateValidator.validate(context);
 

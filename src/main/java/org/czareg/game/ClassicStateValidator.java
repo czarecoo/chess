@@ -15,9 +15,7 @@ public class ClassicStateValidator implements StateValidator {
 
     @Override
     public void validate(Context context) {
-        if (isEmptyBoard(context)) {
-            throw new IllegalStateException("Board is empty.");
-        } else if (isInsufficientMaterial(context)) {
+        if (isInsufficientMaterial(context)) {
             throw new IllegalStateException("Insufficient material.");
         } else if (isDrawnBy50MoveRule(context.getHistory())) {
             throw new IllegalStateException("Drawn by 50 move rule.");
@@ -33,10 +31,6 @@ public class ClassicStateValidator implements StateValidator {
                 throw new IllegalStateException("Stalemate");
             }
         }
-    }
-
-    private boolean isEmptyBoard(Context context) {
-        return context.getBoard().getAllPiecePositions().isEmpty();
     }
 
     private boolean hasLegalMove(Context context, Player currentPlayer) {
