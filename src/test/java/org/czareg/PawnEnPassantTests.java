@@ -31,25 +31,25 @@ class PawnEnPassantTests extends BaseTests {
         Pawn whitePawn = new Pawn(WHITE);
         Pawn blackPawnToBeCaptured = new Pawn(BLACK);
         Pawn blackPawnIrrelevantForTest = new Pawn(BLACK);
-        board.placePiece(pf.create(2, "D"), whitePawn);
-        board.placePiece(pf.create(7, "E"), blackPawnToBeCaptured);
-        board.placePiece(pf.create(7, "A"), blackPawnIrrelevantForTest);
-        moveMaker.make(context, new Move(whitePawn, pf.create(2, "D"), pf.create(4, "D"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        moveMaker.make(context, new Move(blackPawnIrrelevantForTest, pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(whitePawn, pf.create(4, "D"), pf.create(5, "D"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(blackPawnToBeCaptured, pf.create(7, "E"), pf.create(5, "E"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        Move enPassantMove = pieceMoveGenerator.generate(context, whitePawn, pf.create(5, "D"), new IndexChange(1, 1)).orElseThrow();
+        board.placePiece(pf.create("D", 2), whitePawn);
+        board.placePiece(pf.create("E", 7), blackPawnToBeCaptured);
+        board.placePiece(pf.create("A", 7), blackPawnIrrelevantForTest);
+        moveMaker.make(context, new Move(whitePawn, pf.create("D", 2), pf.create("D", 4), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        moveMaker.make(context, new Move(blackPawnIrrelevantForTest, pf.create("A", 7), pf.create("A", 6), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(whitePawn, pf.create("D", 4), pf.create("D", 5), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(blackPawnToBeCaptured, pf.create("E", 7), pf.create("E", 5), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        Move enPassantMove = pieceMoveGenerator.generate(context, whitePawn, pf.create("D", 5), new IndexChange(1, 1)).orElseThrow();
 
         moveMaker.make(context, enPassantMove);
 
-        assertFalse(board.hasPiece(pf.create(5, "E")));
-        assertEquals(whitePawn, board.getPiece(pf.create(6, "E")));
+        assertFalse(board.hasPiece(pf.create("E", 5)));
+        assertEquals(whitePawn, board.getPiece(pf.create("E", 6)));
         Move lastMove = history.getLastPlayedMove().orElseThrow();
         assertEquals(enPassantMove, lastMove);
         Metadata expectedMetadata = new Metadata(EN_PASSANT)
                 .put(CAPTURE_PIECE, blackPawnToBeCaptured)
-                .put(EN_PASSANT_CAPTURE_PIECE_POSITION, pf.create(5, "E"));
-        Move expectedMove = new Move(whitePawn, pf.create(5, "D"), pf.create(6, "E"), expectedMetadata);
+                .put(EN_PASSANT_CAPTURE_PIECE_POSITION, pf.create("E", 5));
+        Move expectedMove = new Move(whitePawn, pf.create("D", 5), pf.create("E", 6), expectedMetadata);
         assertEquals(expectedMove, enPassantMove);
     }
 }

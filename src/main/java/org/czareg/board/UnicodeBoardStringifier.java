@@ -37,7 +37,7 @@ public class UnicodeBoardStringifier implements BoardStringifier {
         StringBuilder boardStringBuilder = new StringBuilder();
         for (int rankIndex = maxRank - 1; rankIndex >= 0; rankIndex--) {
             for (int fileIndex = 0; fileIndex < maxFile; fileIndex++) {
-                Position position = positionFactory.create(rankIndex, fileIndex);
+                Position position = positionFactory.create(fileIndex, rankIndex);
                 if (board.hasPiece(position)) {
                     Piece piece = board.getPiece(position);
                     Player player = piece.getPlayer();

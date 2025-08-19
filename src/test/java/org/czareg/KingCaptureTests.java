@@ -34,7 +34,7 @@ class KingCaptureTests extends BaseTests {
     @Test
     void givenWhiteKingAloneOnTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
 
         Set<Move> moves = pieceMoveGenerator
@@ -47,16 +47,16 @@ class KingCaptureTests extends BaseTests {
     @Test
     void givenWhiteKingSurroundedByWhitePawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 5), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -68,16 +68,16 @@ class KingCaptureTests extends BaseTests {
     @Test
     void givenWhiteKingSurroundedByBlackPawns_whenGeneratingMoves_thenSomeMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 5), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -85,14 +85,14 @@ class KingCaptureTests extends BaseTests {
 
         assertEquals(8, moves.size());
         assertEquals(Set.of(
-                pf.create(3, "C"),
-                pf.create(3, "D"),
-                pf.create(3, "E"),
-                pf.create(4, "C"),
-                pf.create(4, "E"),
-                pf.create(5, "C"),
-                pf.create(5, "D"),
-                pf.create(5, "E")
+                pf.create("C", 3),
+                pf.create("D", 3),
+                pf.create("E", 3),
+                pf.create("C", 4),
+                pf.create("E", 4),
+                pf.create("C", 5),
+                pf.create("D", 5),
+                pf.create("E", 5)
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
         assertEquals(8, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(CAPTURE_PIECE, Piece.class))
@@ -108,16 +108,16 @@ class KingCaptureTests extends BaseTests {
     @Test
     void givenWhiteKingAndBlackPawnsOnTheEdgesOfTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(1, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "H"), new Pawn(BLACK));
-        board.placePiece(pf.create(7, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "G"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 8), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 7), new Pawn(BLACK));
+        board.placePiece(pf.create("G", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 8), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -129,31 +129,31 @@ class KingCaptureTests extends BaseTests {
     @Test
     void givenWhiteKingAttackingThreeKnightsProtectedByAQueen_whenWhiteKingTriesToCaptureAnyOfTheKnights_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(5, "C"), new Knight(BLACK));
-        board.placePiece(pf.create(5, "D"), new Knight(BLACK));
-        board.placePiece(pf.create(5, "E"), new Knight(BLACK));
-        board.placePiece(pf.create(6, "D"), new Queen(BLACK));
+        board.placePiece(pf.create("C", 5), new Knight(BLACK));
+        board.placePiece(pf.create("D", 5), new Knight(BLACK));
+        board.placePiece(pf.create("E", 5), new Knight(BLACK));
+        board.placePiece(pf.create("D", 6), new Queen(BLACK));
 
         Optional<Move> kingCaptureUpAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 1));
         assertTrue(kingCaptureUpAndRight.isPresent());
-        Optional<Move> kingCaptureUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
+        Optional<Move> kingCaptureUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
         assertTrue(kingCaptureUpAndLeft.isPresent());
-        Optional<Move> kingCaptureUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 0));
+        Optional<Move> kingCaptureUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(0, 1));
         assertTrue(kingCaptureUp.isPresent());
     }
 
     @Test
     void givenWhiteKingAndBlackPawn_whenWhiteKingCapturesBlackPawn_thenBlackPawnIsNotOnTheBoard() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(6, "A");
+        Position position = pf.create("A", 6);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(5, "B"), new Pawn(BLACK));
+        board.placePiece(pf.create("B", 5), new Pawn(BLACK));
         assertEquals(1, board.getAllPiecePositions(WHITE).size());
         assertEquals(1, board.getAllPiecePositions(BLACK).size());
 
-        Optional<Move> kingCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
+        Optional<Move> kingCaptureDownAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
         assertTrue(kingCaptureDownAndRight.isPresent());
         moveMaker.make(context, kingCaptureDownAndRight.get());
 

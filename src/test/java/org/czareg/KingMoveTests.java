@@ -34,7 +34,7 @@ class KingMoveTests extends BaseTests {
     @Test
     void givenWhiteKingAloneOnTheBoard_whenGeneratingMoves_thenManyMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
 
         Set<Move> moves = pieceMoveGenerator
@@ -53,16 +53,16 @@ class KingMoveTests extends BaseTests {
     @Test
     void givenWhiteKingSurroundedByWhitePawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 5), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -74,16 +74,16 @@ class KingMoveTests extends BaseTests {
     @Test
     void givenWhiteKingSurroundedByBlackPawns_whenGeneratingMoves_thenManyMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position Position = pf.create(4, "D");
+        Position Position = pf.create("D", 4);
         board.placePiece(Position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 5), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, Position)
@@ -95,16 +95,16 @@ class KingMoveTests extends BaseTests {
     @Test
     void givenWhiteKingAndManyPawnsAtTheEdgeOfTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(1, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "H"), new Pawn(BLACK));
-        board.placePiece(pf.create(7, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "G"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 8), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 7), new Pawn(BLACK));
+        board.placePiece(pf.create("G", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 8), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -122,15 +122,15 @@ class KingMoveTests extends BaseTests {
     @Test
     void givenWhiteKingAndBlackPawn_whenWhiteKingMovesIntoAttackedPosition_thenNoMovesAreGenerated() {
         Piece piece = new King(WHITE);
-        Position position = pf.create(2, "E");
+        Position position = pf.create("E", 2);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 4), new Pawn(BLACK));
 
         Optional<Move> kingMoveUpAndRight = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 1));
         assertTrue(kingMoveUpAndRight.isPresent());
-        Optional<Move> kingMoveUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, -1));
+        Optional<Move> kingMoveUpAndLeft = pieceMoveGenerator.generate(context, piece, position, new IndexChange(-1, 1));
         assertTrue(kingMoveUpAndLeft.isPresent());
-        Optional<Move> kingMoveUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(1, 0));
+        Optional<Move> kingMoveUp = pieceMoveGenerator.generate(context, piece, position, new IndexChange(0, 1));
         assertTrue(kingMoveUp.isPresent());
     }
 }

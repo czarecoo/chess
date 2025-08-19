@@ -20,19 +20,19 @@ class StateValidationTest extends BaseTests {
 
     @Test
     void givenBlackCheckmated_whenTryingToMoveAfter_thenValidationThrowsCheckMate() {
-        board.placePiece(pf.create(1, "H"), new King(WHITE));
-        board.placePiece(pf.create(8, "A"), new King(BLACK));
-        board.placePiece(pf.create(7, "A"), new Knight(BLACK));
-        board.placePiece(pf.create(7, "B"), new Knight(BLACK));
-        board.placePiece(pf.create(8, "B"), new Knight(BLACK));
-        Position knightStartingPosition = pf.create(5, "D");
+        board.placePiece(pf.create("H", 1), new King(WHITE));
+        board.placePiece(pf.create("A", 8), new King(BLACK));
+        board.placePiece(pf.create("A", 7), new Knight(BLACK));
+        board.placePiece(pf.create("B", 7), new Knight(BLACK));
+        board.placePiece(pf.create("B", 8), new Knight(BLACK));
+        Position knightStartingPosition = pf.create("D", 5);
         Knight whiteKnight = new Knight(WHITE);
         board.placePiece(knightStartingPosition, whiteKnight);
-        Position knightEndPosition = pf.create(7, "C");
+        Position knightEndPosition = pf.create("C", 7);
         Move checkMatingMove = new Move(whiteKnight, knightStartingPosition, knightEndPosition, new Metadata(MOVE));
         moveMaker.make(context, checkMatingMove);
 
-        Move afterCheckMate = new Move(board.getPiece(pf.create(7, "A")), pf.create(7, "A"), pf.create(5, "B"), new Metadata(MOVE));
+        Move afterCheckMate = new Move(board.getPiece(pf.create("A", 7)), pf.create("A", 7), pf.create("B", 5), new Metadata(MOVE));
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, afterCheckMate));
         assertEquals("Checkmate", e.getMessage());
     }
@@ -41,15 +41,15 @@ class StateValidationTest extends BaseTests {
     void givenQuickScholarsMateGame_whenTheLastMoveIsMade_thenItsFinallyCheckMate() {
         PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
         piecePlacer.place(board);
-        moveMaker.make(context, new Move(board.getPiece(pf.create(2, "E")), pf.create(2, "E"), pf.create(4, "E"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(7, "H")), pf.create(7, "H"), pf.create(6, "H"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(1, "F")), pf.create(1, "F"), pf.create(4, "C"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(7, "B")), pf.create(7, "B"), pf.create(6, "B"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(1, "D")), pf.create(1, "D"), pf.create(3, "F"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(7, "A")), pf.create(7, "A"), pf.create(6, "A"), new Metadata(MOVE)));
-        moveMaker.make(context, new Move(board.getPiece(pf.create(3, "F")), pf.create(3, "F"), pf.create(7, "F"), new Metadata(CAPTURE).put(CAPTURE_PIECE, board.getPiece(pf.create(7, "F")))));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("E", 2)), pf.create("E", 2), pf.create("E", 4), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("H", 7)), pf.create("H", 7), pf.create("H", 6), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("F", 1)), pf.create("F", 1), pf.create("C", 4), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("B", 7)), pf.create("B", 7), pf.create("B", 6), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("D", 1)), pf.create("D", 1), pf.create("F", 3), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("A", 7)), pf.create("A", 7), pf.create("A", 6), new Metadata(MOVE)));
+        moveMaker.make(context, new Move(board.getPiece(pf.create("F", 3)), pf.create("F", 3), pf.create("F", 7), new Metadata(CAPTURE).put(CAPTURE_PIECE, board.getPiece(pf.create("F", 7)))));
 
-        Move afterCheckMate = new Move(board.getPiece(pf.create(6, "A")), pf.create(6, "A"), pf.create(5, "A"), new Metadata(MOVE));
+        Move afterCheckMate = new Move(board.getPiece(pf.create("A", 6)), pf.create("A", 6), pf.create("A", 5), new Metadata(MOVE));
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, afterCheckMate));
         assertEquals("Checkmate", e.getMessage());
     }
@@ -58,10 +58,10 @@ class StateValidationTest extends BaseTests {
     void givenBothPlayersMoveOnlyKnights_whenOver100TotalMovesAreDone_thenDrawByInsufficientMaterial() {
         PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
         piecePlacer.place(board);
-        Position b1 = pf.create(1, "B");
-        Position a3 = pf.create(3, "A");
-        Position b8 = pf.create(8, "B");
-        Position a6 = pf.create(6, "A");
+        Position b1 = pf.create("B", 1);
+        Position a3 = pf.create("A", 3);
+        Position b8 = pf.create("B", 8);
+        Position a6 = pf.create("A", 6);
         Piece whiteKnight = board.getPiece(b1);
         Move whiteKnightMoveForward = new Move(whiteKnight, b1, a3, new Metadata(MOVE));
         Move whiteKnightMoveBackward = new Move(whiteKnight, a3, b1, new Metadata(MOVE));

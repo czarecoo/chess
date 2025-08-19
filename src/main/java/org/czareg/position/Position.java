@@ -8,6 +8,6 @@ import lombok.Value;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class Position {
 
-    int rank;
     String file;
+    int rank;
 }

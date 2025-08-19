@@ -35,7 +35,7 @@ class RookCaptureTests extends BaseTests {
     @Test
     void givenWhiteRookAloneOnTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new Rook(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
 
         Set<Move> moves = pieceMoveGenerator
@@ -48,16 +48,16 @@ class RookCaptureTests extends BaseTests {
     @Test
     void givenWhiteRookSurroundedByWhitePawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new Rook(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 5), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -69,16 +69,16 @@ class RookCaptureTests extends BaseTests {
     @Test
     void givenWhiteRookSurroundedByBlackPawns_whenGeneratingMoves_thenThereAreFourCaptureMoves() {
         Piece piece = new Rook(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 5), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -86,10 +86,10 @@ class RookCaptureTests extends BaseTests {
 
         assertEquals(4, moves.size());
         assertEquals(Set.of(
-                pf.create(3, "D"),
-                pf.create(5, "D"),
-                pf.create(4, "C"),
-                pf.create(4, "E")
+                pf.create("D", 3),
+                pf.create("D", 5),
+                pf.create("C", 4),
+                pf.create("E", 4)
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
         assertEquals(4, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(CAPTURE_PIECE, Piece.class))
@@ -105,16 +105,16 @@ class RookCaptureTests extends BaseTests {
     @Test
     void givenWhiteRookHasFourPossibleCaptures_whenGeneratingMoves_thenThereAreFourCaptureMoves() {
         Piece piece = new Rook(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(1, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "H"), new Pawn(BLACK));
-        board.placePiece(pf.create(7, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "G"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 8), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 7), new Pawn(BLACK));
+        board.placePiece(pf.create("G", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 8), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -122,10 +122,10 @@ class RookCaptureTests extends BaseTests {
 
         assertEquals(4, moves.size());
         assertEquals(Set.of(
-                pf.create(1, "D"),
-                pf.create(8, "D"),
-                pf.create(4, "A"),
-                pf.create(4, "H")
+                pf.create("D", 1),
+                pf.create("D", 8),
+                pf.create("A", 4),
+                pf.create("H", 4)
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
         assertEquals(4, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(CAPTURE_PIECE, Piece.class))

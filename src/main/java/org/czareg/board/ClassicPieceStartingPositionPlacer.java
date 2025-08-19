@@ -25,7 +25,7 @@ public class ClassicPieceStartingPositionPlacer implements PiecePlacer {
                 .forEach(
                         filePiece -> {
                             String file = filePiece.file();
-                            Position position = positionFactory.create(rank, file);
+                            Position position = positionFactory.create(file, rank);
                             Class<? extends Piece> pieceClass = filePiece.piece();
                             Piece piece = Piece.create(pieceClass, player);
                             board.placePiece(position, piece);

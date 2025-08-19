@@ -10,77 +10,77 @@ import java.util.stream.IntStream;
 @Getter
 public class PositionFactory {
 
-    private static final int MIN_RANK = 1;
-    private static final int MAX_RANK = 26;
     private static final int MIN_FILES = 1;
     private static final int MAX_FILES = 26;
+    private static final int MIN_RANK = 1;
+    private static final int MAX_RANK = 26;
 
-    int minRank;
     int minFile;
-    int maxRank;
+    int minRank;
     int maxFile;
-    private final List<Integer> allowedRankValues;
+    int maxRank;
     private final List<String> allowedFileValues;
+    private final List<Integer> allowedRankValues;
 
-    public PositionFactory(int maxRank, int maxFile) {
-        if (maxRank < MIN_RANK || maxRank > MAX_RANK) {
-            throw new IllegalArgumentException("Ranks has to be between <%d,%d>".formatted(MIN_RANK, MAX_RANK));
-        }
+    public PositionFactory(int maxFile, int maxRank) {
         if (maxFile < MIN_FILES || maxFile > MAX_FILES) {
             throw new IllegalArgumentException("Files has to be between <%d,%d>".formatted(MIN_FILES, MAX_FILES));
         }
-        this.minRank = MIN_RANK;
+        if (maxRank < MIN_RANK || maxRank > MAX_RANK) {
+            throw new IllegalArgumentException("Ranks has to be between <%d,%d>".formatted(MIN_RANK, MAX_RANK));
+        }
         this.minFile = MIN_FILES;
-        this.maxRank = maxRank;
+        this.minRank = MIN_RANK;
         this.maxFile = maxFile;
-        allowedRankValues = IntStream.rangeClosed(1, maxRank).boxed().toList();
+        this.maxRank = maxRank;
         allowedFileValues = IntStream.rangeClosed('A', 'Z').limit(maxFile).mapToObj(Character::toString).toList();
+        allowedRankValues = IntStream.rangeClosed(1, maxRank).boxed().toList();
     }
 
-    public Position create(int rank, String file) {
-        if (!allowedRankValues.contains(rank)) {
-            String message = "Illegal rank %s allowed values %s".formatted(rank, allowedRankValues);
-            throw new IllegalArgumentException(message);
-        }
+    public Position create(String file, int rank) {
         if (!allowedFileValues.contains(file)) {
             String message = "Illegal file %s allowed values %s".formatted(file, allowedRankValues);
             throw new IllegalArgumentException(message);
         }
-        return new Position(rank, file);
+        if (!allowedRankValues.contains(rank)) {
+            String message = "Illegal rank %s allowed values %s".formatted(rank, allowedRankValues);
+            throw new IllegalArgumentException(message);
+        }
+        return new Position(file, rank);
     }
 
-    public Position create(int rankIndex, int fileIndex) {
-        if (isRankIndexInvalid(rankIndex)) {
-            throw new IllegalArgumentException("Rank index out of bounds " + rankIndex);
-        }
+    public Position create(int fileIndex, int rankIndex) {
         if (isFileIndexInvalid(fileIndex)) {
             throw new IllegalArgumentException("File index out of bounds " + fileIndex);
         }
-        return new Position(allowedRankValues.get(rankIndex), allowedFileValues.get(fileIndex));
+        if (isRankIndexInvalid(rankIndex)) {
+            throw new IllegalArgumentException("Rank index out of bounds " + rankIndex);
+        }
+        return new Position(allowedFileValues.get(fileIndex), allowedRankValues.get(rankIndex));
     }
 
     public Index create(Position position) {
-        int rankIndex = position.getRank() - 1;
         int fileIndex = allowedFileValues.indexOf(position.getFile());
-        return new Index(rankIndex, fileIndex);
+        int rankIndex = position.getRank() - 1;
+        return new Index(fileIndex, rankIndex);
     }
 
     public Optional<Position> create(Index index, IndexChange indexChange) {
-        int changedRankIndex = index.getRank() + indexChange.getRankChange();
         int changedFileIndex = index.getFile() + indexChange.getFileChange();
-        if (isRankIndexInvalid(changedRankIndex) || isFileIndexInvalid(changedFileIndex)) {
+        int changedRankIndex = index.getRank() + indexChange.getRankChange();
+        if (isFileIndexInvalid(changedFileIndex) || isRankIndexInvalid(changedRankIndex)) {
             return Optional.empty();
         }
-        Position position = create(changedRankIndex, changedFileIndex);
+        Position position = create(changedFileIndex, changedRankIndex);
         return Optional.of(position);
     }
 
     public IndexChange create(Position currentPosition, Position endPosition) {
         Index currentIndex = create(currentPosition);
         Index endIndex = create(endPosition);
-        int rankChange = endIndex.getRank() - currentIndex.getRank();
         int fileChange = endIndex.getFile() - currentIndex.getFile();
-        return new IndexChange(rankChange, fileChange);
+        int rankChange = endIndex.getRank() - currentIndex.getRank();
+        return new IndexChange(fileChange, rankChange);
     }
 
     public List<Position> between(Index start, Index end) {
@@ -109,7 +109,7 @@ public class PositionFactory {
         int rank = startRank + rankStep;
 
         while (file != endFile || rank != endRank) {
-            between.add(create(rank, file));
+            between.add(create(file, rank));
             file += fileStep;
             rank += rankStep;
         }
@@ -117,11 +117,11 @@ public class PositionFactory {
         return between;
     }
 
-    private boolean isRankIndexInvalid(int rankIndex) {
-        return rankIndex < 0 || rankIndex >= allowedRankValues.size();
-    }
-
     private boolean isFileIndexInvalid(int fileIndex) {
         return fileIndex < 0 || fileIndex >= allowedFileValues.size();
+    }
+
+    private boolean isRankIndexInvalid(int rankIndex) {
+        return rankIndex < 0 || rankIndex >= allowedRankValues.size();
     }
 }

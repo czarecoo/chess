@@ -72,8 +72,8 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
         if (kingEndPositionIndexChange.getFileChange() > 0) {
             // O-O
             String lastFile = positionFactory.getAllowedFileValues().getLast();
-            rookStartPosition = positionFactory.create(currentRank, lastFile);
-            IndexChange rookEndPositionIndexChange = new IndexChange(0, 1);
+            rookStartPosition = positionFactory.create(lastFile, currentRank);
+            IndexChange rookEndPositionIndexChange = new IndexChange(1, 0);
             Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, rookEndPositionIndexChange);
             if (optionalRookEndPosition.isEmpty()) {
                 log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, rookEndPositionIndexChange);
@@ -83,8 +83,8 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
         } else {
             // 0-0-0
             String firstFile = positionFactory.getAllowedFileValues().getFirst();
-            rookStartPosition = positionFactory.create(currentRank, firstFile);
-            IndexChange rookEndPositionIndexChange = new IndexChange(0, -1);
+            rookStartPosition = positionFactory.create(firstFile, currentRank);
+            IndexChange rookEndPositionIndexChange = new IndexChange(-1, 0);
             Optional<Position> optionalRookEndPosition = positionFactory.create(kingCurrentPositionIndex, rookEndPositionIndexChange);
             if (optionalRookEndPosition.isEmpty()) {
                 log.debug("Rejecting move because rook end position is not valid on the board ({}, {}).", kingCurrentPositionIndex, rookEndPositionIndexChange);
@@ -121,8 +121,8 @@ public class KingCastlingMoveGenerator implements PieceMoveGenerator, StartingRa
 
     private List<IndexChange> getEndPositionIndexChanges() {
         return List.of(
-                new IndexChange(0, -2),
-                new IndexChange(0, 2)
+                new IndexChange(-2, 0),
+                new IndexChange(2, 0)
             );
     }
 

@@ -29,45 +29,45 @@ class PawnPromotionTests extends BaseTests {
     @Test
     void givenWhitePawnOnSeventhRank_whenMovingForwardToEighthWithoutChoosingPromotionPiece_thenExceptionIsThrown() {
         Pawn whitePawn = new Pawn(WHITE);
-        board.placePiece(pf.create(7, "D"), whitePawn);
+        board.placePiece(pf.create("D", 7), whitePawn);
         Move promotionMove = pieceMoveGenerator
-                .generate(context, whitePawn, pf.create(7, "D"), new IndexChange(1, 0))
+                .generate(context, whitePawn, pf.create("D", 7), new IndexChange(0, 1))
                 .orElseThrow();
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, promotionMove));
-        assertEquals("Move is not legal Move(piece=Pawn(player=WHITE), start=Position(rank=7, file=D), end=Position(rank=8, file=D), metadata=Metadata(data={MOVE_TYPE=PROMOTION}))", e.getMessage());
+        assertEquals("Move is not legal Move(piece=Pawn(player=WHITE), start=Position(file=D, rank=7), end=Position(file=D, rank=8), metadata=Metadata(data={MOVE_TYPE=PROMOTION}))", e.getMessage());
     }
 
     @Test
     void givenWhitePawnOnSeventhRank_whenMovingForwardToEighth_thenPromotionIsGeneratedAndExecuted() {
         Pawn whitePawn = new Pawn(WHITE);
-        board.placePiece(pf.create(7, "D"), whitePawn);
+        board.placePiece(pf.create("D", 7), whitePawn);
         Move promotionMove = pieceMoveGenerator
-                .generate(context, whitePawn, pf.create(7, "D"), new IndexChange(1, 0))
+                .generate(context, whitePawn, pf.create("D", 7), new IndexChange(0, 1))
                 .orElseThrow();
         promotionMove.getMetadata().put(PROMOTION_PIECE_CLASS, Queen.class);
 
         moveMaker.make(context, promotionMove);
 
-        assertEquals(WHITE, board.getPiece(pf.create(8, "D")).getPlayer());
-        assertInstanceOf(Queen.class, board.getPiece(pf.create(8, "D")));
-        assertFalse(board.hasPiece(pf.create(7, "D")));
+        assertEquals(WHITE, board.getPiece(pf.create("D", 8)).getPlayer());
+        assertInstanceOf(Queen.class, board.getPiece(pf.create("D", 8)));
+        assertFalse(board.hasPiece(pf.create("D", 7)));
 
         Move lastMove = history.getLastPlayedMove().orElseThrow();
         assertEquals(promotionMove, lastMove);
         Metadata expectedMetadata = new Metadata(PROMOTION)
                 .put(PROMOTION_PIECE_CLASS, Queen.class);
-        Move expectedMove = new Move(whitePawn, pf.create(7, "D"), pf.create(8, "D"), expectedMetadata);
+        Move expectedMove = new Move(whitePawn, pf.create("D", 7), pf.create("D", 8), expectedMetadata);
         assertEquals(expectedMove, promotionMove);
     }
 
     @Test
     void givenWhitePawnNotOnSeventhRank_whenTryingPromotion_thenPromotionIsRejected() {
         Pawn whitePawn = new Pawn(WHITE);
-        board.placePiece(pf.create(6, "D"), whitePawn);
+        board.placePiece(pf.create("D", 6), whitePawn);
 
         Optional<Move> illegalPromotionAttempt = pieceMoveGenerator
-                .generate(context, whitePawn, pf.create(6, "D"), new IndexChange(1, 0));
+                .generate(context, whitePawn, pf.create("D", 6), new IndexChange(0, 1));
 
         assertTrue(illegalPromotionAttempt.isEmpty());
     }

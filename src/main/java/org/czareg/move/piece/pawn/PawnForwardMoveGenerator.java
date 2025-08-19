@@ -58,8 +58,8 @@ public class PawnForwardMoveGenerator implements PieceMoveGenerator, PromotionRa
 
     private IndexChange getEndPositionIndexChange(Player player) {
         return switch (player) {
-            case WHITE -> new IndexChange(1, 0);
-            case BLACK -> new IndexChange(-1, 0);
+            case WHITE -> new IndexChange(0, 1);
+            case BLACK -> new IndexChange(0, -1);
         };
     }
 

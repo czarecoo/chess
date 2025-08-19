@@ -31,10 +31,10 @@ class KingCastlingTests extends BaseTests {
     @Test
     void testWhiteLongCastle() {
         Piece king = new King(WHITE);
-        Position kingPosition = pf.create(1, "E");
+        Position kingPosition = pf.create("E", 1);
         board.placePiece(kingPosition, king);
         Piece rook = new Rook(WHITE);
-        Position rookPosition = pf.create(1, "A");
+        Position rookPosition = pf.create("A", 1);
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
                 .generate(context, king, kingPosition)
@@ -43,12 +43,12 @@ class KingCastlingTests extends BaseTests {
 
         moveMaker.make(context, moves.getFirst());
 
-        Position expectedRookPosition = pf.create(1, "D");
+        Position expectedRookPosition = pf.create("D", 1);
         assertTrue(board.hasPiece(expectedRookPosition));
         Piece actualRook = board.getPiece(expectedRookPosition);
         assertInstanceOf(Rook.class, actualRook);
         assertEquals(WHITE, actualRook.getPlayer());
-        Position expectedKingPosition = pf.create(1, "C");
+        Position expectedKingPosition = pf.create("C", 1);
         assertTrue(board.hasPiece(expectedKingPosition));
         Piece actualKing = board.getPiece(expectedKingPosition);
         assertInstanceOf(King.class, actualKing);
@@ -58,10 +58,10 @@ class KingCastlingTests extends BaseTests {
     @Test
     void testWhiteShortCastle() {
         Piece king = new King(WHITE);
-        Position kingPosition = pf.create(1, "E");
+        Position kingPosition = pf.create("E", 1);
         board.placePiece(kingPosition, king);
         Piece rook = new Rook(WHITE);
-        Position rookPosition = pf.create(1, "H");
+        Position rookPosition = pf.create("H", 1);
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
                 .generate(context, king, kingPosition)
@@ -70,12 +70,12 @@ class KingCastlingTests extends BaseTests {
 
         moveMaker.make(context, moves.getFirst());
 
-        Position expectedRookPosition = pf.create(1, "F");
+        Position expectedRookPosition = pf.create("F", 1);
         assertTrue(board.hasPiece(expectedRookPosition));
         Piece actualRook = board.getPiece(expectedRookPosition);
         assertInstanceOf(Rook.class, actualRook);
         assertEquals(WHITE, actualRook.getPlayer());
-        Position expectedKingPosition = pf.create(1, "G");
+        Position expectedKingPosition = pf.create("G", 1);
         assertTrue(board.hasPiece(expectedKingPosition));
         Piece actualKing = board.getPiece(expectedKingPosition);
         assertInstanceOf(King.class, actualKing);
@@ -85,15 +85,15 @@ class KingCastlingTests extends BaseTests {
     @Test
     void testBlackLongCastle() {
         Pawn pawn = new Pawn(WHITE);
-        Position pawnStartPosition = pf.create(1, "A");
-        Position pawnEndPosition = pf.create(2, "A");
+        Position pawnStartPosition = pf.create("A", 1);
+        Position pawnEndPosition = pf.create("A", 2);
         board.placePiece(pawnStartPosition, pawn);
         moveMaker.make(context, new Move(pawn, pawnStartPosition, pawnEndPosition, new Metadata(MOVE)));
         Piece king = new King(BLACK);
-        Position kingPosition = pf.create(8, "E");
+        Position kingPosition = pf.create("E", 8);
         board.placePiece(kingPosition, king);
         Piece rook = new Rook(BLACK);
-        Position rookPosition = pf.create(8, "A");
+        Position rookPosition = pf.create("A", 8);
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
                 .generate(context, king, kingPosition)
@@ -103,12 +103,12 @@ class KingCastlingTests extends BaseTests {
 
         moveMaker.make(context, moves.getFirst());
 
-        Position expectedRookPosition = pf.create(8, "D");
+        Position expectedRookPosition = pf.create("D", 8);
         assertTrue(board.hasPiece(expectedRookPosition));
         Piece actualRook = board.getPiece(expectedRookPosition);
         assertInstanceOf(Rook.class, actualRook);
         assertEquals(BLACK, actualRook.getPlayer());
-        Position expectedKingPosition = pf.create(8, "C");
+        Position expectedKingPosition = pf.create("C", 8);
         assertTrue(board.hasPiece(expectedKingPosition));
         Piece actualKing = board.getPiece(expectedKingPosition);
         assertInstanceOf(King.class, actualKing);
@@ -118,15 +118,15 @@ class KingCastlingTests extends BaseTests {
     @Test
     void testBlackShortCastle() {
         Pawn pawn = new Pawn(WHITE);
-        Position pawnStartPosition = pf.create(1, "A");
-        Position pawnEndPosition = pf.create(2, "A");
+        Position pawnStartPosition = pf.create("A", 1);
+        Position pawnEndPosition = pf.create("A", 2);
         board.placePiece(pawnStartPosition, pawn);
         moveMaker.make(context, new Move(pawn, pawnStartPosition, pawnEndPosition, new Metadata(MOVE)));
         Piece king = new King(BLACK);
-        Position kingPosition = pf.create(8, "E");
+        Position kingPosition = pf.create("E", 8);
         board.placePiece(kingPosition, king);
         Piece rook = new Rook(BLACK);
-        Position rookPosition = pf.create(8, "H");
+        Position rookPosition = pf.create("H", 8);
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
                 .generate(context, king, kingPosition)
@@ -135,12 +135,12 @@ class KingCastlingTests extends BaseTests {
 
         moveMaker.make(context, moves.getFirst());
 
-        Position expectedRookPosition = pf.create(8, "F");
+        Position expectedRookPosition = pf.create("F", 8);
         assertTrue(board.hasPiece(expectedRookPosition));
         Piece actualRook = board.getPiece(expectedRookPosition);
         assertInstanceOf(Rook.class, actualRook);
         assertEquals(BLACK, actualRook.getPlayer());
-        Position expectedKingPosition = pf.create(8, "G");
+        Position expectedKingPosition = pf.create("G", 8);
         assertTrue(board.hasPiece(expectedKingPosition));
         Piece actualKing = board.getPiece(expectedKingPosition);
         assertInstanceOf(King.class, actualKing);
@@ -149,12 +149,12 @@ class KingCastlingTests extends BaseTests {
 
     @Test
     void testWhiteLongCastleImpossibleBecauseKingEndPositionIsUnderAttack() {
-        board.placePiece(pf.create(8, "C"), new Rook(BLACK));
+        board.placePiece(pf.create("C", 8), new Rook(BLACK));
         Piece king = new King(WHITE);
-        Position kingPosition = pf.create(1, "E");
+        Position kingPosition = pf.create("E", 1);
         board.placePiece(kingPosition, king);
         Piece rook = new Rook(WHITE);
-        Position rookPosition = pf.create(1, "A");
+        Position rookPosition = pf.create("A", 1);
         board.placePiece(rookPosition, rook);
         List<Move> moves = pieceMoveGenerator
                 .generate(context, king, kingPosition)
@@ -163,17 +163,17 @@ class KingCastlingTests extends BaseTests {
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, moves.getFirst()));
 
-        assertEquals("Move is not legal Move(piece=King(player=WHITE), start=Position(rank=1, file=E), end=Position(rank=1, file=C), metadata=Metadata(data={MOVE_TYPE=CASTLING, CASTLING_ROOK_START_POSITION=Position(rank=1, file=A), CASTLING_ROOK_END_POSITION=Position(rank=1, file=D)}))", e.getMessage());
+        assertEquals("Move is not legal Move(piece=King(player=WHITE), start=Position(file=E, rank=1), end=Position(file=C, rank=1), metadata=Metadata(data={MOVE_TYPE=CASTLING, CASTLING_ROOK_START_POSITION=Position(file=A, rank=1), CASTLING_ROOK_END_POSITION=Position(file=D, rank=1)}))", e.getMessage());
     }
 
     @Test
     void testWhiteLongCastleImpossibleBecauseRookEndPositionIsUnderAttack() {
-        board.placePiece(pf.create(8, "D"), new Rook(BLACK));
+        board.placePiece(pf.create("D", 8), new Rook(BLACK));
         Piece king = new King(WHITE);
-        Position kingPosition = pf.create(1, "E");
+        Position kingPosition = pf.create("E", 1);
         board.placePiece(kingPosition, king);
         Piece rook = new Rook(WHITE);
-        Position rookPosition = pf.create(1, "A");
+        Position rookPosition = pf.create("A", 1);
         board.placePiece(rookPosition, rook);
 
         List<Move> moves = pieceMoveGenerator
@@ -184,6 +184,6 @@ class KingCastlingTests extends BaseTests {
 
         Exception e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, moves.getFirst()));
 
-        assertEquals("Move is not legal Move(piece=King(player=WHITE), start=Position(rank=1, file=E), end=Position(rank=1, file=C), metadata=Metadata(data={MOVE_TYPE=CASTLING, CASTLING_ROOK_START_POSITION=Position(rank=1, file=A), CASTLING_ROOK_END_POSITION=Position(rank=1, file=D)}))", e.getMessage());
+        assertEquals("Move is not legal Move(piece=King(player=WHITE), start=Position(file=E, rank=1), end=Position(file=C, rank=1), metadata=Metadata(data={MOVE_TYPE=CASTLING, CASTLING_ROOK_START_POSITION=Position(file=A, rank=1), CASTLING_ROOK_END_POSITION=Position(file=D, rank=1)}))", e.getMessage());
     }
 }

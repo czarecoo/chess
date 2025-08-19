@@ -66,12 +66,12 @@ public class PawnCaptureMoveGenerator implements PieceMoveGenerator {
     private List<IndexChange> getEndPositionIndexChanges(Player player) {
         return switch (player) {
             case WHITE -> List.of(
-                    new IndexChange(1, -1),
+                    new IndexChange(-1, 1),
                     new IndexChange(1, 1)
             );
             case BLACK -> List.of(
                     new IndexChange(-1, -1),
-                    new IndexChange(-1, 1)
+                    new IndexChange(1, -1)
             );
         };
     }

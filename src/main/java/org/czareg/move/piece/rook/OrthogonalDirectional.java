@@ -10,10 +10,10 @@ public interface OrthogonalDirectional extends Directional {
     @Override
     default Stream<IndexChange> getDirections() {
         return Stream.of(
-                new IndexChange(-1, 0),
-                new IndexChange(1, 0),
                 new IndexChange(0, -1),
-                new IndexChange(0, 1)
+                new IndexChange(0, 1),
+                new IndexChange(-1, 0),
+                new IndexChange(1, 0)
         );
     }
 }

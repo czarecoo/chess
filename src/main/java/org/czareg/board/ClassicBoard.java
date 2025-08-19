@@ -22,8 +22,8 @@ public class ClassicBoard implements Board {
     @Getter
     private final PositionFactory positionFactory;
 
-    public ClassicBoard(int maxRank, int maxFile) {
-        this.positionFactory = new PositionFactory(maxRank, maxFile);
+    public ClassicBoard(int maxFile, int maxRank) {
+        this.positionFactory = new PositionFactory(maxFile, maxRank);
         this.board = new Piece[maxRank][maxFile];
     }
 
@@ -73,7 +73,7 @@ public class ClassicBoard implements Board {
             for (int fileIndex = 0; fileIndex < board[rankIndex].length; fileIndex++) {
                 Piece piece = board[rankIndex][fileIndex];
                 if (piece != null) {
-                    Position position = positionFactory.create(rankIndex, fileIndex);
+                    Position position = positionFactory.create(fileIndex, rankIndex);
                     piecePositions.add(new PiecePosition(piece, position));
                 }
             }
@@ -105,7 +105,7 @@ public class ClassicBoard implements Board {
             for (int fileIndex = 0; fileIndex < board[rankIndex].length; fileIndex++) {
                 Piece foundPiece = board[rankIndex][fileIndex];
                 if (piece == foundPiece) {
-                    Position position = positionFactory.create(rankIndex, fileIndex);
+                    Position position = positionFactory.create(fileIndex, rankIndex);
                     return Optional.of(position);
                 }
             }

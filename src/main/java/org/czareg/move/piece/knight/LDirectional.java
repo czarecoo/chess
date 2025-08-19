@@ -10,14 +10,14 @@ public interface LDirectional extends Directional {
     @Override
     default Stream<IndexChange> getDirections() {
         return Stream.of(
-                new IndexChange(-2, -1),
-                new IndexChange(-2, 1),
                 new IndexChange(-1, -2),
-                new IndexChange(-1, 2),
                 new IndexChange(1, -2),
-                new IndexChange(1, 2),
+                new IndexChange(-2, -1),
                 new IndexChange(2, -1),
-                new IndexChange(2, 1)
+                new IndexChange(-2, 1),
+                new IndexChange(2, 1),
+                new IndexChange(-1, 2),
+                new IndexChange(1, 2)
         );
     }
 }

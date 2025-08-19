@@ -28,14 +28,14 @@ class PawnTests extends BaseTests {
     @Test
     void givenWhitePawnDidNotMoveYet_whenGettingPossibleMoves_thenCanMoveByOneOrTwoRows() {
         Pawn pawn = new Pawn(WHITE);
-        Position start = pf.create(2, "A");
+        Position start = pf.create("A", 2);
         board.placePiece(start, pawn);
 
         Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
 
         Set<Move> expectedMoves = Set.of(
-                new Move(pawn, start, pf.create(3, "A"), new Metadata(MOVE)),
-                new Move(pawn, start, pf.create(4, "A"), new Metadata(INITIAL_DOUBLE_FORWARD))
+                new Move(pawn, start, pf.create("A", 3), new Metadata(MOVE)),
+                new Move(pawn, start, pf.create("A", 4), new Metadata(INITIAL_DOUBLE_FORWARD))
         );
         assertEquals(expectedMoves, actualMoves);
     }
@@ -43,21 +43,21 @@ class PawnTests extends BaseTests {
     @Test
     void givenWhitePawnDidMoveBefore_whenGettingPossibleMoves_thenCanMoveByOneRow() {
         Pawn pawn = new Pawn(WHITE);
-        Position d2 = pf.create(2, "D");
+        Position d2 = pf.create("D", 2);
         board.placePiece(d2, pawn);
-        Position d3 = pf.create(3, "D");
+        Position d3 = pf.create("D", 3);
         moveMaker.make(context, new Move(pawn, d2, d3, new Metadata(MOVE)));
 
         Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(d3);
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, d3, pf.create(4, "D"), new Metadata(MOVE)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, d3, pf.create("D", 4), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
     }
 
     @Test
     void givenWhitePawnOnLastRank_whenGettingPossibleMoves_thenNoGeneratedMoves() {
         Pawn pawn = new Pawn(WHITE);
-        Position start = pf.create(8, "H");
+        Position start = pf.create("H", 8);
         board.placePiece(start, pawn);
 
         Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
@@ -68,7 +68,7 @@ class PawnTests extends BaseTests {
     @Test
     void givenWhitePawnOnSeventhRank_whenGettingPossibleMoves_thenManyPromotionMovesGenerated() {
         Pawn pawn = new Pawn(WHITE);
-        Position start = pf.create(7, "B");
+        Position start = pf.create("B", 7);
         board.placePiece(start, pawn);
 
         Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
@@ -97,12 +97,12 @@ class PawnTests extends BaseTests {
     @Test
     void givenWhitePawnOnSixthRank_whenGettingPossibleMoves_thenOneMoveGenerated() {
         Pawn pawn = new Pawn(WHITE);
-        Position start = pf.create(6, "E");
+        Position start = pf.create("E", 6);
         board.placePiece(start, pawn);
 
         Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create(7, "E"), new Metadata(MOVE)));
+        Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create("E", 7), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
     }
 
@@ -110,7 +110,7 @@ class PawnTests extends BaseTests {
     void givenClassicStartingPosition_whenBlackPawnIsMakingMove_thenExceptionIsThrown() {
         PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
         piecePlacer.place(board);
-        Move move = new Move(new Pawn(BLACK), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
+        Move move = new Move(new Pawn(BLACK), pf.create("A", 1), pf.create("A", 2), new Metadata(MOVE));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, move));
         assertEquals("Now moving player WHITE not player BLACK", e.getMessage());
@@ -120,15 +120,15 @@ class PawnTests extends BaseTests {
     void givenClassicStartingPosition_whenWhitePawnIsMakingMove_thenExceptionIsThrown() {
         PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
         piecePlacer.place(board);
-        Move move = new Move(new Pawn(WHITE), pf.create(1, "A"), pf.create(2, "A"), new Metadata(MOVE));
+        Move move = new Move(new Pawn(WHITE), pf.create("A", 1), pf.create("A", 2), new Metadata(MOVE));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, move));
-        assertEquals("Move is not legal Move(piece=Pawn(player=WHITE), start=Position(rank=1, file=A), end=Position(rank=2, file=A), metadata=Metadata(data={MOVE_TYPE=MOVE}))", e.getMessage());
+        assertEquals("Move is not legal Move(piece=Pawn(player=WHITE), start=Position(file=A, rank=1), end=Position(file=A, rank=2), metadata=Metadata(data={MOVE_TYPE=MOVE}))", e.getMessage());
     }
 
     @Test
     void givenEmptyBoard_whenGeneratingMovesForPositionWithoutPiece_thenNoMovesAreReturned() {
-        Position positionWithoutPiece = pf.create(1, "A");
+        Position positionWithoutPiece = pf.create("A", 1);
 
         Set<Move> moves = moveGenerator.generateLegal(context).getMovesStarting(positionWithoutPiece);
 
@@ -137,42 +137,42 @@ class PawnTests extends BaseTests {
 
     @Test
     void givenWhiteAndBlackPawns_whenWhiteIsDoingDoubleForwardMoveToTheEndPositionOccupiedByBlackPawn_thenNoMovesAreReturned() {
-        Position whitePosition = pf.create(2, "E");
+        Position whitePosition = pf.create("E", 2);
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(whitePosition, whitePawn);
-        Position blackPosition = pf.create(4, "E");
+        Position blackPosition = pf.create("E", 4);
         board.placePiece(blackPosition, new Pawn(BLACK));
         PieceMoveGenerator pieceMoveGenerator = new PawnDoubleForwardMoveGenerator();
 
-        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, whitePosition, new IndexChange(2, 0));
+        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, whitePosition, new IndexChange(0, 2));
 
         assertTrue(move.isEmpty());
     }
 
     @Test
     void givenWhiteAndBlackPawns_whenWhiteIsDoingDoubleForwardMoveAndBlackPawnIsOnTheWay_thenNoMovesAreReturned() {
-        Position whiteStartPosition = pf.create(2, "E");
+        Position whiteStartPosition = pf.create("E", 2);
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(whiteStartPosition, whitePawn);
-        Position blackPosition = pf.create(3, "E");
+        Position blackPosition = pf.create("E", 3);
         board.placePiece(blackPosition, new Pawn(BLACK));
         PieceMoveGenerator pieceMoveGenerator = new PawnDoubleForwardMoveGenerator();
 
-        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, whiteStartPosition, new IndexChange(2, 0));
+        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, whiteStartPosition, new IndexChange(0, 2));
 
         assertTrue(move.isEmpty());
     }
 
     @Test
     void givenTwoWhitePawns_whenOnePawnIsTryingToCaptureAnother_thenNoMovesAreReturned() {
-        Position firstWhitePosition = pf.create(3, "B");
+        Position firstWhitePosition = pf.create("B", 3);
         Pawn whitePawn = new Pawn(WHITE);
         board.placePiece(firstWhitePosition, whitePawn);
-        Position secondWhitePosition = pf.create(4, "A");
+        Position secondWhitePosition = pf.create("A", 4);
         board.placePiece(secondWhitePosition, new Pawn(WHITE));
         PieceMoveGenerator pieceMoveGenerator = new PawnCaptureMoveGenerator();
 
-        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, firstWhitePosition, new IndexChange(1, -1));
+        Optional<Move> move = pieceMoveGenerator.generate(context, whitePawn, firstWhitePosition, new IndexChange(-1, 1));
 
         assertTrue(move.isEmpty());
     }
@@ -180,16 +180,16 @@ class PawnTests extends BaseTests {
     @Test
     void givenTwoPlayers_whenPlayersAreMovingTheirPawnsOnTheSameFileUntilTheyFaceEachOther_thenThereAreNoMoreMoves() {
         Pawn whitePawn = new Pawn(WHITE);
-        board.placePiece(pf.create(1, "C"), whitePawn);
+        board.placePiece(pf.create("C", 1), whitePawn);
         Pawn blackPawn = new Pawn(BLACK);
-        board.placePiece(pf.create(8, "C"), blackPawn);
+        board.placePiece(pf.create("C", 8), blackPawn);
 
-        moveMaker.make(context, new Move(whitePawn, pf.create(1, "C"), pf.create(3, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        moveMaker.make(context, new Move(blackPawn, pf.create(8, "C"), pf.create(6, "C"), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        Position c4 = pf.create(4, "C");
-        moveMaker.make(context, new Move(whitePawn, pf.create(3, "C"), c4, new Metadata(MOVE)));
-        Position c5 = pf.create(5, "C");
-        moveMaker.make(context, new Move(blackPawn, pf.create(6, "C"), c5, new Metadata(MOVE)));
+        moveMaker.make(context, new Move(whitePawn, pf.create("C", 1), pf.create("C", 3), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        moveMaker.make(context, new Move(blackPawn, pf.create("C", 8), pf.create("C", 6), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        Position c4 = pf.create("C", 4);
+        moveMaker.make(context, new Move(whitePawn, pf.create("C", 3), c4, new Metadata(MOVE)));
+        Position c5 = pf.create("C", 5);
+        moveMaker.make(context, new Move(blackPawn, pf.create("C", 6), c5, new Metadata(MOVE)));
 
         Set<Move> whiteMoves = moveGenerator.generateLegal(context).getMovesStarting(c4);
         assertEquals(Set.of(), whiteMoves);
@@ -200,10 +200,10 @@ class PawnTests extends BaseTests {
     @Test
     void givenWhitePawnAndBlackPawnOnDiagonalRight_whenWhiteMoves_thenItCanCapture() {
         Pawn whitePawn = new Pawn(WHITE);
-        Position whitePosition = pf.create(4, "C");
+        Position whitePosition = pf.create("C", 4);
         board.placePiece(whitePosition, whitePawn);
         Pawn blackPawn = new Pawn(BLACK);
-        Position blackPosition = pf.create(5, "D");
+        Position blackPosition = pf.create("D", 5);
         board.placePiece(blackPosition, blackPawn);
 
         Set<Move> whiteMoves = moveGenerator.generateLegal(context).getMovesStarting(whitePosition);
@@ -217,10 +217,10 @@ class PawnTests extends BaseTests {
     @Test
     void givenBlackPawnAndWhitePawnOnDiagonalLeft_whenBlackMoves_thenItCanCapture() {
         Pawn whitePawn = new Pawn(WHITE);
-        Position whitePosition = pf.create(2, "A");
+        Position whitePosition = pf.create("A", 2);
         board.placePiece(whitePosition, whitePawn);
         Pawn blackPawn = new Pawn(BLACK);
-        Position blackPosition = pf.create(3, "B");
+        Position blackPosition = pf.create("B", 3);
         board.placePiece(blackPosition, blackPawn);
 
         Set<Move> blackMoves = moveGenerator.generateLegal(context).getMovesStarting(blackPosition);

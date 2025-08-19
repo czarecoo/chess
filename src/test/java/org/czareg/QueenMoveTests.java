@@ -33,7 +33,7 @@ class QueenMoveTests extends BaseTests {
     @Test
     void givenWhiteQueenAloneOnTheBoard_whenGeneratingMoves_thenManyMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
-        Position queenPosition = pf.create(4, "D");
+        Position queenPosition = pf.create("D", 4);
         board.placePiece(queenPosition, queen);
 
         Set<Move> moves = pieceMoveGenerator
@@ -52,16 +52,16 @@ class QueenMoveTests extends BaseTests {
     @Test
     void givenWhiteQueenSurroundedByWhitePawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
-        Position queenPosition = pf.create(4, "D");
+        Position queenPosition = pf.create("D", 4);
         board.placePiece(queenPosition, queen);
-        board.placePiece(pf.create(3, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 5), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, queen, queenPosition)
@@ -73,16 +73,16 @@ class QueenMoveTests extends BaseTests {
     @Test
     void givenWhiteQueenSurroundedByBlackPawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
-        Position queenPosition = pf.create(4, "D");
+        Position queenPosition = pf.create("D", 4);
         board.placePiece(queenPosition, queen);
-        board.placePiece(pf.create(3, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 5), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, queen, queenPosition)
@@ -94,16 +94,16 @@ class QueenMoveTests extends BaseTests {
     @Test
     void givenWhiteQueenHasManyPossibleMoves_whenGeneratingMoves_thenManyMovesAreGenerated() {
         Queen queen = new Queen(WHITE);
-        Position queenPosition = pf.create(4, "D");
+        Position queenPosition = pf.create("D", 4);
         board.placePiece(queenPosition, queen);
-        board.placePiece(pf.create(1, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "H"), new Pawn(BLACK));
-        board.placePiece(pf.create(7, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "G"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 8), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 7), new Pawn(BLACK));
+        board.placePiece(pf.create("G", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 8), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, queen, queenPosition)

@@ -68,15 +68,15 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, Promo
 
     private IndexChange getEndPositionIndexChange(Player player) {
         return switch (player) {
-            case WHITE -> new IndexChange(2, 0);
-            case BLACK -> new IndexChange(-2, 0);
+            case WHITE -> new IndexChange(0, 2);
+            case BLACK -> new IndexChange(0, -2);
         };
     }
 
     private IndexChange getMiddlePositionIndexChange(Player player) {
         return switch (player) {
-            case WHITE -> new IndexChange(1, 0);
-            case BLACK -> new IndexChange(-1, 0);
+            case WHITE -> new IndexChange(0, 1);
+            case BLACK -> new IndexChange(0, -1);
         };
     }
 

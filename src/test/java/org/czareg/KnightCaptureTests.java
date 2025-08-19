@@ -35,7 +35,7 @@ class KnightCaptureTests extends BaseTests {
     @Test
     void givenWhiteKnightAloneOnTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new Knight(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
 
         Set<Move> moves = pieceMoveGenerator
@@ -48,16 +48,16 @@ class KnightCaptureTests extends BaseTests {
     @Test
     void givenWhiteKnightSurroundedByWhitePawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new Knight(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(3, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(4, "E"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "C"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "D"), new Pawn(WHITE));
-        board.placePiece(pf.create(5, "E"), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 3), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 4), new Pawn(WHITE));
+        board.placePiece(pf.create("C", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("D", 5), new Pawn(WHITE));
+        board.placePiece(pf.create("E", 5), new Pawn(WHITE));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -69,16 +69,16 @@ class KnightCaptureTests extends BaseTests {
     @Test
     void givenWhiteKnightSurroundedByBlackPawns_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new Knight(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(3, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 5), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -90,16 +90,16 @@ class KnightCaptureTests extends BaseTests {
     @Test
     void givenWhiteKnightAndBlackPawnsOnTheEdgesOfTheBoard_whenGeneratingMoves_thenNoMovesAreGenerated() {
         Piece piece = new Knight(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(1, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "D"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(4, "H"), new Pawn(BLACK));
-        board.placePiece(pf.create(7, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "G"), new Pawn(BLACK));
-        board.placePiece(pf.create(1, "A"), new Pawn(BLACK));
-        board.placePiece(pf.create(8, "H"), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("D", 8), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 4), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 7), new Pawn(BLACK));
+        board.placePiece(pf.create("G", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("A", 1), new Pawn(BLACK));
+        board.placePiece(pf.create("H", 8), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -111,16 +111,16 @@ class KnightCaptureTests extends BaseTests {
     @Test
     void givenWhiteKnightHasEightPossibleCaptures_whenGeneratingMoves_thenThereAreEightCaptureMoves() {
         Piece piece = new Knight(WHITE);
-        Position position = pf.create(4, "D");
+        Position position = pf.create("D", 4);
         board.placePiece(position, piece);
-        board.placePiece(pf.create(6, "E"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "B"), new Pawn(BLACK));
-        board.placePiece(pf.create(6, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(5, "F"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "B"), new Pawn(BLACK));
-        board.placePiece(pf.create(3, "F"), new Pawn(BLACK));
-        board.placePiece(pf.create(2, "C"), new Pawn(BLACK));
-        board.placePiece(pf.create(2, "E"), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 6), new Pawn(BLACK));
+        board.placePiece(pf.create("B", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 6), new Pawn(BLACK));
+        board.placePiece(pf.create("F", 5), new Pawn(BLACK));
+        board.placePiece(pf.create("B", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("F", 3), new Pawn(BLACK));
+        board.placePiece(pf.create("C", 2), new Pawn(BLACK));
+        board.placePiece(pf.create("E", 2), new Pawn(BLACK));
 
         Set<Move> moves = pieceMoveGenerator
                 .generate(context, piece, position)
@@ -128,14 +128,14 @@ class KnightCaptureTests extends BaseTests {
 
         assertEquals(8, moves.size());
         assertEquals(Set.of(
-                pf.create(6, "E"),
-                pf.create(5, "B"),
-                pf.create(6, "C"),
-                pf.create(5, "F"),
-                pf.create(3, "B"),
-                pf.create(3, "F"),
-                pf.create(2, "C"),
-                pf.create(2, "E")
+                pf.create("E", 6),
+                pf.create("B", 5),
+                pf.create("C", 6),
+                pf.create("F", 5),
+                pf.create("B", 3),
+                pf.create("F", 3),
+                pf.create("C", 2),
+                pf.create("E", 2)
         ), moves.stream().map(Move::getEnd).collect(Collectors.toSet()));
         assertEquals(8, moves.stream().map(Move::getMetadata)
                 .map(metadata -> metadata.get(CAPTURE_PIECE, Piece.class))
