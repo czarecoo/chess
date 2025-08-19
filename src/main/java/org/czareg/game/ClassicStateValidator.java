@@ -61,6 +61,7 @@ public class ClassicStateValidator implements StateValidator {
                             || moveType == MoveType.CAPTURE
                             || moveType == MoveType.INITIAL_DOUBLE_FORWARD
                             || moveType == MoveType.PROMOTION
+                            || moveType == MoveType.PROMOTION_CAPTURE
                             || moveType == MoveType.EN_PASSANT;
                 });
     }

@@ -8,8 +8,7 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.shared.PromotionRankChecker;
-import org.czareg.piece.Piece;
-import org.czareg.piece.Player;
+import org.czareg.piece.*;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -21,16 +20,23 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.czareg.game.Metadata.Key.CAPTURE_PIECE;
+import static org.czareg.game.Metadata.Key.PROMOTION_PIECE_CLASS;
 
 @Slf4j
-public class PawnCaptureMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
+public class PawnPromotionCaptureMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
 
     @Override
     public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
         List<Move> moves = new ArrayList<>();
         Player player = piece.getPlayer();
         for (IndexChange endPositionIndexChange : getEndPositionIndexChanges(player)) {
-            generate(context, piece, currentPosition, endPositionIndexChange).ifPresent(moves::add);
+            for (Class<? extends Piece> promotionPieceClass : getAllowedPiecePromotionClasses()) {
+                generate(context, piece, currentPosition, endPositionIndexChange)
+                        .ifPresent(move -> {
+                            move.getMetadata().put(PROMOTION_PIECE_CLASS, promotionPieceClass);
+                            moves.add(move);
+                        });
+            }
         }
         return moves.stream();
     }
@@ -40,7 +46,6 @@ public class PawnCaptureMoveGenerator implements PieceMoveGenerator, PromotionRa
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
         Board board = context.getBoard();
         PositionFactory positionFactory = board.getPositionFactory();
-        Player player = piece.getPlayer();
         Index currentPositionIndex = positionFactory.create(currentPosition);
         Optional<Position> optionalEndPosition = positionFactory.create(currentPositionIndex, endPositionIndexChange);
         if (optionalEndPosition.isEmpty()) {
@@ -52,19 +57,20 @@ public class PawnCaptureMoveGenerator implements PieceMoveGenerator, PromotionRa
             log.debug("Rejecting move because target {} is empty.", endPosition);
             return Optional.empty();
         }
+        Player player = piece.getPlayer();
         Piece targetPiece = board.getPiece(endPosition);
         if (targetPiece.getPlayer() == player) {
             log.debug("Rejecting move because target {} is occupied by friendly {}.", endPosition, targetPiece);
             return Optional.empty();
         }
-        if (isOnPromotionRank(endPosition, positionFactory, player)) {
-            log.debug("Rejecting move because end {} is on promotion rank.", endPosition);
+        if (!isOnPromotionRank(endPosition, positionFactory, player)) {
+            log.debug("Rejecting move because end {} is not on promotion rank.", endPosition);
             return Optional.empty();
         }
         Metadata metadata = new Metadata(getMoveType())
                 .put(CAPTURE_PIECE, targetPiece);
         Move move = new Move(piece, currentPosition, endPosition, metadata);
-        log.debug("Accepted move {}", move);
+        log.debug("Accepted move {}.", move);
         return Optional.of(move);
     }
 
@@ -83,6 +89,10 @@ public class PawnCaptureMoveGenerator implements PieceMoveGenerator, PromotionRa
 
     @Override
     public MoveType getMoveType() {
-        return MoveType.CAPTURE;
+        return MoveType.PROMOTION_CAPTURE;
+    }
+
+    private List<Class<? extends Piece>> getAllowedPiecePromotionClasses() {
+        return List.of(Knight.class, Bishop.class, Rook.class, Queen.class);
     }
 }

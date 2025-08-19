@@ -22,7 +22,7 @@ public abstract class BaseTests {
 
     @BeforeEach
     protected void init() {
-        context = new ClassicContext();
+        context = ClassicContext.create();
         board = context.getBoard();
         pf = board.getPositionFactory();
         moveGenerator = context.getMoveGenerator();

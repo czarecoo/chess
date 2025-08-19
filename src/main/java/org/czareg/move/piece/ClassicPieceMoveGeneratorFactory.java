@@ -41,6 +41,7 @@ public class ClassicPieceMoveGeneratorFactory implements PieceMoveGeneratorFacto
                 new PawnForwardMoveGenerator(),
                 new PawnCaptureMoveGenerator(),
                 new PawnPromotionMoveGenerator(),
+                new PawnPromotionCaptureMoveGenerator(),
                 new PawnDoubleForwardMoveGenerator(),
                 new PawnEnPassantMoveGenerator()
         );

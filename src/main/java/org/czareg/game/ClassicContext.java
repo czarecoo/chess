@@ -2,14 +2,12 @@ package org.czareg.game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import lombok.With;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicBoard;
 import org.czareg.move.*;
 import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
 
-@With
 @Value
 @RequiredArgsConstructor
 public class ClassicContext implements Context {
@@ -26,22 +24,6 @@ public class ClassicContext implements Context {
     StateValidator stateValidator;
     BoardValidator boardValidator;
 
-    public ClassicContext() {
-        this(
-                new ClassicBoard(8, 8),
-                new ClassicHistory(),
-                new ClassicMoveMaker(),
-                new ClassicMoveGenerator(new CachingLegalMoveGenerator(new LegalMoveGenerator(new PseudoLegalMoveGenerator(), new ClassicOnlyValidKingMoveFilter())), new PseudoLegalMoveGenerator()),
-                new ClassicPlayerTurnValidator(),
-                new ClassicMoveExecutor(),
-                new ClassicPieceMoveGeneratorFactory(),
-                new ClassicMoveLegalityValidator(),
-                new ClassicThreatAnalyzer(),
-                new ClassicStateValidator(),
-                new ClassicBoardValidator()
-        );
-    }
-
     @Override
     public ClassicContext duplicate() {
         return new ClassicContext(
@@ -56,6 +38,22 @@ public class ClassicContext implements Context {
                 threatAnalyzer,
                 stateValidator,
                 boardValidator
+        );
+    }
+
+    public static ClassicContext create() {
+        PseudoLegalMoveGenerator pseudoLegalMoveGenerator = new PseudoLegalMoveGenerator();
+        return new ClassicContext(new ClassicBoard(8, 8),
+                new ClassicHistory(),
+                new ClassicMoveMaker(),
+                new ClassicMoveGenerator(new CachingLegalMoveGenerator(new LegalMoveGenerator(pseudoLegalMoveGenerator, new ClassicOnlyValidKingMoveFilter())), pseudoLegalMoveGenerator),
+                new ClassicPlayerTurnValidator(),
+                new ClassicMoveExecutor(),
+                new ClassicPieceMoveGeneratorFactory(),
+                new ClassicMoveLegalityValidator(),
+                new ClassicThreatAnalyzer(),
+                new ClassicStateValidator(),
+                new ClassicBoardValidator()
         );
     }
 }

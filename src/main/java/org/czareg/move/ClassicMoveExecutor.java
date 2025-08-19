@@ -22,6 +22,7 @@ public class ClassicMoveExecutor implements MoveExecutor {
         MoveType moveType = metadata.get(MOVE_TYPE, MoveType.class).orElseThrow();
         Runnable runnable = switch (moveType) {
             case PROMOTION -> () -> executePromotion(move, board);
+            case PROMOTION_CAPTURE -> () -> executePromotionCapture(move, board);
             case EN_PASSANT -> () -> executeEnPassant(move, board);
             case CASTLING -> () -> executeCastling(move, board);
             case CAPTURE -> () -> executeCapture(move, board);
@@ -38,6 +39,26 @@ public class ClassicMoveExecutor implements MoveExecutor {
         Player player = oldPiece.getPlayer();
         Piece promotionPiece = Piece.create(promotionPieceClass, player);
         log.debug("Executing promotion {}", move);
+        board.removePiece(move.getStart());
+        board.placePiece(move.getEnd(), promotionPiece);
+    }
+
+    private void executePromotionCapture(Move move, Board board) {
+        Class<Piece> promotionPieceClass = move.getMetadata()
+                .getClass(PROMOTION_PIECE_CLASS, Piece.class)
+                .orElseThrow(() -> new IllegalStateException("Promotion capture move missing chosen piece class."));
+        Piece pieceToCaptureOnBoard = board.getPiece(move.getEnd());
+        Piece pieceToCaptureInMove = move.getMetadata().get(CAPTURE_PIECE, Piece.class)
+                .orElseThrow(() -> new IllegalStateException("Promotion capture move missing capture piece"));
+        if (pieceToCaptureOnBoard != pieceToCaptureInMove) {
+            String message = "Piece to capture on board %s is different than the one declared in move %s".formatted(pieceToCaptureOnBoard, pieceToCaptureInMove);
+            throw new IllegalStateException(message);
+        }
+        Piece oldPiece = move.getPiece();
+        Player player = oldPiece.getPlayer();
+        Piece promotionPiece = Piece.create(promotionPieceClass, player);
+        log.debug("Executing promotion capture {}", move);
+        board.removePiece(move.getEnd());
         board.removePiece(move.getStart());
         board.placePiece(move.getEnd(), promotionPiece);
     }

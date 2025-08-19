@@ -8,6 +8,7 @@ public enum MoveType {
     INITIAL_DOUBLE_FORWARD,
 
     PROMOTION,
+    PROMOTION_CAPTURE,
     EN_PASSANT,
     CASTLING
 }

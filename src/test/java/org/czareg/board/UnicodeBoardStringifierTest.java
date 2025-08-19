@@ -9,7 +9,7 @@ class UnicodeBoardStringifierTest {
 
     @Test
     void shouldPrintAllPiecesOnStartingPlacesOnBoard() {
-        ClassicContext classicContext = new ClassicContext();
+        ClassicContext classicContext = ClassicContext.create();
         Board board = classicContext.getBoard();
         PiecePlacer piecePlacer = new ClassicPieceStartingPositionPlacer();
         piecePlacer.place(board);
