@@ -7,6 +7,13 @@ import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toSet;
 
 public interface Board extends Duplicatable<Board> {
 
@@ -35,5 +42,11 @@ public interface Board extends Duplicatable<Board> {
                 .map(PiecePosition::piece)
                 .filter(pieceType::isInstance)
                 .toList();
+    }
+
+    default Map<Player, Set<Piece>> getPiecesForPlayers() {
+        return getAllPiecePositions().stream()
+                .map(PiecePosition::piece)
+                .collect(Collectors.groupingBy(Piece::getPlayer, mapping(Function.identity(), toSet())));
     }
 }

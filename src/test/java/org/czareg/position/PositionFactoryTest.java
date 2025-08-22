@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PositionFactoryTest {
 
@@ -86,5 +85,40 @@ class PositionFactoryTest {
         assertEquals(4, result.get(2).getRank());
         assertEquals("F", result.get(3).getFile());
         assertEquals(5, result.get(3).getRank());
+    }
+
+    @Test
+    void givenA1_whenCheckingSquareColor_returnsDark() {
+        Position pos = positionFactory.create("A", 1);
+        assertFalse(positionFactory.isLightSquare(pos));
+        assertTrue(positionFactory.isDarkSquare(pos));
+    }
+
+    @Test
+    void givenB1_whenCheckingSquareColor_returnsLight() {
+        Position pos = positionFactory.create("B", 1);
+        assertTrue(positionFactory.isLightSquare(pos));
+        assertFalse(positionFactory.isDarkSquare(pos));
+    }
+
+    @Test
+    void givenC1_whenCheckingSquareColor_returnsDark() {
+        Position pos = positionFactory.create("C", 1);
+        assertFalse(positionFactory.isLightSquare(pos));
+        assertTrue(positionFactory.isDarkSquare(pos));
+    }
+
+    @Test
+    void givenD4_whenCheckingSquareColor_returnsLight() {
+        Position pos = positionFactory.create("D", 4);
+        assertFalse(positionFactory.isLightSquare(pos));
+        assertTrue(positionFactory.isDarkSquare(pos));
+    }
+
+    @Test
+    void givenH8_whenCheckingSquareColor_returnsDark() {
+        Position pos = positionFactory.create("H", 8);
+        assertFalse(positionFactory.isLightSquare(pos));
+        assertTrue(positionFactory.isDarkSquare(pos));
     }
 }

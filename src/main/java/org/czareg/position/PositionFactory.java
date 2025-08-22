@@ -83,6 +83,20 @@ public class PositionFactory {
         return new IndexChange(fileChange, rankChange);
     }
 
+    /*
+    Convention:
+    light squares are where file + rank is odd,
+    and dark squares are where file + rank is even.
+     */
+    public boolean isLightSquare(Position position) {
+        Index index = create(position);
+        return (index.getFile() + index.getRank()) % 2 != 0;
+    }
+
+    public boolean isDarkSquare(Position position) {
+        return !isLightSquare(position);
+    }
+
     public List<Position> between(Index start, Index end) {
         List<Position> between = new ArrayList<>();
         int startFile = start.getFile();

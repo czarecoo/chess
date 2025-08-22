@@ -39,15 +39,11 @@ public class ClassicThreatAnalyzer implements ThreatAnalyzer {
     @Override
     public boolean isUnderAttack(Context context, Position position, Player player) {
         GeneratedMoves generatedMoves = context.getMoveGenerator().generateLegal(context);
-        return checkIfUnderAttack(generatedMoves, position, player);
+        return isUnderAttack(generatedMoves, position, player);
     }
 
     @Override
     public boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
-        return checkIfUnderAttack(generatedMoves, position, player);
-    }
-
-    private boolean checkIfUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
         Player attacker = player.getOpponent();
         return generatedMoves
                 .getMoves(attacker)

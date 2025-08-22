@@ -1,6 +1,7 @@
 package org.czareg.game;
 
 import lombok.extern.slf4j.Slf4j;
+import org.czareg.game.validator.InsufficientMaterialChecker;
 import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerator;
 import org.czareg.piece.Pawn;
@@ -66,25 +67,8 @@ public class ClassicStateValidator implements StateValidator {
                 });
     }
 
-    /*
-        The game is declared a draw whenever both sides do not have the "sufficient material" to force a checkmate.
-        Insufficient material (no checkmates are possible or no checkmates can be forced):
-        - King vs king
-        - King + bishop or knight vs king
-        - King + Bishop vs. King + Bishop (both bishops on the same color)
-        - King + 2 knights vs King
-
-        In the specific case of two knights versus a lone king
-        USCF (United States Chess Federation): The rule specifies a game is drawn if there is no forced mate.
-        FIDE (International Chess Federation): The rule states a game is only drawn when a checkmate is absolutely impossible,
-        meaning that two knights versus a lone king may not be an automatic draw since a checkmate could theoretically occur
-        if the lone king 'helps' you by making specific moves to allow the checkmate.
-
-        Chess.com follows the USCF rule in this case and calls two knights insufficient mating material because the checkmate can not be forced.
-
-        I am going with USCF rule also.
-     */
     private boolean isInsufficientMaterial(Context context) {
-        return false;
+        InsufficientMaterialChecker insufficientMaterialChecker = new InsufficientMaterialChecker(context);
+        return insufficientMaterialChecker.check();
     }
 }
