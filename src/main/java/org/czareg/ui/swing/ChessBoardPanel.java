@@ -14,8 +14,7 @@ import java.awt.*;
 
 class ChessBoardPanel extends JPanel {
 
-    private static final int BOARD_SIZE = 8;
-    private static final int DEFAULT_PANEL_SIZE = 800;
+    private static final int DEFAULT_PANEL_SIZE_IN_PIXELS = 800;
 
     private static final Color LIGHT_SQUARE_COLOR = new Color(240, 217, 181);
     private static final Color DARK_SQUARE_COLOR = new Color(181, 136, 99);
@@ -37,46 +36,46 @@ class ChessBoardPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int size = Math.min(getWidth(), getHeight());
-        int squareSize = size / BOARD_SIZE;
-
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        drawBoard(g2d, squareSize);
-        drawPieces(g2d, squareSize);
+        int size = Math.min(getWidth(), getHeight());
+        int squareWidth = size / pf.getMaxFile();
+        int squareHeight = size / pf.getMaxRank();
+        drawBoard(g2d, squareWidth, squareHeight);
+        drawPieces(g2d, squareWidth, squareHeight);
     }
 
-    private void drawBoard(Graphics2D g, int squareSize) {
-        for (int rank = 0; rank < BOARD_SIZE; rank++) {
-            for (int file = 0; file < BOARD_SIZE; file++) {
+    private void drawBoard(Graphics2D g, int squareWidth, int squareHeight) {
+        for (int rank = 0; rank < pf.getMaxRank(); rank++) {
+            for (int file = 0; file < pf.getMaxFile(); file++) {
                 g.setColor((file + rank) % 2 == 0 ? LIGHT_SQUARE_COLOR : DARK_SQUARE_COLOR);
-                int x = file * squareSize;
-                int y = (BOARD_SIZE - 1 - rank) * squareSize;
-                g.fillRect(x, y, squareSize, squareSize);
+                int x = file * squareWidth;
+                int y = (pf.getMaxRank() - 1 - rank) * squareHeight;
+                g.fillRect(x, y, squareWidth, squareHeight);
             }
         }
     }
 
-    private void drawPieces(Graphics2D g, int squareSize) {
-        for (int rank = 0; rank < BOARD_SIZE; rank++) {
-            for (int file = 0; file < BOARD_SIZE; file++) {
+    private void drawPieces(Graphics2D g, int squareWidth, int squareHeight) {
+        for (int rank = 0; rank < pf.getMaxRank(); rank++) {
+            for (int file = 0; file < pf.getMaxFile(); file++) {
                 Position pos = pf.create(file, rank);
-                if (!board.hasPiece(pos)) continue;
+                if (!board.hasPiece(pos)) {
+                    continue;
+                }
 
                 Piece piece = board.getPiece(pos);
                 Image img = imageCache.getPieceImage(piece);
-                if (img != null) {
-                    int x = file * squareSize;
-                    int y = (BOARD_SIZE - 1 - rank) * squareSize;
-                    g.drawImage(img, x, y, squareSize, squareSize, this);
-                }
+                int x = file * squareWidth;
+                int y = (pf.getMaxRank() - 1 - rank) * squareHeight;
+                g.drawImage(img, x, y, squareWidth, squareHeight, this);
             }
         }
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(DEFAULT_PANEL_SIZE, DEFAULT_PANEL_SIZE);
+        return new Dimension(DEFAULT_PANEL_SIZE_IN_PIXELS, DEFAULT_PANEL_SIZE_IN_PIXELS);
     }
 }
