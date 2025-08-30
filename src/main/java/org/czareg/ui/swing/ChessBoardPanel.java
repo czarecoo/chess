@@ -134,6 +134,16 @@ class ChessBoardPanel extends JPanel {
 
         Position clicked = pf.create(file, rank);
 
+        for (Move move : highlightedMoves) {
+            if (move.getEnd().equals(clicked)) {
+                context.getMoveMaker().make(context, move);
+                this.selectedPosition = null;
+                this.highlightedMoves = Set.of();
+                repaint();
+                return;
+            }
+        }
+
         if (board.hasPiece(clicked)) {
             this.selectedPosition = clicked;
             GeneratedMoves generated = moveGenerators.generateLegal(context);
