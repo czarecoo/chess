@@ -3,7 +3,7 @@ package org.czareg.game;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.game.validator.InsufficientMaterialChecker;
 import org.czareg.move.MoveExecutor;
-import org.czareg.move.MoveGenerator;
+import org.czareg.move.MoveGenerators;
 import org.czareg.piece.Pawn;
 import org.czareg.piece.Player;
 
@@ -36,8 +36,8 @@ public class ClassicStateValidator implements StateValidator {
 
     private boolean hasLegalMove(Context context, Player currentPlayer) {
         ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
-        MoveGenerator moveGenerator = context.getMoveGenerator();
-        return moveGenerator.generateLegal(context)
+        MoveGenerators moveGenerators = context.getMoveGenerators();
+        return moveGenerators.generateLegal(context)
                 .getMoves(currentPlayer)
                 .stream()
                 .anyMatch(move -> {

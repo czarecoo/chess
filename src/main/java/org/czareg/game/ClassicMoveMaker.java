@@ -30,5 +30,6 @@ public class ClassicMoveMaker implements MoveMaker {
 
         History history = context.getHistory();
         history.save(move);
+        log.info("Made {}", move);
     }
 }

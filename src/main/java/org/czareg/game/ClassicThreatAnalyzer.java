@@ -3,6 +3,7 @@ package org.czareg.game;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.PiecePosition;
+import org.czareg.move.MoveGenerators;
 import org.czareg.piece.King;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
@@ -38,7 +39,8 @@ public class ClassicThreatAnalyzer implements ThreatAnalyzer {
 
     @Override
     public boolean isUnderAttack(Context context, Position position, Player player) {
-        GeneratedMoves generatedMoves = context.getMoveGenerator().generateLegal(context);
+        MoveGenerators moveGenerators = context.getMoveGenerators();
+        GeneratedMoves generatedMoves = moveGenerators.generateLegal(context);
         return isUnderAttack(generatedMoves, position, player);
     }
 

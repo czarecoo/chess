@@ -42,8 +42,8 @@ public class ClassicOnlyValidKingMoveFilter implements OnlyValidKingMoveFilter {
         Context duplicatedContext = context.duplicate();
         MoveExecutor moveExecutor = duplicatedContext.getMoveExecutor();
         moveExecutor.execute(duplicatedContext, move);
-        MoveGenerator moveGenerator = duplicatedContext.getMoveGenerator();
-        GeneratedMoves generatedMoves = moveGenerator.generatePseudoLegal(duplicatedContext);
+        MoveGenerators moveGenerators = duplicatedContext.getMoveGenerators();
+        GeneratedMoves generatedMoves = moveGenerators.generatePseudoLegal(duplicatedContext);
         ThreatAnalyzer threatAnalyzer = duplicatedContext.getThreatAnalyzer();
         return threatAnalyzer.isUnderAttack(generatedMoves, position, player);
     }

@@ -15,7 +15,7 @@ public class ClassicContext implements Context {
     Board board;
     History history;
     MoveMaker moveMaker;
-    MoveGenerator moveGenerator;
+    MoveGenerators moveGenerators;
     PlayerTurnValidator playerTurnValidator;
     MoveExecutor moveExecutor;
     PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
@@ -30,7 +30,7 @@ public class ClassicContext implements Context {
                 board.duplicate(),
                 history.duplicate(),
                 moveMaker,
-                moveGenerator,
+                moveGenerators,
                 playerTurnValidator,
                 moveExecutor,
                 pieceMoveGeneratorFactory,
@@ -42,11 +42,11 @@ public class ClassicContext implements Context {
     }
 
     public static ClassicContext create() {
-        PseudoLegalMoveGenerator pseudoLegalMoveGenerator = new PseudoLegalMoveGenerator();
+        MoveGenerator pseudoLegalMoveGenerator = new PseudoLegalMoveGenerator();
         return new ClassicContext(new ClassicBoard(8, 8),
                 new ClassicHistory(),
                 new ClassicMoveMaker(),
-                new ClassicMoveGenerator(new CachingLegalMoveGenerator(new LegalMoveGenerator(pseudoLegalMoveGenerator, new ClassicOnlyValidKingMoveFilter())), pseudoLegalMoveGenerator),
+                new ClassicMoveGenerators(new LegalMoveGenerator(pseudoLegalMoveGenerator, new ClassicOnlyValidKingMoveFilter()), pseudoLegalMoveGenerator),
                 new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),

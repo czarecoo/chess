@@ -31,7 +31,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("A", 2);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
 
         Set<Move> expectedMoves = Set.of(
                 new Move(pawn, start, pf.create("A", 3), new Metadata(MOVE)),
@@ -48,7 +48,7 @@ class PawnTests extends BaseTests {
         Position d3 = pf.create("D", 3);
         moveMaker.make(context, new Move(pawn, d2, d3, new Metadata(MOVE)));
 
-        Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(d3);
+        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(d3);
 
         Set<Move> expectedMoves = Set.of(new Move(pawn, d3, pf.create("D", 4), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
@@ -60,7 +60,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("H", 8);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
 
         assertEquals(Set.of(), actualMoves);
     }
@@ -71,7 +71,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("B", 7);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
 
         assertEquals(4, actualMoves.size());
         assertEquals(1, actualMoves.stream().map(Move::getEnd).distinct().count());
@@ -100,7 +100,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("E", 6);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerator.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
 
         Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create("E", 7), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
@@ -130,7 +130,7 @@ class PawnTests extends BaseTests {
     void givenEmptyBoard_whenGeneratingMovesForPositionWithoutPiece_thenNoMovesAreReturned() {
         Position positionWithoutPiece = pf.create("A", 1);
 
-        Set<Move> moves = moveGenerator.generateLegal(context).getMovesStarting(positionWithoutPiece);
+        Set<Move> moves = moveGenerators.generateLegal(context).getMovesStarting(positionWithoutPiece);
 
         assertTrue(moves.isEmpty());
     }
@@ -191,9 +191,9 @@ class PawnTests extends BaseTests {
         Position c5 = pf.create("C", 5);
         moveMaker.make(context, new Move(blackPawn, pf.create("C", 6), c5, new Metadata(MOVE)));
 
-        Set<Move> whiteMoves = moveGenerator.generateLegal(context).getMovesStarting(c4);
+        Set<Move> whiteMoves = moveGenerators.generateLegal(context).getMovesStarting(c4);
         assertEquals(Set.of(), whiteMoves);
-        Set<Move> blackMoves = moveGenerator.generateLegal(context).getMovesStarting(c5);
+        Set<Move> blackMoves = moveGenerators.generateLegal(context).getMovesStarting(c5);
         assertEquals(Set.of(), blackMoves);
     }
 
@@ -206,7 +206,7 @@ class PawnTests extends BaseTests {
         Position blackPosition = pf.create("D", 5);
         board.placePiece(blackPosition, blackPawn);
 
-        Set<Move> whiteMoves = moveGenerator.generateLegal(context).getMovesStarting(whitePosition);
+        Set<Move> whiteMoves = moveGenerators.generateLegal(context).getMovesStarting(whitePosition);
 
         Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, blackPawn);
@@ -223,7 +223,7 @@ class PawnTests extends BaseTests {
         Position blackPosition = pf.create("B", 3);
         board.placePiece(blackPosition, blackPawn);
 
-        Set<Move> blackMoves = moveGenerator.generateLegal(context).getMovesStarting(blackPosition);
+        Set<Move> blackMoves = moveGenerators.generateLegal(context).getMovesStarting(blackPosition);
 
         Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, whitePawn);

@@ -7,24 +7,24 @@ import org.czareg.game.GeneratedMoves;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ClassicMoveGenerator implements MoveGenerator {
+public class ClassicMoveGenerators implements MoveGenerators {
 
-    private final CachingLegalMoveGenerator cachingLegalMoveGenerator;
-    private final PseudoLegalMoveGenerator pseudoLegalMoveGenerator;
+    private final MoveGenerator legalMoveGenerator;
+    private final MoveGenerator pseudoLegalMoveGenerator;
 
     @Override
     public GeneratedMoves generateLegal(Context context) {
-        log.info("Start generate legal moves");
-        GeneratedMoves generatedMoves = cachingLegalMoveGenerator.generate(context);
-        log.info("End generate legal moves");
+        log.debug("Start generate legal moves");
+        GeneratedMoves generatedMoves = legalMoveGenerator.generate(context);
+        log.debug("End generate legal moves");
         return generatedMoves;
     }
 
     @Override
     public GeneratedMoves generatePseudoLegal(Context context) {
-        log.info("Start generate pseudo legal moves");
+        log.debug("Start generate pseudo legal moves");
         GeneratedMoves generatedMoves = pseudoLegalMoveGenerator.generate(context);
-        log.info("End generate pseudo legal moves");
+        log.debug("End generate pseudo legal moves");
         return generatedMoves;
     }
 }

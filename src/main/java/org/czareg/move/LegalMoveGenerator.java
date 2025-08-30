@@ -12,11 +12,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class LegalMoveGenerator {
+public class LegalMoveGenerator implements MoveGenerator {
 
-    private final PseudoLegalMoveGenerator pseudoLegalMoveGenerator;
+    private final MoveGenerator pseudoLegalMoveGenerator;
     private final OnlyValidKingMoveFilter onlyValidKingMoveFilter;
 
+    @Override
     public GeneratedMoves generate(Context context) {
         GeneratedMoves generatedMoves = pseudoLegalMoveGenerator.generate(context);
         Map<Player, Set<Move>> playerMoves = generatedMoves.getPlayerMoves();

@@ -1,6 +1,5 @@
 package org.czareg.board;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-@EqualsAndHashCode
 public class ClassicBoard implements Board {
 
     private final Piece[][] board;
