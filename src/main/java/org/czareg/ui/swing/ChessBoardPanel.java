@@ -5,12 +5,19 @@ import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
 import org.czareg.game.ClassicContext;
 import org.czareg.game.Context;
+import org.czareg.game.GeneratedMoves;
+import org.czareg.game.Move;
+import org.czareg.move.MoveGenerators;
 import org.czareg.piece.Piece;
+import org.czareg.position.Index;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Set;
 
 class ChessBoardPanel extends JPanel {
 
@@ -18,18 +25,32 @@ class ChessBoardPanel extends JPanel {
 
     private static final Color LIGHT_SQUARE_COLOR = new Color(240, 217, 181);
     private static final Color DARK_SQUARE_COLOR = new Color(181, 136, 99);
+    private static final Color SEMI_TRANSPARENT_YELLOW = new Color(255, 255, 0, 128);
+    private static final Color SEMI_TRANSPARENT_GREEN = new Color(0, 255, 0, 128);
 
-    private final Board board;
-    private final PositionFactory pf;
     private final ImageCache imageCache = new ImageCache();
 
+    private final Context context;
+    private final Board board;
+    private final PositionFactory pf;
+    private final MoveGenerators moveGenerators;
+
+    private Position selectedPosition;
+    private Set<Move> highlightedMoves = Set.of();
+
     ChessBoardPanel() {
-        Context context = ClassicContext.create();
+        context = ClassicContext.create();
         PiecePlacer placer = new ClassicPieceStartingPositionPlacer();
         placer.place(context.getBoard());
-
         this.board = context.getBoard();
         this.pf = board.getPositionFactory();
+        this.moveGenerators = context.getMoveGenerators();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handleClick(e.getX(), e.getY());
+            }
+        });
     }
 
     @Override
@@ -43,6 +64,7 @@ class ChessBoardPanel extends JPanel {
         int squareWidth = size / pf.getMaxFile();
         int squareHeight = size / pf.getMaxRank();
         drawBoard(g2d, squareWidth, squareHeight);
+        drawHighlights(g2d, squareWidth, squareHeight);
         drawPieces(g2d, squareWidth, squareHeight);
     }
 
@@ -74,8 +96,53 @@ class ChessBoardPanel extends JPanel {
         }
     }
 
+    private void drawHighlights(Graphics2D g, int squareWidth, int squareHeight) {
+        if (selectedPosition != null) {
+            Index idx = pf.create(selectedPosition);
+            int x = idx.getFile() * squareWidth;
+            int y = (pf.getMaxRank() - 1 - idx.getRank()) * squareHeight;
+
+            g.setColor(SEMI_TRANSPARENT_YELLOW);
+            g.fillRect(x, y, squareWidth, squareHeight);
+        }
+
+        g.setColor(SEMI_TRANSPARENT_GREEN);
+        for (Move move : highlightedMoves) {
+            Index idx = pf.create(move.getEnd());
+            int x = idx.getFile() * squareWidth;
+            int y = (pf.getMaxRank() - 1 - idx.getRank()) * squareHeight;
+
+            g.fillOval(x + squareWidth / 4, y + squareHeight / 4, squareWidth / 2, squareHeight / 2);
+        }
+    }
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(DEFAULT_PANEL_SIZE_IN_PIXELS, DEFAULT_PANEL_SIZE_IN_PIXELS);
+    }
+
+    private void handleClick(int mouseX, int mouseY) {
+        int size = Math.min(getWidth(), getHeight());
+        int squareWidth = size / pf.getMaxFile();
+        int squareHeight = size / pf.getMaxRank();
+
+        int file = mouseX / squareWidth;
+        int rank = pf.getMaxRank() - 1 - (mouseY / squareHeight);
+        if (file < 0 || file >= pf.getMaxFile() || rank < 0 || rank >= pf.getMaxRank()) {
+            return;
+        }
+
+        Position clicked = pf.create(file, rank);
+
+        if (board.hasPiece(clicked)) {
+            this.selectedPosition = clicked;
+            GeneratedMoves generated = moveGenerators.generateLegal(context);
+            this.highlightedMoves = generated.getMovesStarting(clicked);
+        } else {
+            this.selectedPosition = null;
+            this.highlightedMoves = Set.of();
+        }
+
+        repaint();
     }
 }
