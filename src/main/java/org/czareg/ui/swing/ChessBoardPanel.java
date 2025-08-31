@@ -3,10 +3,7 @@ package org.czareg.ui.swing;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
-import org.czareg.game.ClassicContext;
-import org.czareg.game.Context;
-import org.czareg.game.GeneratedMoves;
-import org.czareg.game.Move;
+import org.czareg.game.*;
 import org.czareg.move.MoveGenerators;
 import org.czareg.piece.Piece;
 import org.czareg.position.Index;
@@ -34,6 +31,7 @@ class ChessBoardPanel extends JPanel {
     private final Board board;
     private final PositionFactory pf;
     private final MoveGenerators moveGenerators;
+    private final History history;
 
     private Position selectedPosition;
     private Set<Move> highlightedMoves = Set.of();
@@ -45,6 +43,7 @@ class ChessBoardPanel extends JPanel {
         this.board = context.getBoard();
         this.pf = board.getPositionFactory();
         this.moveGenerators = context.getMoveGenerators();
+        this.history = context.getHistory();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -144,7 +143,7 @@ class ChessBoardPanel extends JPanel {
             }
         }
 
-        if (board.hasPiece(clicked)) {
+        if (board.hasPiece(clicked) && board.getPiece(clicked).getPlayer() == history.getCurrentPlayer()) {
             this.selectedPosition = clicked;
             GeneratedMoves generated = moveGenerators.generateLegal(context);
             this.highlightedMoves = generated.getMovesStarting(clicked);

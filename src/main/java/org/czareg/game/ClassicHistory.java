@@ -37,6 +37,13 @@ public class ClassicHistory implements History {
     }
 
     @Override
+    public Player getCurrentPlayer() {
+        return getLastMovingPlayer()
+                .map(Player::getOpponent)
+                .orElse(Player.WHITE);
+    }
+
+    @Override
     public Optional<Move> getLastPlayedMove() {
         if (history.isEmpty()) {
             return Optional.empty();

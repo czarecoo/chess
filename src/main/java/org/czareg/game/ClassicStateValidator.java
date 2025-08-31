@@ -16,13 +16,14 @@ public class ClassicStateValidator implements StateValidator {
 
     @Override
     public void validate(Context context) {
+        History history = context.getHistory();
         if (isInsufficientMaterial(context)) {
             throw new IllegalStateException("Insufficient material.");
-        } else if (isDrawnBy50MoveRule(context.getHistory())) {
+        } else if (isDrawnBy50MoveRule(history)) {
             throw new IllegalStateException("Drawn by 50 move rule.");
         }
         ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
-        Player currentPlayer = context.getHistory().getLastMovingPlayer().map(Player::getOpponent).orElse(Player.WHITE);
+        Player currentPlayer = history.getCurrentPlayer();
         boolean hasNoLegalMoves = !hasLegalMove(context, currentPlayer);
         if (hasNoLegalMoves) {
             boolean inInCheck = threatAnalyzer.isInCheck(context, currentPlayer);

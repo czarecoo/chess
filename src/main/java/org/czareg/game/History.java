@@ -14,6 +14,8 @@ public interface History extends Duplicatable<History> {
 
     Optional<Player> getLastMovingPlayer();
 
+    Player getCurrentPlayer();
+
     Optional<Move> getLastPlayedMove();
 
     int movesCount();
