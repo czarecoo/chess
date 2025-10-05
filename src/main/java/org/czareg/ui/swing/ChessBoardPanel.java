@@ -46,7 +46,7 @@ class ChessBoardPanel extends JPanel {
         this.history = context.getHistory();
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 handleClick(e.getX(), e.getY());
             }
         });
