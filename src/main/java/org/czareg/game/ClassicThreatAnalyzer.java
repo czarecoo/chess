@@ -46,9 +46,8 @@ public class ClassicThreatAnalyzer implements ThreatAnalyzer {
 
     @Override
     public boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player) {
-        Player attacker = player.getOpponent();
         return generatedMoves
-                .getMoves(attacker)
+                .getMoves()
                 .stream()
                 .anyMatch(move -> isCapture(position, player, move));
     }

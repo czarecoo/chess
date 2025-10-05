@@ -23,16 +23,10 @@ public class ClassicStateValidator implements StateValidator {
         } else if (isDrawnBy50MoveRule(history)) {
             throw new IllegalStateException("Drawn by 50 move rule.");
         }
-        ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
         Player currentPlayer = history.getCurrentPlayer();
         boolean hasNoLegalMoves = !hasLegalMove(context, currentPlayer);
         if (hasNoLegalMoves) {
-            boolean inInCheck = threatAnalyzer.isInCheck(context, currentPlayer);
-            if (inInCheck) {
-                throw new IllegalStateException("Checkmate");
-            } else {
-                throw new IllegalStateException("Stalemate");
-            }
+            throw new IllegalStateException("There are no legal moves available.");
         } else {
             log.info("There is at least one valid move");
         }
@@ -42,7 +36,7 @@ public class ClassicStateValidator implements StateValidator {
         ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
         MoveGenerators moveGenerators = context.getMoveGenerators();
         return moveGenerators.generateLegal(context)
-                .getMoves(currentPlayer)
+                .getMoves()
                 .stream()
                 .anyMatch(move -> {
                     Context duplicatedContext = context.duplicate();

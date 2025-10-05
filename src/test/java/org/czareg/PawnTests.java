@@ -42,15 +42,19 @@ class PawnTests extends BaseTests {
 
     @Test
     void givenWhitePawnDidMoveBefore_whenGettingPossibleMoves_thenCanMoveByOneRow() {
-        Pawn pawn = new Pawn(WHITE);
+        Pawn whitePawn = new Pawn(WHITE);
         Position d2 = pf.create("D", 2);
-        board.placePiece(d2, pawn);
+        board.placePiece(d2, whitePawn);
+        Pawn blackPawn = new Pawn(BLACK);
+        board.placePiece(pf.create("H", 7), blackPawn);
+
         Position d3 = pf.create("D", 3);
-        moveMaker.make(context, new Move(pawn, d2, d3, new Metadata(MOVE)));
+        moveMaker.make(context, new Move(whitePawn, d2, d3, new Metadata(MOVE)));
+        moveMaker.make(context, new Move(blackPawn, pf.create("H", 7), pf.create("H", 6), new Metadata(MOVE)));
 
         Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(d3);
 
-        Set<Move> expectedMoves = Set.of(new Move(pawn, d3, pf.create("D", 4), new Metadata(MOVE)));
+        Set<Move> expectedMoves = Set.of(new Move(whitePawn, d3, pf.create("D", 4), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
     }
 
@@ -217,17 +221,19 @@ class PawnTests extends BaseTests {
     @Test
     void givenBlackPawnAndWhitePawnOnDiagonalLeft_whenBlackMoves_thenItCanCapture() {
         Pawn whitePawn = new Pawn(WHITE);
-        Position whitePosition = pf.create("A", 2);
-        board.placePiece(whitePosition, whitePawn);
+        Position a2 = pf.create("A", 2);
+        board.placePiece(a2, whitePawn);
         Pawn blackPawn = new Pawn(BLACK);
-        Position blackPosition = pf.create("B", 3);
-        board.placePiece(blackPosition, blackPawn);
+        Position b4 = pf.create("B", 4);
+        board.placePiece(b4, blackPawn);
+        Position a3 = pf.create("A", 3);
+        moveMaker.make(context, new Move(whitePawn, a2, a3, new Metadata(MOVE)));
 
-        Set<Move> blackMoves = moveGenerators.generateLegal(context).getMovesStarting(blackPosition);
+        Set<Move> blackMoves = moveGenerators.generateLegal(context).getMovesStarting(b4);
 
         Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, whitePawn);
-        Move expectedMove = new Move(blackPawn, blackPosition, whitePosition, expectedMetadata);
+        Move expectedMove = new Move(blackPawn, b4, a3, expectedMetadata);
         assertTrue(blackMoves.contains(expectedMove));
     }
 }

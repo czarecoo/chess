@@ -6,9 +6,7 @@ import org.czareg.game.Context;
 import org.czareg.game.GeneratedMoves;
 import org.czareg.game.Move;
 import org.czareg.game.hasher.ZobristHasher;
-import org.czareg.piece.Player;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,15 +35,12 @@ public class ClassicMoveGenerators implements MoveGenerators {
         return legalMovesCache.computeIfAbsent(currentHash, hash -> {
             log.info("Start generate legal moves, current hash={}", currentHash);
             GeneratedMoves generatedMoves = generatePseudoLegal(context);
-            Map<Player, Set<Move>> playerMoves = generatedMoves.getPlayerMoves();
-            Map<Player, Set<Move>> result = new EnumMap<>(Player.class);
-            for (Map.Entry<Player, Set<Move>> playerSetEntry : playerMoves.entrySet()) {
-                Player player = playerSetEntry.getKey();
-                Set<Move> moves = filterMoves(context, playerSetEntry);
-                result.put(player, moves);
-            }
+            Set<Move> legalMoves = generatedMoves.getMoves()
+                    .stream()
+                    .filter(move -> onlyValidKingMoveFilter.filter(context, move))
+                    .collect(Collectors.toSet());
             log.info("End generate legal moves, current hash={}", currentHash);
-            return new GeneratedMoves(result);
+            return new GeneratedMoves(legalMoves);
         });
     }
 
@@ -60,12 +55,5 @@ public class ClassicMoveGenerators implements MoveGenerators {
             log.info("End generate pseudo legal moves, current hash={}", currentHash);
             return generatedMoves;
         });
-    }
-
-    private Set<Move> filterMoves(Context context, Map.Entry<Player, Set<Move>> playerSetEntry) {
-        return playerSetEntry.getValue()
-                .stream()
-                .filter(move -> onlyValidKingMoveFilter.filter(context, move))
-                .collect(Collectors.toSet());
     }
 }

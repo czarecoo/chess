@@ -34,7 +34,7 @@ class StateValidationTest extends BaseTests {
 
         Move afterCheckMate = new Move(board.getPiece(pf.create("A", 7)), pf.create("A", 7), pf.create("B", 5), new Metadata(MOVE));
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, afterCheckMate));
-        assertEquals("Checkmate", e.getMessage());
+        assertEquals("There are no legal moves available.", e.getMessage());
     }
 
     @Test
@@ -51,7 +51,7 @@ class StateValidationTest extends BaseTests {
 
         Move afterCheckMate = new Move(board.getPiece(pf.create("A", 6)), pf.create("A", 6), pf.create("A", 5), new Metadata(MOVE));
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> moveMaker.make(context, afterCheckMate));
-        assertEquals("Checkmate", e.getMessage());
+        assertEquals("There are no legal moves available.", e.getMessage());
     }
 
     @Test

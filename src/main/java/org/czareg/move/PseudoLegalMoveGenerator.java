@@ -8,8 +8,6 @@ import org.czareg.game.Move;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
 import org.czareg.piece.Player;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,12 +16,9 @@ public class PseudoLegalMoveGenerator implements MoveGenerator {
 
     @Override
     public GeneratedMoves generate(Context context) {
-        Map<Player, Set<Move>> playerMoves = new EnumMap<>(Player.class);
-        for (Player player : Player.values()) {
-            Set<Move> moves = generateMovesForPlayer(context, player);
-            playerMoves.put(player, moves);
-        }
-        return new GeneratedMoves(playerMoves);
+        Player current = context.getHistory().getCurrentPlayer();
+        Set<Move> moves = generateMovesForPlayer(context, current);
+        return new GeneratedMoves(moves);
     }
 
     private Set<Move> generateMovesForPlayer(Context context, Player player) {
