@@ -39,7 +39,7 @@ public class PositionFactory {
 
     public Position create(String file, int rank) {
         if (!allowedFileValues.contains(file)) {
-            String message = "Illegal file %s allowed values %s".formatted(file, allowedRankValues);
+            String message = "Illegal file %s allowed values %s".formatted(file, allowedFileValues);
             throw new IllegalArgumentException(message);
         }
         if (!allowedRankValues.contains(rank)) {
