@@ -2,10 +2,7 @@ package org.czareg.move;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.game.Context;
-import org.czareg.game.Metadata;
-import org.czareg.game.Move;
-import org.czareg.game.MoveType;
+import org.czareg.game.*;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Position;
@@ -29,6 +26,8 @@ public class ClassicMoveExecutor implements MoveExecutor {
             case MOVE, INITIAL_DOUBLE_FORWARD -> () -> executeMove(move, board);
         };
         runnable.run();
+        History history = context.getHistory();
+        history.save(move);
     }
 
     private void executePromotion(Move move, Board board) {

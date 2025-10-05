@@ -27,9 +27,6 @@ public class ClassicMoveMaker implements MoveMaker {
 
         MoveExecutor moveExecutor = context.getMoveExecutor();
         moveExecutor.execute(context, move);
-
-        History history = context.getHistory();
-        history.save(move);
         log.info("Made {}", move);
     }
 }
