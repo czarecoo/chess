@@ -16,6 +16,7 @@ public class ClassicStateValidator implements StateValidator {
 
     @Override
     public void validate(Context context) {
+        log.info("Started context state validation");
         History history = context.getHistory();
         if (isInsufficientMaterial(context)) {
             throw new IllegalStateException("Insufficient material.");
@@ -32,6 +33,8 @@ public class ClassicStateValidator implements StateValidator {
             } else {
                 throw new IllegalStateException("Stalemate");
             }
+        } else {
+            log.info("There is at least one valid move");
         }
     }
 

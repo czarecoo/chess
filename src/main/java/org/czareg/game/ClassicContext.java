@@ -42,11 +42,10 @@ public class ClassicContext implements Context {
     }
 
     public static ClassicContext create() {
-        MoveGenerator pseudoLegalMoveGenerator = new PseudoLegalMoveGenerator();
         return new ClassicContext(new ClassicBoard(8, 8),
                 new ClassicHistory(),
                 new ClassicMoveMaker(),
-                new ClassicMoveGenerators(new LegalMoveGenerator(pseudoLegalMoveGenerator, new ClassicOnlyValidKingMoveFilter()), pseudoLegalMoveGenerator),
+                new ClassicMoveGenerators(new PseudoLegalMoveGenerator(), new ClassicOnlyValidKingMoveFilter()),
                 new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),

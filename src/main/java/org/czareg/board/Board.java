@@ -1,6 +1,7 @@
 package org.czareg.board;
 
 import org.czareg.game.Duplicatable;
+import org.czareg.game.hasher.ZobristHasher;
 import org.czareg.piece.Piece;
 import org.czareg.piece.Player;
 import org.czareg.position.Position;
@@ -18,6 +19,8 @@ import static java.util.stream.Collectors.toSet;
 public interface Board extends Duplicatable<Board> {
 
     PositionFactory getPositionFactory();
+
+    ZobristHasher getZobristHasher();
 
     boolean hasPiece(Position position);
 

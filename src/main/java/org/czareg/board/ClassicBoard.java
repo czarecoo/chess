@@ -3,6 +3,7 @@ package org.czareg.board;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.czareg.game.hasher.ZobristHasher;
 import org.czareg.piece.Piece;
 import org.czareg.position.Index;
 import org.czareg.position.Position;
@@ -19,10 +20,13 @@ public class ClassicBoard implements Board {
     private final Piece[][] board;
     @Getter
     private final PositionFactory positionFactory;
+    @Getter
+    private final ZobristHasher zobristHasher;
 
     public ClassicBoard(int maxFile, int maxRank) {
         this.positionFactory = new PositionFactory(maxFile, maxRank);
         this.board = new Piece[maxRank][maxFile];
+        this.zobristHasher = new ZobristHasher(this);
     }
 
     @Override
@@ -85,7 +89,7 @@ public class ClassicBoard implements Board {
         for (int i = 0; i < board.length; i++) {
             shallowCopy[i] = board[i].clone();
         }
-        return new ClassicBoard(shallowCopy, positionFactory);
+        return new ClassicBoard(shallowCopy, positionFactory, zobristHasher);
     }
 
     private Piece get(Position position) {
