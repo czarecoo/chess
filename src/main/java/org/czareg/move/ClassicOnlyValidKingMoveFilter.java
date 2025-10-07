@@ -2,14 +2,12 @@ package org.czareg.move;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.game.Context;
-import org.czareg.game.GeneratedMoves;
 import org.czareg.game.Move;
 import org.czareg.game.ThreatAnalyzer;
-import org.czareg.piece.King;
 import org.czareg.piece.Player;
 import org.czareg.position.Position;
+import org.czareg.position.PositionFactory;
 
-import static org.czareg.game.Metadata.Key.CASTLING_ROOK_END_POSITION;
 import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 import static org.czareg.game.MoveType.CASTLING;
 
@@ -18,33 +16,48 @@ public class ClassicOnlyValidKingMoveFilter implements OnlyValidKingMoveFilter {
 
     @Override
     public boolean filter(Context context, Move move) {
-        if (move.getPiece().getClass() != King.class) {
-            return true;
-        }
-        Position kingEndPosition = move.getEnd();
-        if (simulateTheMoveAndCheckIfUnderAttack(context, move, kingEndPosition)) {
-            log.debug("King would be in check after moving to {}.", kingEndPosition);
+        Player currentPlayer = move.getPiece().getPlayer();
+
+        // 1. Duplicate context and execute move
+        Context simulation = context.duplicate();
+        simulation.getMoveExecutor().execute(simulation, move);
+
+        // 2. Get the threat analyzer — must use *pure pseudo-attack* logic
+        ThreatAnalyzer threatAnalyzer = simulation.getThreatAnalyzer();
+
+        // 3. If the player's king is attacked in this new position → illegal move
+        if (threatAnalyzer.isKingUnderAttack(simulation, currentPlayer)) {
+            log.debug("Move {} would leave {} in check.", move, currentPlayer);
             return false;
         }
-        boolean isCastleMove = move.getMetadata().isExactly(MOVE_TYPE, CASTLING);
-        if (isCastleMove) {
-            Position rookEndPosition = move.getMetadata().get(CASTLING_ROOK_END_POSITION, Position.class).orElseThrow();
-            if (simulateTheMoveAndCheckIfUnderAttack(context, move, rookEndPosition)) {
-                log.debug("King would pass through {} that is under attack.", rookEndPosition);
+
+        // 4. Special handling for castling (check if path is safe)
+        if (isCastleMove(move)) {
+            return isCastlingPathSafe(context, move, currentPlayer);
+        }
+
+        return true;
+    }
+
+    private boolean isCastleMove(Move move) {
+        return move.getMetadata().isExactly(MOVE_TYPE, CASTLING);
+    }
+
+    private boolean isCastlingPathSafe(Context context, Move move, Player player) {
+        ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
+        PositionFactory pf = context.getBoard().getPositionFactory();
+
+        Position start = move.getStart();
+        Position end = move.getEnd();
+        int dir = Integer.signum(pf.create(end).getFile() - pf.create(start).getFile());
+
+        for (int step = pf.create(start).getFile(); step != pf.create(end).getFile() + dir; step += dir) {
+            Position pos = pf.create(step, pf.create(start).getRank());
+            if (threatAnalyzer.isSquareUnderAttack(context, pos, player)) {
+                log.debug("Castling path square {} is under attack", pos);
                 return false;
             }
         }
         return true;
-    }
-
-    private boolean simulateTheMoveAndCheckIfUnderAttack(Context context, Move move, Position position) {
-        Player player = move.getPiece().getPlayer();
-        Context duplicatedContext = context.duplicate();
-        MoveExecutor moveExecutor = duplicatedContext.getMoveExecutor();
-        moveExecutor.execute(duplicatedContext, move);
-        MoveGenerators moveGenerators = duplicatedContext.getMoveGenerators();
-        GeneratedMoves generatedMoves = moveGenerators.generatePseudoLegal(duplicatedContext);
-        ThreatAnalyzer threatAnalyzer = duplicatedContext.getThreatAnalyzer();
-        return threatAnalyzer.isUnderAttack(generatedMoves, position, player);
     }
 }

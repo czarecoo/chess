@@ -10,4 +10,8 @@ public interface ThreatAnalyzer {
     boolean isUnderAttack(Context context, Position position, Player player);
 
     boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player);
+
+    boolean isKingUnderAttack(Context context, Player player);
+
+    boolean isSquareUnderAttack(Context context, Position square, Player owner);
 }
