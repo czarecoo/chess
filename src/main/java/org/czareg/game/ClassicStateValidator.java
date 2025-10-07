@@ -1,49 +1,32 @@
 package org.czareg.game;
 
-import lombok.extern.slf4j.Slf4j;
 import org.czareg.game.validator.InsufficientMaterialChecker;
-import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerators;
 import org.czareg.piece.Pawn;
-import org.czareg.piece.Player;
 
 import java.util.List;
 
 import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
-@Slf4j
 public class ClassicStateValidator implements StateValidator {
 
     @Override
     public void validate(Context context) {
-        log.info("Started context state validation");
         History history = context.getHistory();
         if (isInsufficientMaterial(context)) {
             throw new IllegalStateException("Insufficient material.");
         } else if (isDrawnBy50MoveRule(history)) {
             throw new IllegalStateException("Drawn by 50 move rule.");
         }
-        Player currentPlayer = history.getCurrentPlayer();
-        boolean hasNoLegalMoves = !hasLegalMove(context, currentPlayer);
-        if (hasNoLegalMoves) {
+        if (hasNoLegalMoves(context)) {
             throw new IllegalStateException("There are no legal moves available.");
-        } else {
-            log.info("There is at least one valid move");
         }
     }
 
-    private boolean hasLegalMove(Context context, Player currentPlayer) {
-        ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
+    private boolean hasNoLegalMoves(Context context) {
         MoveGenerators moveGenerators = context.getMoveGenerators();
         return moveGenerators.generateLegal(context)
-                .getMoves()
-                .stream()
-                .anyMatch(move -> {
-                    Context duplicatedContext = context.duplicate();
-                    MoveExecutor moveExecutor = duplicatedContext.getMoveExecutor();
-                    moveExecutor.execute(duplicatedContext, move);
-                    return !threatAnalyzer.isInCheck(duplicatedContext, currentPlayer);
-                });
+                .getMoves().isEmpty();
     }
 
     private boolean isDrawnBy50MoveRule(History history) {

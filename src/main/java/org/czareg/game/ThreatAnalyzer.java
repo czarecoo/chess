@@ -5,13 +5,7 @@ import org.czareg.position.Position;
 
 public interface ThreatAnalyzer {
 
-    boolean isInCheck(Context context, Player player);
-
-    boolean isUnderAttack(Context context, Position position, Player player);
-
-    boolean isUnderAttack(GeneratedMoves generatedMoves, Position position, Player player);
-
     boolean isKingUnderAttack(Context context, Player player);
 
-    boolean isSquareUnderAttack(Context context, Position square, Player owner);
+    boolean isPositionUnderAttack(Context context, Position square, Player owner);
 }

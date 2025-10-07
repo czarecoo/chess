@@ -27,7 +27,7 @@ public class ClassicBoardValidator implements BoardValidator {
     private boolean hasIncorrectNumberOfKingsPerPlayer(Board board) {
         Map<Player, Long> kingCounts = new EnumMap<>(Player.class);
         for (Player player : Player.values()) {
-            long count = board.getAllPieces(player, King.class).size();
+            long count = board.getAllPiecePositions(player, King.class).size();
             kingCounts.put(player, count);
         }
         log.debug("King count per player: {}", kingCounts);

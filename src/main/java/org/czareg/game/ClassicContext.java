@@ -45,7 +45,7 @@ public class ClassicContext implements Context {
         return new ClassicContext(new ClassicBoard(8, 8),
                 new ClassicHistory(),
                 new ClassicMoveMaker(),
-                new ClassicMoveGenerators(new PseudoLegalMoveGenerator(), new ClassicOnlyValidKingMoveFilter()),
+                new ClassicMoveGenerators(new PseudoLegalMoveGenerator(), new ClassicLegalMoveFilter()),
                 new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),

@@ -40,10 +40,9 @@ public interface Board extends Duplicatable<Board> {
                 .toList();
     }
 
-    default List<Piece> getAllPieces(Player player, Class<? extends Piece> pieceType) {
+    default List<PiecePosition> getAllPiecePositions(Player player, Class<? extends Piece> pieceType) {
         return getAllPiecePositions(player).stream()
-                .map(PiecePosition::piece)
-                .filter(pieceType::isInstance)
+                .filter(piecePosition -> piecePosition.piece().getClass() == pieceType)
                 .toList();
     }
 

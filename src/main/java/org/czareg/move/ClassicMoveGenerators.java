@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 public class ClassicMoveGenerators implements MoveGenerators {
 
     private final MoveGenerator pseudoLegalMoveGenerator;
-    private final OnlyValidKingMoveFilter onlyValidKingMoveFilter;
+    private final LegalMoveFilter legalMoveFilter;
     private final Map<Long, GeneratedMoves> legalMovesCache;
     private final Map<Long, GeneratedMoves> pseudoLegalMovesCache;
 
-    public ClassicMoveGenerators(MoveGenerator pseudoLegalMoveGenerator, OnlyValidKingMoveFilter onlyValidKingMoveFilter) {
+    public ClassicMoveGenerators(MoveGenerator pseudoLegalMoveGenerator, LegalMoveFilter legalMoveFilter) {
         this.pseudoLegalMoveGenerator = pseudoLegalMoveGenerator;
-        this.onlyValidKingMoveFilter = onlyValidKingMoveFilter;
+        this.legalMoveFilter = legalMoveFilter;
         legalMovesCache = new HashMap<>();
         pseudoLegalMovesCache = new HashMap<>();
     }
@@ -33,13 +33,13 @@ public class ClassicMoveGenerators implements MoveGenerators {
         ZobristHasher zobristHasher = board.getZobristHasher();
         long currentHash = zobristHasher.computeHash(context);
         return legalMovesCache.computeIfAbsent(currentHash, hash -> {
-            log.info("Start generate legal moves, current hash={}", currentHash);
+            log.debug("Start generate legal moves, current hash={}", currentHash);
             GeneratedMoves generatedMoves = generatePseudoLegal(context);
             Set<Move> legalMoves = generatedMoves.getMoves()
                     .stream()
-                    .filter(move -> onlyValidKingMoveFilter.filter(context, move))
+                    .filter(move -> legalMoveFilter.isLegal(context, move))
                     .collect(Collectors.toSet());
-            log.info("End generate legal moves, current hash={}", currentHash);
+            log.debug("End generate legal moves, current hash={}", currentHash);
             return new GeneratedMoves(legalMoves);
         });
     }
@@ -50,9 +50,9 @@ public class ClassicMoveGenerators implements MoveGenerators {
         ZobristHasher zobristHasher = board.getZobristHasher();
         long currentHash = zobristHasher.computeHash(context);
         return pseudoLegalMovesCache.computeIfAbsent(currentHash, hash -> {
-            log.info("Start generate pseudo legal moves, current hash={}", currentHash);
+            log.debug("Start generate pseudo legal moves, current hash={}", currentHash);
             GeneratedMoves generatedMoves = pseudoLegalMoveGenerator.generate(context);
-            log.info("End generate pseudo legal moves, current hash={}", currentHash);
+            log.debug("End generate pseudo legal moves, current hash={}", currentHash);
             return generatedMoves;
         });
     }
