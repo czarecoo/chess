@@ -3,6 +3,7 @@ package org.czareg.game;
 import lombok.Value;
 import org.czareg.position.Position;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,5 +17,9 @@ public class GeneratedMoves {
                 .stream()
                 .filter(move -> move.getStart().equals(start))
                 .collect(Collectors.toSet());
+    }
+
+    public Optional<Move> findAny() {
+        return moves.stream().findAny();
     }
 }

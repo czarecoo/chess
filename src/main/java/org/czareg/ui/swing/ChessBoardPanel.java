@@ -1,5 +1,6 @@
 package org.czareg.ui.swing;
 
+import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
@@ -12,10 +13,14 @@ import org.czareg.position.PositionFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 class ChessBoardPanel extends JPanel {
 
     private static final int DEFAULT_PANEL_SIZE_IN_PIXELS = 800;
@@ -53,6 +58,18 @@ class ChessBoardPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 handleClick(e.getX(), e.getY());
+            }
+        });
+
+        setFocusable(true);
+        requestFocusInWindow();
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    makeAnyMove();
+                }
             }
         });
     }
@@ -162,5 +179,20 @@ class ChessBoardPanel extends JPanel {
 
     private void generateLegalMoves() {
         this.generatedMoves = moveGenerators.generateLegal(context);
+    }
+
+    private void makeAnyMove() {
+        Optional<Move> optionalMove = generatedMoves.findAny();
+        if (optionalMove.isEmpty()) {
+            log.warn("No moves generated");
+            return;
+        }
+        Move move = optionalMove.orElseThrow();
+        context.getMoveMaker().make(context, move);
+
+        generateLegalMoves();
+        selectedPosition = null;
+        highlightedMoves = Set.of();
+        repaint();
     }
 }
