@@ -36,6 +36,8 @@ class ChessBoardPanel extends JPanel {
     private Position selectedPosition;
     private Set<Move> highlightedMoves = Set.of();
 
+    private GeneratedMoves generatedMoves;
+
     ChessBoardPanel() {
         context = ClassicContext.create();
         PiecePlacer placer = new ClassicPieceStartingPositionPlacer();
@@ -44,6 +46,9 @@ class ChessBoardPanel extends JPanel {
         this.pf = board.getPositionFactory();
         this.moveGenerators = context.getMoveGenerators();
         this.history = context.getHistory();
+
+        generateLegalMoves();
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -136,6 +141,7 @@ class ChessBoardPanel extends JPanel {
         for (Move move : highlightedMoves) {
             if (move.getEnd().equals(clicked)) {
                 context.getMoveMaker().make(context, move);
+                generateLegalMoves();
                 this.selectedPosition = null;
                 this.highlightedMoves = Set.of();
                 repaint();
@@ -145,13 +151,16 @@ class ChessBoardPanel extends JPanel {
 
         if (board.hasPiece(clicked) && board.getPiece(clicked).getPlayer() == history.getCurrentPlayer()) {
             this.selectedPosition = clicked;
-            GeneratedMoves generated = moveGenerators.generateLegal(context);
-            this.highlightedMoves = generated.getMovesStarting(clicked);
+            this.highlightedMoves = generatedMoves.getMovesStarting(clicked);
         } else {
             this.selectedPosition = null;
             this.highlightedMoves = Set.of();
         }
 
         repaint();
+    }
+
+    private void generateLegalMoves() {
+        this.generatedMoves = moveGenerators.generateLegal(context);
     }
 }
