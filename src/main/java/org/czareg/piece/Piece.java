@@ -19,12 +19,4 @@ public sealed interface Piece permits Pawn, Knight, Bishop, Rook, Queen, King {
     }
 
     Player getPlayer();
-
-    static boolean different(Piece piece1, Piece piece2) {
-        return !same(piece1, piece2);
-    }
-
-    static boolean same(Piece piece1, Piece piece2) {
-        return piece1.getClass() == piece2.getClass() && piece1.getPlayer() == piece2.getPlayer();
-    }
 }

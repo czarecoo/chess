@@ -49,7 +49,7 @@ public class ClassicMoveExecutor implements MoveExecutor {
         Piece pieceToCaptureOnBoard = board.getPiece(move.getEnd());
         Piece pieceToCaptureInMove = move.getMetadata().get(CAPTURE_PIECE, Piece.class)
                 .orElseThrow(() -> new IllegalStateException("Promotion capture move missing capture piece"));
-        if (Piece.different(pieceToCaptureOnBoard, pieceToCaptureInMove)) {
+        if (pieceToCaptureOnBoard != pieceToCaptureInMove) {
             String message = "Piece to capture on board %s is different than the one declared in move %s".formatted(pieceToCaptureOnBoard, pieceToCaptureInMove);
             throw new IllegalStateException(message);
         }
@@ -95,7 +95,7 @@ public class ClassicMoveExecutor implements MoveExecutor {
         Piece pieceToCaptureOnBoard = board.getPiece(move.getEnd());
         Piece pieceToCaptureInMove = move.getMetadata().get(CAPTURE_PIECE, Piece.class)
                 .orElseThrow(() -> new IllegalStateException("Capture move missing capture piece"));
-        if (Piece.different(pieceToCaptureOnBoard, pieceToCaptureInMove)) {
+        if (pieceToCaptureOnBoard != pieceToCaptureInMove) {
             String message = "Piece to capture on board %s is different than the one declared in move %s".formatted(pieceToCaptureOnBoard, pieceToCaptureInMove);
             throw new IllegalStateException(message);
         }
