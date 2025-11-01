@@ -182,7 +182,7 @@ class ChessBoardPanel extends JPanel {
     }
 
     private void makeAnyMove() {
-        Optional<Move> optionalMove = generatedMoves.findAny();
+        Optional<Move> optionalMove = generatedMoves.findRandom();
         if (optionalMove.isEmpty()) {
             log.warn("No moves generated");
             return;

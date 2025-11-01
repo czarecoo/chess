@@ -2,6 +2,7 @@ package org.czareg.game;
 
 import lombok.Value;
 import org.czareg.position.Position;
+import org.czareg.util.RandomUtils;
 
 import java.util.Optional;
 import java.util.Set;
@@ -19,7 +20,11 @@ public class GeneratedMoves {
                 .collect(Collectors.toSet());
     }
 
-    public Optional<Move> findAny() {
-        return moves.stream().findAny();
+    public Optional<Move> findRandom() {
+        if (moves.isEmpty()) {
+            return Optional.empty();
+        }
+        int index = RandomUtils.betweenZeroInclusiveAndEndExclusive(moves.size());
+        return Optional.of(moves.stream().toList().get(index));
     }
 }
