@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -15,7 +17,7 @@ class ImageCache {
     private static final String PATH_TEMPLATE = "/pieces/default/%s/%s.png";
     private static final String KEY_TEMPLATE = "%s_%s";
 
-    private final java.util.Map<String, Image> cache = new java.util.HashMap<>();
+    private final Map<String, Image> cache = new HashMap<>();
 
     Image getPieceImage(Piece piece) {
         String color = piece.getPlayer().toString().toLowerCase();
