@@ -1,6 +1,5 @@
 package org.czareg.ui.swing;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicPieceStartingPositionPlacer;
@@ -25,13 +24,6 @@ class Game {
     private final History history;
     private final MoveMaker moveMaker;
 
-    @Getter
-    private Position selectedPosition;
-    @Getter
-    private Set<Move> highlightedMoves = Set.of();
-
-    private GeneratedMoves generatedMoves;
-
     Game() {
         context = ClassicContext.create();
         board = context.getBoard();
@@ -43,7 +35,7 @@ class Game {
         PiecePlacer placer = new ClassicPieceStartingPositionPlacer();
         placer.place(board);
 
-        generatedMoves = moveGenerators.generateLegal(context);
+        moveGenerators.generateLegal(context);
     }
 
     int getMaxFile() {
@@ -70,37 +62,27 @@ class Game {
         return board.getPiece(position);
     }
 
-    void updateSelectedPositionAndHighlightedMoves(Position clicked) {
-        for (Move move : highlightedMoves) {
-            if (move.getEnd().equals(clicked)) {
-                moveMaker.make(context, move);
-                generatedMoves = moveGenerators.generateLegal(context);
-                selectedPosition = null;
-                highlightedMoves = Set.of();
-                return;
-            }
-        }
+    Set<Move> findMovesStarting(Position clicked) {
+        return moveGenerators.generateLegal(context).getMovesStarting(clicked);
+    }
 
-        if (board.hasPiece(clicked) && board.getPiece(clicked).getPlayer() == history.getCurrentPlayer()) {
-            selectedPosition = clicked;
-            highlightedMoves = generatedMoves.getMovesStarting(clicked);
-        } else {
-            selectedPosition = null;
-            highlightedMoves = Set.of();
-        }
+    boolean isCurrentPlayerPiece(Position clicked) {
+        return board.hasPiece(clicked) && board.getPiece(clicked).getPlayer() == history.getCurrentPlayer();
     }
 
     void makeRandomMove() {
+        GeneratedMoves generatedMoves = moveGenerators.generateLegal(context);
         Optional<Move> optionalMove = generatedMoves.findRandom();
         if (optionalMove.isEmpty()) {
             log.warn("No moves generated");
             return;
         }
         Move move = optionalMove.orElseThrow();
-        moveMaker.make(context, move);
+        makeMove(move);
+    }
 
-        generatedMoves = moveGenerators.generateLegal(context);
-        selectedPosition = null;
-        highlightedMoves = Set.of();
+    void makeMove(Move move) {
+        moveMaker.make(context, move);
+        moveGenerators.generateLegal(context);
     }
 }

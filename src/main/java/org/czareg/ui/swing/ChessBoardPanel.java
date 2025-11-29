@@ -1,6 +1,7 @@
 package org.czareg.ui.swing;
 
 import lombok.extern.slf4j.Slf4j;
+import org.czareg.game.Move;
 import org.czareg.position.Position;
 
 import javax.swing.*;
@@ -9,6 +10,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 class ChessBoardPanel extends JPanel {
@@ -18,9 +21,12 @@ class ChessBoardPanel extends JPanel {
     private final Game game;
     private final Drawer drawer;
 
+    private Selection selection;
+
     ChessBoardPanel() {
         game = new Game();
         drawer = new Drawer(game);
+        selection = Selection.EMPTY;
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -37,6 +43,7 @@ class ChessBoardPanel extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     game.makeRandomMove();
+                    selection = Selection.EMPTY;
                     repaint();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -61,7 +68,7 @@ class ChessBoardPanel extends JPanel {
 
         Square square = createSquare();
         drawer.drawBoard(g2d, square);
-        drawer.drawHighlights(g2d, square);
+        drawer.drawHighlights(g2d, square, selection);
         drawer.drawPieces(g2d, square);
     }
 
@@ -76,8 +83,33 @@ class ChessBoardPanel extends JPanel {
 
         Position clicked = game.create(file, rank);
 
-        game.updateSelectedPositionAndHighlightedMoves(clicked);
-
+        if (selection.isEmpty()) {
+            if (game.isCurrentPlayerPiece(clicked)) {
+                selection = new Selection(clicked, game.findMovesStarting(clicked));
+            } else {
+                selection = Selection.EMPTY;
+            }
+        } else {
+            Set<Move> highlightedMoves = selection.highlightedMoves();
+            List<Move> matchedHighlightedMoves = highlightedMoves.stream()
+                    .filter(move -> move.getEnd().equals(clicked))
+                    .toList();
+            if (matchedHighlightedMoves.isEmpty()) {
+                if (game.isCurrentPlayerPiece(clicked)) {
+                    selection = new Selection(clicked, game.findMovesStarting(clicked));
+                } else {
+                    selection = Selection.EMPTY;
+                }
+            } else if (matchedHighlightedMoves.size() > 1) {
+                //handle multiple moves available aka promotion
+                Move move = matchedHighlightedMoves.getFirst();
+                game.makeMove(move);
+                selection = Selection.EMPTY;
+            } else {
+                game.makeMove(matchedHighlightedMoves.getFirst());
+                selection = Selection.EMPTY;
+            }
+        }
         repaint();
     }
 

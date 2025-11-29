@@ -52,8 +52,8 @@ class Drawer {
         }
     }
 
-    void drawHighlights(Graphics2D g, Square square) {
-        Position selectedPosition = game.getSelectedPosition();
+    void drawHighlights(Graphics2D g, Square square, Selection selection) {
+        Position selectedPosition = selection.selectedPosition();
         if (selectedPosition != null) {
             Index idx = game.create(selectedPosition);
             int x = idx.getFile() * square.width();
@@ -64,7 +64,7 @@ class Drawer {
         }
 
         g.setColor(SEMI_TRANSPARENT_GREEN);
-        for (Move move : game.getHighlightedMoves()) {
+        for (Move move : selection.highlightedMoves()) {
             Index idx = game.create(move.getEnd());
             int x = idx.getFile() * square.width();
             int y = (game.getMaxRank() - 1 - idx.getRank()) * square.height();
