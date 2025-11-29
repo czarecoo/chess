@@ -16,8 +16,6 @@ import java.util.Optional;
 @Slf4j
 class ChessBoardPanel extends JPanel {
 
-    private static final int DEFAULT_PANEL_SIZE_IN_PIXELS = 800;
-
     private final Game game;
     private final Drawer drawer;
 
@@ -31,7 +29,12 @@ class ChessBoardPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                handleClick(e.getX(), e.getY());
+                Optional<Position> clickedPositionOptional = getClickedPosition(e.getX(), e.getY());
+                if (clickedPositionOptional.isEmpty()) {
+                    return;
+                }
+                Position clickedPosition = clickedPositionOptional.get();
+                handleClick(clickedPosition);
             }
         });
 
@@ -55,11 +58,6 @@ class ChessBoardPanel extends JPanel {
     }
 
     @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(DEFAULT_PANEL_SIZE_IN_PIXELS, DEFAULT_PANEL_SIZE_IN_PIXELS);
-    }
-
-    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -72,22 +70,16 @@ class ChessBoardPanel extends JPanel {
         drawer.drawPieces(g2d, square);
     }
 
-    private void handleClick(int mouseX, int mouseY) {
-        Optional<Position> clickedPosition = getClickedPosition(mouseX, mouseY);
-        if (clickedPosition.isEmpty()) {
-            return;
-        }
-        Position clicked = clickedPosition.get();
-
+    private void handleClick(Position clickedPosition) {
         if (selection.isNoPositionSelected()) {
-            handleSelect(clicked);
+            handleSelect(clickedPosition);
         } else {
             List<Move> matchedHighlightedMoves = selection.highlightedMoves()
                     .stream()
-                    .filter(move -> move.getEnd().equals(clicked))
+                    .filter(move -> move.getEnd().equals(clickedPosition))
                     .toList();
             if (matchedHighlightedMoves.isEmpty()) {
-                handleSelect(clicked);
+                handleSelect(clickedPosition);
             } else {
                 Move move = matchedHighlightedMoves.getFirst(); // TODO handle promotion moves better
                 handleMove(move);
@@ -101,9 +93,9 @@ class ChessBoardPanel extends JPanel {
         selection = Selection.EMPTY;
     }
 
-    private void handleSelect(Position clicked) {
-        if (game.isCurrentPlayerPiece(clicked)) {
-            selection = new Selection(clicked, game.findMovesStarting(clicked));
+    private void handleSelect(Position clickedPosition) {
+        if (game.isCurrentPlayerPiece(clickedPosition)) {
+            selection = new Selection(clickedPosition, game.findMovesStarting(clickedPosition));
         } else {
             selection = Selection.EMPTY;
         }
