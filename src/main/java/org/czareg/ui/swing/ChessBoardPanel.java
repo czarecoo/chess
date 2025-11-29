@@ -121,6 +121,7 @@ class ChessBoardPanel extends JPanel {
         int file = mouseX / square.width();
         int rank = game.getMaxRank() - 1 - (mouseY / square.height());
         if (file < 0 || file >= game.getMaxFile() || rank < 0 || rank >= game.getMaxRank()) {
+            log.info("Click outside board, x={} y={}", mouseX, mouseY);
             return Optional.empty();
         }
         return Optional.of(game.create(file, rank));
