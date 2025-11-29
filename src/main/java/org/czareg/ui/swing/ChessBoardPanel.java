@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Slf4j
 class ChessBoardPanel extends JPanel {
@@ -73,44 +73,40 @@ class ChessBoardPanel extends JPanel {
     }
 
     private void handleClick(int mouseX, int mouseY) {
-        Square square = createSquare();
-
-        int file = mouseX / square.width();
-        int rank = game.getMaxRank() - 1 - (mouseY / square.height());
-        if (file < 0 || file >= game.getMaxFile() || rank < 0 || rank >= game.getMaxRank()) {
+        Optional<Position> clickedPosition = getClickedPosition(mouseX, mouseY);
+        if (clickedPosition.isEmpty()) {
             return;
         }
+        Position clicked = clickedPosition.get();
 
-        Position clicked = game.create(file, rank);
-
-        if (selection.isEmpty()) {
-            if (game.isCurrentPlayerPiece(clicked)) {
-                selection = new Selection(clicked, game.findMovesStarting(clicked));
-            } else {
-                selection = Selection.EMPTY;
-            }
+        if (selection.isNoPositionSelected()) {
+            handleSelect(clicked);
         } else {
-            Set<Move> highlightedMoves = selection.highlightedMoves();
-            List<Move> matchedHighlightedMoves = highlightedMoves.stream()
+            List<Move> matchedHighlightedMoves = selection.highlightedMoves()
+                    .stream()
                     .filter(move -> move.getEnd().equals(clicked))
                     .toList();
             if (matchedHighlightedMoves.isEmpty()) {
-                if (game.isCurrentPlayerPiece(clicked)) {
-                    selection = new Selection(clicked, game.findMovesStarting(clicked));
-                } else {
-                    selection = Selection.EMPTY;
-                }
-            } else if (matchedHighlightedMoves.size() > 1) {
-                //handle multiple moves available aka promotion
-                Move move = matchedHighlightedMoves.getFirst();
-                game.makeMove(move);
-                selection = Selection.EMPTY;
+                handleSelect(clicked);
             } else {
-                game.makeMove(matchedHighlightedMoves.getFirst());
-                selection = Selection.EMPTY;
+                Move move = matchedHighlightedMoves.getFirst(); // TODO handle promotion moves better
+                handleMove(move);
             }
         }
         repaint();
+    }
+
+    private void handleMove(Move move) {
+        game.makeMove(move);
+        selection = Selection.EMPTY;
+    }
+
+    private void handleSelect(Position clicked) {
+        if (game.isCurrentPlayerPiece(clicked)) {
+            selection = new Selection(clicked, game.findMovesStarting(clicked));
+        } else {
+            selection = Selection.EMPTY;
+        }
     }
 
     private Square createSquare() {
@@ -118,5 +114,15 @@ class ChessBoardPanel extends JPanel {
         int squareWidth = size / game.getMaxFile();
         int squareHeight = size / game.getMaxRank();
         return new Square(squareWidth, squareHeight);
+    }
+
+    private Optional<Position> getClickedPosition(int mouseX, int mouseY) {
+        Square square = createSquare();
+        int file = mouseX / square.width();
+        int rank = game.getMaxRank() - 1 - (mouseY / square.height());
+        if (file < 0 || file >= game.getMaxFile() || rank < 0 || rank >= game.getMaxRank()) {
+            return Optional.empty();
+        }
+        return Optional.of(game.create(file, rank));
     }
 }
