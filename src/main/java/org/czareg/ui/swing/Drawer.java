@@ -16,8 +16,6 @@ class Drawer {
     private static final Color SEMI_TRANSPARENT_YELLOW = new Color(255, 255, 0, 128);
     private static final Color SEMI_TRANSPARENT_GREEN = new Color(0, 255, 0, 128);
 
-    private final ImageCache imageCache = new ImageCache();
-
     private final Game game;
 
     Drawer(Game game) {
@@ -42,7 +40,7 @@ class Drawer {
                     continue;
                 }
                 Piece piece = game.getPiece(pos);
-                Image image = imageCache.getPieceImage(piece);
+                Image image = ImageCache.getPieceImage(piece);
                 Point topLeftSquarePoint = getTopLeftSquarePoint(file, rank, square);
                 graphics.drawImage(image, topLeftSquarePoint.x, topLeftSquarePoint.y, square.width(), square.height(), null);
             }

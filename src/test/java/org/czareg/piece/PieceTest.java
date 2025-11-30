@@ -8,7 +8,7 @@ class PieceTest {
 
     @Test
     void allPieceClassesShouldHavePlayerConstructor() {
-        for (Class<? extends Piece> clazz : Piece.getPieceClasses()) {
+        for (Class<? extends Piece> clazz : Piece.getAllPieceClasses()) {
             assertDoesNotThrow(() -> clazz.getConstructor(Player.class));
         }
     }
@@ -17,7 +17,7 @@ class PieceTest {
     void pieceCreateShouldInstantiateCorrectSubclassWithPlayer() {
         Player testPlayer = Player.WHITE;
 
-        for (Class<? extends Piece> clazz : Piece.getPieceClasses()) {
+        for (Class<? extends Piece> clazz : Piece.getAllPieceClasses()) {
             Piece piece = assertDoesNotThrow(() -> Piece.create(clazz, testPlayer));
 
             assertNotNull(piece);

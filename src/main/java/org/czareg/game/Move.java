@@ -22,6 +22,11 @@ public class Move implements Duplicatable<Move> {
         this.metadata = metadata;
     }
 
+    public boolean isPromotion() {
+        return metadata.isExactly(Metadata.Key.MOVE_TYPE, MoveType.PROMOTION)
+                || metadata.isExactly(Metadata.Key.MOVE_TYPE, MoveType.PROMOTION_CAPTURE);
+    }
+
     @Override
     public Move duplicate() {
         return new Move(piece, start, end, metadata.duplicate());

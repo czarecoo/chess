@@ -24,7 +24,7 @@ public class ZobristHasher {
         Random rng = new Random(123456); // fixed seed for reproducibility
 
         PositionFactory pf = board.getPositionFactory();
-        List<Class<? extends Piece>> pieceTypes = Piece.getPieceClasses();
+        List<Class<? extends Piece>> pieceTypes = Piece.getAllPieceClasses();
         zobristTable = new long[pieceTypes.size()][2][pf.getMaxFile() * pf.getMaxRank()];
         for (int p = 0; p < pieceTypes.size(); p++) {
             for (int c = 0; c < 2; c++) {

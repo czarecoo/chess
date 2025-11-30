@@ -31,7 +31,7 @@ public class ClassicMoveExecutor implements MoveExecutor {
     }
 
     private void executePromotion(Move move, Board board) {
-        Class<Piece> promotionPieceClass = move.getMetadata()
+        Class<? extends Piece> promotionPieceClass = move.getMetadata()
                 .getClass(PROMOTION_PIECE_CLASS, Piece.class)
                 .orElseThrow(() -> new IllegalStateException("Promotion move missing chosen piece class."));
         Piece oldPiece = move.getPiece();
@@ -43,7 +43,7 @@ public class ClassicMoveExecutor implements MoveExecutor {
     }
 
     private void executePromotionCapture(Move move, Board board) {
-        Class<Piece> promotionPieceClass = move.getMetadata()
+        Class<? extends Piece> promotionPieceClass = move.getMetadata()
                 .getClass(PROMOTION_PIECE_CLASS, Piece.class)
                 .orElseThrow(() -> new IllegalStateException("Promotion capture move missing chosen piece class."));
         Piece pieceToCaptureOnBoard = board.getPiece(move.getEnd());

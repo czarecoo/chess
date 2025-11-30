@@ -8,7 +8,8 @@ import org.czareg.game.Move;
 import org.czareg.game.MoveType;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.shared.PromotionRankChecker;
-import org.czareg.piece.*;
+import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.Index;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
@@ -29,7 +30,7 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator, Promotion
         List<Move> moves = new ArrayList<>();
         Player player = piece.getPlayer();
         IndexChange endPositionIndexChange = getEndPositionIndexChange(player);
-        for (Class<? extends Piece> promotionPieceClass : getAllowedPiecePromotionClasses()) {
+        for (Class<? extends Piece> promotionPieceClass : Piece.getPromotionPieceClasses()) {
             generate(context, piece, currentPosition, endPositionIndexChange)
                     .ifPresent(move -> {
                         move.getMetadata().put(PROMOTION_PIECE_CLASS, promotionPieceClass);
@@ -77,9 +78,5 @@ public class PawnPromotionMoveGenerator implements PieceMoveGenerator, Promotion
     @Override
     public MoveType getMoveType() {
         return MoveType.PROMOTION;
-    }
-
-    private List<Class<? extends Piece>> getAllowedPiecePromotionClasses() {
-        return List.of(Knight.class, Bishop.class, Rook.class, Queen.class);
     }
 }

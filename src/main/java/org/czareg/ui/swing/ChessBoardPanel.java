@@ -35,6 +35,7 @@ class ChessBoardPanel extends JPanel {
                 }
                 Position clickedPosition = clickedPositionOptional.get();
                 handleClick(clickedPosition);
+                repaint();
             }
         });
 
@@ -81,14 +82,30 @@ class ChessBoardPanel extends JPanel {
             if (matchedHighlightedMoves.isEmpty()) {
                 handleSelect(clickedPosition);
             } else {
-                Move move = matchedHighlightedMoves.getFirst(); // TODO handle promotion moves better
-                handleMove(move);
+                handleMoves(matchedHighlightedMoves);
             }
         }
-        repaint();
     }
 
-    private void handleMove(Move move) {
+    private void handleMoves(List<Move> moves) {
+        if (moves.size() > 1) {
+            boolean areAllMatchedMovesPromotion = moves.stream()
+                    .allMatch(Move::isPromotion);
+            if (!areAllMatchedMovesPromotion) {
+                throw new IllegalStateException("Detected multiple moves and not all of them are promotion: " + moves);
+            }
+            PromotionDialog.show(
+                    this,
+                    moves,
+                    chosenMove -> {
+                        game.makeMove(chosenMove);
+                        selection = Selection.EMPTY;
+                        repaint();
+                    }
+            );
+            return;
+        }
+        Move move = moves.getFirst();
         game.makeMove(move);
         selection = Selection.EMPTY;
     }

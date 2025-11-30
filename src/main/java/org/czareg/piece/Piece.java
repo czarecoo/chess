@@ -5,8 +5,12 @@ import java.util.List;
 
 public sealed interface Piece permits Pawn, Knight, Bishop, Rook, Queen, King {
 
-    static List<Class<? extends Piece>> getPieceClasses() {
+    static List<Class<? extends Piece>> getAllPieceClasses() {
         return List.of(Pawn.class, Knight.class, Bishop.class, Rook.class, Queen.class, King.class);
+    }
+
+    static List<Class<? extends Piece>> getPromotionPieceClasses() {
+        return List.of(Knight.class, Bishop.class, Rook.class, Queen.class);
     }
 
     static Piece create(Class<? extends Piece> clazz, Player player) {

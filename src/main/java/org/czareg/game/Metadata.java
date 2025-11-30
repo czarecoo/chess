@@ -49,10 +49,10 @@ public class Metadata implements Duplicatable<Metadata> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<Class<T>> getClass(Key key, Class<T> expectedType) {
+    public <T> Optional<Class<? extends T>> getClass(Key key, Class<T> expectedType) {
         Object value = data.get(key);
         if (value instanceof Class<?> clazz && expectedType.isAssignableFrom(clazz)) {
-            return Optional.of((Class<T>) clazz);
+            return Optional.of((Class<? extends T>) clazz);
         }
         return Optional.empty();
     }
