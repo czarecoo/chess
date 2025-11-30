@@ -2,8 +2,8 @@ package org.czareg.ui.swing;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
+import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
-import org.czareg.board.PromotionTestingPieceStartingPositionPlacer;
 import org.czareg.game.*;
 import org.czareg.move.MoveGenerators;
 import org.czareg.piece.Piece;
@@ -32,7 +32,7 @@ class Game {
         history = context.getHistory();
         moveMaker = context.getMoveMaker();
 
-        PiecePlacer placer = new PromotionTestingPieceStartingPositionPlacer();
+        PiecePlacer placer = new ClassicPieceStartingPositionPlacer();
         placer.place(board);
 
         moveGenerators.generateLegal(context);
