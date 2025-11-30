@@ -26,7 +26,7 @@ class PromotionDialog {
             Image image = ImageCache.getPieceImage(player, pieceName);
 
             int size = rectangle.getShorterSide();
-            ImageChoice choice = new ImageChoice(image, size, () -> {
+            ChoosePieceComponent choosePieceComponent = new ChoosePieceComponent(image, size, () -> {
                 dialog.dispose();
                 Move chosenMove = promotionMoves.stream()
                         .filter(move -> move.getMetadata().isExactly(Metadata.Key.PROMOTION_PIECE_CLASS, promotionPieceClass))
@@ -35,7 +35,7 @@ class PromotionDialog {
                 callback.onPromotionChosen(chosenMove);
             });
 
-            dialog.add(choice);
+            dialog.add(choosePieceComponent);
         }
 
         dialog.pack();

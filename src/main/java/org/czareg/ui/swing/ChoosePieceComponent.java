@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-class ImageChoice extends JComponent {
+class ChoosePieceComponent extends JComponent {
 
     private final Image image;
     private final int size;
     private boolean hover = false;
 
-    ImageChoice(Image image, int size, Runnable onClick) {
+    ChoosePieceComponent(Image image, int size, Runnable onClick) {
         this.image = image;
         this.size = size;
 
