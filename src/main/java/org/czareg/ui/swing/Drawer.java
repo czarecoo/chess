@@ -22,17 +22,17 @@ class Drawer {
         this.game = game;
     }
 
-    void drawBoard(Graphics2D graphics, Rectangle rectangle) {
+    void drawBoard(Graphics2D graphics, int cellSize) {
         for (int rank = 0; rank < game.getMaxRank(); rank++) {
             for (int file = 0; file < game.getMaxFile(); file++) {
                 graphics.setColor((file + rank) % 2 == 0 ? LIGHT_SQUARE_COLOR : DARK_SQUARE_COLOR);
-                Point topLeft = getTopLeftPoint(file, rank, rectangle);
-                graphics.fillRect(topLeft.x, topLeft.y, rectangle.width(), rectangle.height());
+                Point topLeft = getTopLeftPoint(file, rank, cellSize);
+                graphics.fillRect(topLeft.x, topLeft.y, cellSize, cellSize);
             }
         }
     }
 
-    void drawPieces(Graphics2D graphics, Rectangle rectangle) {
+    void drawPieces(Graphics2D graphics, int cellSize) {
         for (int rank = 0; rank < game.getMaxRank(); rank++) {
             for (int file = 0; file < game.getMaxFile(); file++) {
                 Position pos = game.create(file, rank);
@@ -41,47 +41,47 @@ class Drawer {
                 }
                 Piece piece = game.getPiece(pos);
                 Image image = ImageCache.getPieceImage(piece);
-                Point topLeft = getTopLeftPoint(file, rank, rectangle);
-                graphics.drawImage(image, topLeft.x, topLeft.y, rectangle.width(), rectangle.height(), null);
+                Point topLeft = getTopLeftPoint(file, rank, cellSize);
+                graphics.drawImage(image, topLeft.x, topLeft.y, cellSize, cellSize, null);
             }
         }
     }
 
-    void drawHighlights(Graphics2D graphics, Rectangle rectangle, Selection selection) {
+    void drawHighlights(Graphics2D graphics, int cellSize, Selection selection) {
         Position selectedPosition = selection.selectedPosition();
         if (selectedPosition != null) {
             Index index = game.create(selectedPosition);
             graphics.setColor(SEMI_TRANSPARENT_YELLOW);
-            Point topLeft = getTopLeftPoint(index, rectangle);
-            graphics.fillRect(topLeft.x, topLeft.y, rectangle.width(), rectangle.height());
+            Point topLeft = getTopLeftPoint(index, cellSize);
+            graphics.fillRect(topLeft.x, topLeft.y, cellSize, cellSize);
         }
 
         graphics.setColor(SEMI_TRANSPARENT_GREEN);
         for (Move move : selection.highlightedMoves()) {
             Index index = game.create(move.getEnd());
-            Point topLeft = getTopLeftPoint(index, rectangle);
+            Point topLeft = getTopLeftPoint(index, cellSize);
 
-            drawCenteredCircle(graphics, topLeft, rectangle);
+            drawCenteredCircle(graphics, topLeft, cellSize);
         }
     }
 
-    private void drawCenteredCircle(Graphics2D graphics, Point rectangleTopLeft, Rectangle rectangle) {
+    private void drawCenteredCircle(Graphics2D graphics, Point topLeft, int cellSize) {
         int percentOfRectangle = 65;
-        int size = (int) (rectangle.getShorterSide() * percentOfRectangle / 100f);
+        int size = (int) (cellSize * percentOfRectangle / 100f);
 
-        int x = rectangleTopLeft.x + (rectangle.width() - size) / 2;
-        int y = rectangleTopLeft.y + (rectangle.height() - size) / 2;
+        int x = topLeft.x + (cellSize - size) / 2;
+        int y = topLeft.y + (cellSize - size) / 2;
 
         graphics.fillOval(x, y, size, size);
     }
 
-    private Point getTopLeftPoint(Index index, Rectangle rectangle) {
-        return getTopLeftPoint(index.getFile(), index.getRank(), rectangle);
+    private Point getTopLeftPoint(Index index, int cellSize) {
+        return getTopLeftPoint(index.getFile(), index.getRank(), cellSize);
     }
 
-    private Point getTopLeftPoint(int file, int rank, Rectangle rectangle) {
-        int x = file * rectangle.width();
-        int y = (game.getMaxRank() - 1 - rank) * rectangle.height();
+    private Point getTopLeftPoint(int file, int rank, int cellSize) {
+        int x = file * cellSize;
+        int y = (game.getMaxRank() - 1 - rank) * cellSize;
         return new Point(x, y);
     }
 }

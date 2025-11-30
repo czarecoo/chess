@@ -19,7 +19,7 @@ class ImageCache {
     private static final String PATH_TEMPLATE = "/pieces/default/%s/%s.png";
     private static final String KEY_TEMPLATE = "%s_%s";
 
-    private static final Map<String, Image> cache = new HashMap<>();
+    private static final Map<String, Image> CACHE = new HashMap<>();
 
     static Image getPieceImage(Piece piece) {
         String color = piece.getPlayer().toString();
@@ -32,15 +32,15 @@ class ImageCache {
         pieceName = pieceName.toLowerCase();
         String key = KEY_TEMPLATE.formatted(player, pieceName);
 
-        if (cache.containsKey(key)) {
-            return cache.get(key);
+        if (CACHE.containsKey(key)) {
+            return CACHE.get(key);
         }
 
         String path = PATH_TEMPLATE.formatted(player, pieceName);
         try {
             InputStream resourceAsStream = Objects.requireNonNull(ImageCache.class.getResourceAsStream(path), "cannot find resource at: " + path);
             Image img = ImageIO.read(resourceAsStream);
-            cache.put(key, img);
+            CACHE.put(key, img);
             return img;
         } catch (IOException e) {
             log.error("Missing image for {}: {}", key, path);

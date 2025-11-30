@@ -65,10 +65,10 @@ class ChessBoardPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Rectangle rectangle = createRectangle();
-        drawer.drawBoard(g2d, rectangle);
-        drawer.drawHighlights(g2d, rectangle, selection);
-        drawer.drawPieces(g2d, rectangle);
+        int cellSize = computeCellSize();
+        drawer.drawBoard(g2d, cellSize);
+        drawer.drawHighlights(g2d, cellSize, selection);
+        drawer.drawPieces(g2d, cellSize);
     }
 
     private void handleClick(Position clickedPosition) {
@@ -94,11 +94,11 @@ class ChessBoardPanel extends JPanel {
             if (!areAllMatchedMovesPromotion) {
                 throw new IllegalStateException("Detected multiple moves and not all of them are promotion: " + moves);
             }
-            Rectangle rectangle = createRectangle();
+            int cellSize = computeCellSize();
             PromotionDialog.show(
                     this,
                     moves,
-                    rectangle,
+                    cellSize,
                     chosenMove -> {
                         game.makeMove(chosenMove);
                         selection = Selection.EMPTY;
@@ -120,21 +120,29 @@ class ChessBoardPanel extends JPanel {
         }
     }
 
-    private Rectangle createRectangle() {
-        int size = Math.min(getWidth(), getHeight());
-        int rectangleWidth = size / game.getMaxFile();
-        int rectangleHeight = size / game.getMaxRank();
-        return new Rectangle(rectangleWidth, rectangleHeight);
-    }
-
     private Optional<Position> getClickedPosition(int mouseX, int mouseY) {
-        Rectangle rectangle = createRectangle();
-        int file = mouseX / rectangle.width();
-        int rank = game.getMaxRank() - 1 - (mouseY / rectangle.height());
-        if (file < 0 || file >= game.getMaxFile() || rank < 0 || rank >= game.getMaxRank()) {
+        int cellSize = computeCellSize();
+        int files = game.getMaxFile();
+        int ranks = game.getMaxRank();
+
+        int boardWidth = cellSize * files;
+        int boardHeight = cellSize * ranks;
+
+        if (mouseX < 0 || mouseX >= boardWidth || mouseY < 0 || mouseY >= boardHeight) {
             log.info("Click outside board, x={} y={}", mouseX, mouseY);
             return Optional.empty();
         }
+
+        int file = mouseX / cellSize;
+        int rank = ranks - 1 - (mouseY / cellSize);
+
         return Optional.of(game.create(file, rank));
+    }
+
+    private int computeCellSize() {
+        int files = game.getMaxFile();
+        int ranks = game.getMaxRank();
+
+        return Math.min(getWidth() / files, getHeight() / ranks);
     }
 }

@@ -8,14 +8,14 @@ import java.awt.event.MouseEvent;
 class ChoosePieceComponent extends JComponent {
 
     private final Image image;
-    private final int size;
+    private final int cellSize;
     private boolean hover = false;
 
-    ChoosePieceComponent(Image image, int size, Runnable onClick) {
+    ChoosePieceComponent(Image image, int cellSize, Runnable onClick) {
         this.image = image;
-        this.size = size;
+        this.cellSize = cellSize;
 
-        setPreferredSize(new Dimension(size, size));
+        setPreferredSize(new Dimension(cellSize, cellSize));
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -43,7 +43,7 @@ class ChoosePieceComponent extends JComponent {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.drawImage(image, 0, 0, size, size, null);
+        g2.drawImage(image, 0, 0, cellSize, cellSize, null);
 
         if (hover) {
             g2.setColor(new Color(0, 0, 0));

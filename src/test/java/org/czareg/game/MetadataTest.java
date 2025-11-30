@@ -30,9 +30,11 @@ class MetadataTest {
         Metadata metadata = new Metadata();
         metadata.put(PROMOTION_PIECE_CLASS, Queen.class);
 
-        Optional<Class<Piece>> aClass = metadata.getClass(PROMOTION_PIECE_CLASS, Piece.class);
+        Optional<Class<? extends Piece>> pieceClassOptional = metadata.getClass(PROMOTION_PIECE_CLASS, Piece.class);
 
-        assertTrue(aClass.isPresent());
-        assertEquals(Queen.class, aClass.get());
+        assertTrue(pieceClassOptional.isPresent());
+        Class<? extends Piece> pieceClass = pieceClassOptional.get();
+        assertEquals(Queen.class, pieceClass);
+        assertEquals("Queen", pieceClass.getSimpleName());
     }
 }
