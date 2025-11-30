@@ -18,24 +18,21 @@ class PromotionDialog {
         Window window = SwingUtilities.getWindowAncestor(parent);
         JDialog dialog = new JDialog(window, "Choose promotion piece", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new GridLayout(1, promotionMoves.size()));
-        dialog.setResizable(true);
+        dialog.setResizable(false);
 
         for (Move move : promotionMoves) {
             String player = move.getPiece().getPlayer().toString();
             String pieceName = move.getMetadata().getClass(Metadata.Key.PROMOTION_PIECE_CLASS, Piece.class)
                     .orElseThrow()
                     .getSimpleName();
-            Image img = ImageCache.getPieceImage(player, pieceName);
-            Image scaled = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            JButton button = new JButton(new ImageIcon(scaled));
-            button.setBackground(Color.WHITE);
+            Image image = ImageCache.getPieceImage(player, pieceName);
 
-            button.addActionListener(e -> {
+            ImageChoice choice = new ImageChoice(image, 100, () -> {
                 dialog.dispose();
                 callback.onPromotionChosen(move);
             });
 
-            dialog.add(button);
+            dialog.add(choice);
         }
 
         dialog.pack();
