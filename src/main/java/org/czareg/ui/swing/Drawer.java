@@ -22,17 +22,17 @@ class Drawer {
         this.game = game;
     }
 
-    void drawBoard(Graphics2D graphics, Square square) {
+    void drawBoard(Graphics2D graphics, Rectangle rectangle) {
         for (int rank = 0; rank < game.getMaxRank(); rank++) {
             for (int file = 0; file < game.getMaxFile(); file++) {
                 graphics.setColor((file + rank) % 2 == 0 ? LIGHT_SQUARE_COLOR : DARK_SQUARE_COLOR);
-                Point topLeftSquarePoint = getTopLeftSquarePoint(file, rank, square);
-                graphics.fillRect(topLeftSquarePoint.x, topLeftSquarePoint.y, square.width(), square.height());
+                Point topLeft = getTopLeftPoint(file, rank, rectangle);
+                graphics.fillRect(topLeft.x, topLeft.y, rectangle.width(), rectangle.height());
             }
         }
     }
 
-    void drawPieces(Graphics2D graphics, Square square) {
+    void drawPieces(Graphics2D graphics, Rectangle rectangle) {
         for (int rank = 0; rank < game.getMaxRank(); rank++) {
             for (int file = 0; file < game.getMaxFile(); file++) {
                 Position pos = game.create(file, rank);
@@ -41,47 +41,47 @@ class Drawer {
                 }
                 Piece piece = game.getPiece(pos);
                 Image image = ImageCache.getPieceImage(piece);
-                Point topLeftSquarePoint = getTopLeftSquarePoint(file, rank, square);
-                graphics.drawImage(image, topLeftSquarePoint.x, topLeftSquarePoint.y, square.width(), square.height(), null);
+                Point topLeft = getTopLeftPoint(file, rank, rectangle);
+                graphics.drawImage(image, topLeft.x, topLeft.y, rectangle.width(), rectangle.height(), null);
             }
         }
     }
 
-    void drawHighlights(Graphics2D graphics, Square square, Selection selection) {
+    void drawHighlights(Graphics2D graphics, Rectangle rectangle, Selection selection) {
         Position selectedPosition = selection.selectedPosition();
         if (selectedPosition != null) {
             Index index = game.create(selectedPosition);
             graphics.setColor(SEMI_TRANSPARENT_YELLOW);
-            Point topLeftSquarePoint = getTopLeftSquarePoint(index, square);
-            graphics.fillRect(topLeftSquarePoint.x, topLeftSquarePoint.y, square.width(), square.height());
+            Point topLeft = getTopLeftPoint(index, rectangle);
+            graphics.fillRect(topLeft.x, topLeft.y, rectangle.width(), rectangle.height());
         }
 
         graphics.setColor(SEMI_TRANSPARENT_GREEN);
         for (Move move : selection.highlightedMoves()) {
             Index index = game.create(move.getEnd());
-            Point topLeftSquarePoint = getTopLeftSquarePoint(index, square);
+            Point topLeft = getTopLeftPoint(index, rectangle);
 
-            drawCenteredCircle(graphics, topLeftSquarePoint, square);
+            drawCenteredCircle(graphics, topLeft, rectangle);
         }
     }
 
-    private void drawCenteredCircle(Graphics2D graphics, Point squareTopLeft, Square square) {
-        int percentOfSquare = 65;
-        int size = (int) (square.width() * percentOfSquare / 100f);
+    private void drawCenteredCircle(Graphics2D graphics, Point rectangleTopLeft, Rectangle rectangle) {
+        int percentOfRectangle = 65;
+        int size = (int) (rectangle.getShorterSide() * percentOfRectangle / 100f);
 
-        int x = squareTopLeft.x + (square.width() - size) / 2;
-        int y = squareTopLeft.y + (square.height() - size) / 2;
+        int x = rectangleTopLeft.x + (rectangle.width() - size) / 2;
+        int y = rectangleTopLeft.y + (rectangle.height() - size) / 2;
 
         graphics.fillOval(x, y, size, size);
     }
 
-    private Point getTopLeftSquarePoint(Index index, Square square) {
-        return getTopLeftSquarePoint(index.getFile(), index.getRank(), square);
+    private Point getTopLeftPoint(Index index, Rectangle rectangle) {
+        return getTopLeftPoint(index.getFile(), index.getRank(), rectangle);
     }
 
-    private Point getTopLeftSquarePoint(int file, int rank, Square square) {
-        int x = file * square.width();
-        int y = (game.getMaxRank() - 1 - rank) * square.height();
+    private Point getTopLeftPoint(int file, int rank, Rectangle rectangle) {
+        int x = file * rectangle.width();
+        int y = (game.getMaxRank() - 1 - rank) * rectangle.height();
         return new Point(x, y);
     }
 }

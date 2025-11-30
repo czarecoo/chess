@@ -14,22 +14,25 @@ class PromotionDialog {
         void onPromotionChosen(Move chosenMove);
     }
 
-    static void show(Component parent, List<Move> promotionMoves, Callback callback) {
+    static void show(Component parent, List<Move> promotionMoves, Rectangle rectangle, Callback callback) {
         Window window = SwingUtilities.getWindowAncestor(parent);
         JDialog dialog = new JDialog(window, "Choose promotion piece", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new GridLayout(1, promotionMoves.size()));
         dialog.setResizable(false);
 
-        for (Move move : promotionMoves) {
-            String player = move.getPiece().getPlayer().toString();
-            String pieceName = move.getMetadata().getClass(Metadata.Key.PROMOTION_PIECE_CLASS, Piece.class)
-                    .orElseThrow()
-                    .getSimpleName();
+        String player = promotionMoves.getFirst().getPiece().getPlayer().toString();
+        for (Class<? extends Piece> promotionPieceClass : Piece.getPromotionPieceClasses()) {
+            String pieceName = promotionPieceClass.getSimpleName();
             Image image = ImageCache.getPieceImage(player, pieceName);
 
-            ImageChoice choice = new ImageChoice(image, 100, () -> {
+            int size = rectangle.getShorterSide();
+            ImageChoice choice = new ImageChoice(image, size, () -> {
                 dialog.dispose();
-                callback.onPromotionChosen(move);
+                Move chosenMove = promotionMoves.stream()
+                        .filter(move -> move.getMetadata().isExactly(Metadata.Key.PROMOTION_PIECE_CLASS, promotionPieceClass))
+                        .findFirst()
+                        .orElseThrow();
+                callback.onPromotionChosen(chosenMove);
             });
 
             dialog.add(choice);

@@ -65,10 +65,10 @@ class ChessBoardPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Square square = createSquare();
-        drawer.drawBoard(g2d, square);
-        drawer.drawHighlights(g2d, square, selection);
-        drawer.drawPieces(g2d, square);
+        Rectangle rectangle = createRectangle();
+        drawer.drawBoard(g2d, rectangle);
+        drawer.drawHighlights(g2d, rectangle, selection);
+        drawer.drawPieces(g2d, rectangle);
     }
 
     private void handleClick(Position clickedPosition) {
@@ -94,9 +94,11 @@ class ChessBoardPanel extends JPanel {
             if (!areAllMatchedMovesPromotion) {
                 throw new IllegalStateException("Detected multiple moves and not all of them are promotion: " + moves);
             }
+            Rectangle rectangle = createRectangle();
             PromotionDialog.show(
                     this,
                     moves,
+                    rectangle,
                     chosenMove -> {
                         game.makeMove(chosenMove);
                         selection = Selection.EMPTY;
@@ -118,17 +120,17 @@ class ChessBoardPanel extends JPanel {
         }
     }
 
-    private Square createSquare() {
+    private Rectangle createRectangle() {
         int size = Math.min(getWidth(), getHeight());
-        int squareWidth = size / game.getMaxFile();
-        int squareHeight = size / game.getMaxRank();
-        return new Square(squareWidth, squareHeight);
+        int rectangleWidth = size / game.getMaxFile();
+        int rectangleHeight = size / game.getMaxRank();
+        return new Rectangle(rectangleWidth, rectangleHeight);
     }
 
     private Optional<Position> getClickedPosition(int mouseX, int mouseY) {
-        Square square = createSquare();
-        int file = mouseX / square.width();
-        int rank = game.getMaxRank() - 1 - (mouseY / square.height());
+        Rectangle rectangle = createRectangle();
+        int file = mouseX / rectangle.width();
+        int rank = game.getMaxRank() - 1 - (mouseY / rectangle.height());
         if (file < 0 || file >= game.getMaxFile() || rank < 0 || rank >= game.getMaxRank()) {
             log.info("Click outside board, x={} y={}", mouseX, mouseY);
             return Optional.empty();
