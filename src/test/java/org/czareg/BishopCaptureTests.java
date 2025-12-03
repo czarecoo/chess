@@ -2,6 +2,7 @@ package org.czareg;
 
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
+import org.czareg.game.StateValidator;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.bishop.BishopCaptureMoveGenerator;
 import org.czareg.piece.Bishop;
@@ -24,13 +25,14 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BishopCaptureTests extends BaseTests {
+class BishopCaptureTests extends ClassicContextTests {
 
     private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
         pieceMoveGenerator = new BishopCaptureMoveGenerator();
+        context = context.withStateValidator(StateValidator.NOOP);
     }
 
     @Test

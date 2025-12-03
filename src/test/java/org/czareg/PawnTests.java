@@ -5,12 +5,14 @@ import org.czareg.board.PiecePlacer;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
+import org.czareg.game.StateValidator;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.pawn.PawnCaptureMoveGenerator;
 import org.czareg.move.piece.pawn.PawnDoubleForwardMoveGenerator;
 import org.czareg.piece.*;
 import org.czareg.position.IndexChange;
 import org.czareg.position.Position;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -23,7 +25,12 @@ import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class PawnTests extends BaseTests {
+class PawnTests extends ClassicContextTests {
+
+    @BeforeEach
+    void setUp() {
+        context = context.withStateValidator(StateValidator.NOOP);
+    }
 
     @Test
     void givenWhitePawnDidNotMoveYet_whenGettingPossibleMoves_thenCanMoveByOneOrTwoRows() {
@@ -31,7 +38,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("A", 2);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(start);
 
         Set<Move> expectedMoves = Set.of(
                 new Move(pawn, start, pf.create("A", 3), new Metadata(MOVE)),
@@ -52,7 +59,7 @@ class PawnTests extends BaseTests {
         moveMaker.make(context, new Move(whitePawn, d2, d3, new Metadata(MOVE)));
         moveMaker.make(context, new Move(blackPawn, pf.create("H", 7), pf.create("H", 6), new Metadata(MOVE)));
 
-        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(d3);
+        Set<Move> actualMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(d3);
 
         Set<Move> expectedMoves = Set.of(new Move(whitePawn, d3, pf.create("D", 4), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
@@ -64,7 +71,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("H", 8);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(start);
 
         assertEquals(Set.of(), actualMoves);
     }
@@ -75,7 +82,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("B", 7);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(start);
 
         assertEquals(4, actualMoves.size());
         assertEquals(1, actualMoves.stream().map(Move::getEnd).distinct().count());
@@ -104,7 +111,7 @@ class PawnTests extends BaseTests {
         Position start = pf.create("E", 6);
         board.placePiece(start, pawn);
 
-        Set<Move> actualMoves = moveGenerators.generateLegal(context).getMovesStarting(start);
+        Set<Move> actualMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(start);
 
         Set<Move> expectedMoves = Set.of(new Move(pawn, start, pf.create("E", 7), new Metadata(MOVE)));
         assertEquals(expectedMoves, actualMoves);
@@ -134,7 +141,7 @@ class PawnTests extends BaseTests {
     void givenEmptyBoard_whenGeneratingMovesForPositionWithoutPiece_thenNoMovesAreReturned() {
         Position positionWithoutPiece = pf.create("A", 1);
 
-        Set<Move> moves = moveGenerators.generateLegal(context).getMovesStarting(positionWithoutPiece);
+        Set<Move> moves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(positionWithoutPiece);
 
         assertTrue(moves.isEmpty());
     }
@@ -195,9 +202,9 @@ class PawnTests extends BaseTests {
         Position c5 = pf.create("C", 5);
         moveMaker.make(context, new Move(blackPawn, pf.create("C", 6), c5, new Metadata(MOVE)));
 
-        Set<Move> whiteMoves = moveGenerators.generateLegal(context).getMovesStarting(c4);
+        Set<Move> whiteMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(c4);
         assertEquals(Set.of(), whiteMoves);
-        Set<Move> blackMoves = moveGenerators.generateLegal(context).getMovesStarting(c5);
+        Set<Move> blackMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(c5);
         assertEquals(Set.of(), blackMoves);
     }
 
@@ -210,7 +217,7 @@ class PawnTests extends BaseTests {
         Position blackPosition = pf.create("D", 5);
         board.placePiece(blackPosition, blackPawn);
 
-        Set<Move> whiteMoves = moveGenerators.generateLegal(context).getMovesStarting(whitePosition);
+        Set<Move> whiteMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(whitePosition);
 
         Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, blackPawn);
@@ -229,7 +236,7 @@ class PawnTests extends BaseTests {
         Position a3 = pf.create("A", 3);
         moveMaker.make(context, new Move(whitePawn, a2, a3, new Metadata(MOVE)));
 
-        Set<Move> blackMoves = moveGenerators.generateLegal(context).getMovesStarting(b4);
+        Set<Move> blackMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(b4);
 
         Metadata expectedMetadata = new Metadata(CAPTURE)
                 .put(CAPTURE_PIECE, whitePawn);

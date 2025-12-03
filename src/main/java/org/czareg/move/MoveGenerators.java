@@ -5,7 +5,7 @@ import org.czareg.game.GeneratedMoves;
 
 public interface MoveGenerators {
 
-    GeneratedMoves generateLegal(Context context);
+    GeneratedMoves getOrGenerateLegal(Context context);
 
-    GeneratedMoves generatePseudoLegal(Context context);
+    GeneratedMoves getOrGeneratePseudoLegal(Context context);
 }

@@ -1,30 +1,50 @@
 package org.czareg.game;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.czareg.position.Position;
 import org.czareg.util.RandomUtils;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@Value
+@RequiredArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class GeneratedMoves {
 
-    Set<Move> moves;
+    private final Set<Move> moves;
+
+    public boolean contains(Move move) {
+        return moves.contains(move);
+    }
+
+    public boolean isEmpty() {
+        return moves.isEmpty();
+    }
+
+    public int size() {
+        return moves.size();
+    }
+
+    public Stream<Move> stream() {
+        return moves.stream();
+    }
 
     public Set<Move> getMovesStarting(Position start) {
-        return moves
-                .stream()
+        return stream()
                 .filter(move -> move.getStart().equals(start))
                 .collect(Collectors.toSet());
     }
 
     public Optional<Move> findRandom() {
-        if (moves.isEmpty()) {
+        if (isEmpty()) {
             return Optional.empty();
         }
-        int index = RandomUtils.betweenZeroInclusiveAndEndExclusive(moves.size());
-        return Optional.of(moves.stream().toList().get(index));
+        int index = RandomUtils.betweenZeroInclusiveAndEndExclusive(size());
+        return Optional.of(stream().toList().get(index));
     }
 }

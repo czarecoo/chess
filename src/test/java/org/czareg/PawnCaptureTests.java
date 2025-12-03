@@ -3,6 +3,7 @@ package org.czareg;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
+import org.czareg.game.StateValidator;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.pawn.PawnCaptureMoveGenerator;
 import org.czareg.piece.Knight;
@@ -19,13 +20,14 @@ import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class PawnCaptureTests extends BaseTests {
+class PawnCaptureTests extends ClassicContextTests {
 
     private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
         pieceMoveGenerator = new PawnCaptureMoveGenerator();
+        context = context.withStateValidator(StateValidator.NOOP);
     }
 
     @Test

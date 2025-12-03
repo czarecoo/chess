@@ -23,7 +23,7 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class QueenCaptureTests extends BaseTests {
+class QueenCaptureTests extends ClassicContextTests {
 
     private PieceMoveGenerator pieceMoveGenerator;
 

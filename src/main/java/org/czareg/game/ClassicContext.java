@@ -2,6 +2,7 @@ package org.czareg.game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import lombok.With;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicBoard;
 import org.czareg.move.*;
@@ -10,19 +11,18 @@ import org.czareg.move.piece.PieceMoveGeneratorFactory;
 
 @Value
 @RequiredArgsConstructor
+@With
 public class ClassicContext implements Context {
 
     Board board;
     History history;
     MoveMaker moveMaker;
     MoveGenerators moveGenerators;
-    PlayerTurnValidator playerTurnValidator;
     MoveExecutor moveExecutor;
     PieceMoveGeneratorFactory pieceMoveGeneratorFactory;
     MoveLegalityValidator moveLegalityValidator;
     ThreatAnalyzer threatAnalyzer;
     StateValidator stateValidator;
-    BoardValidator boardValidator;
 
     @Override
     public ClassicContext duplicate() {
@@ -31,13 +31,11 @@ public class ClassicContext implements Context {
                 history.duplicate(),
                 moveMaker,
                 moveGenerators,
-                playerTurnValidator,
                 moveExecutor,
                 pieceMoveGeneratorFactory,
                 moveLegalityValidator,
                 threatAnalyzer,
-                stateValidator,
-                boardValidator
+                stateValidator
         );
     }
 
@@ -46,13 +44,11 @@ public class ClassicContext implements Context {
                 new ClassicHistory(),
                 new ClassicMoveMaker(),
                 new ClassicMoveGenerators(new PseudoLegalMoveGenerator(), new ClassicLegalMoveFilter()),
-                new ClassicPlayerTurnValidator(),
                 new ClassicMoveExecutor(),
                 new ClassicPieceMoveGeneratorFactory(),
                 new ClassicMoveLegalityValidator(),
                 new ClassicThreatAnalyzer(),
-                new ClassicStateValidator(),
-                new ClassicBoardValidator()
+                new ClassicStateValidator()
         );
     }
 }

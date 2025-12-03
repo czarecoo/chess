@@ -2,6 +2,7 @@ package org.czareg.game;
 
 import lombok.Value;
 import org.czareg.piece.Piece;
+import org.czareg.piece.Player;
 import org.czareg.position.Position;
 
 @Value
@@ -20,6 +21,10 @@ public class Move implements Duplicatable<Move> {
         this.end = end;
         this.start = start;
         this.metadata = metadata;
+    }
+
+    public Player getPlayer() {
+        return piece.getPlayer();
     }
 
     public boolean isPromotion() {

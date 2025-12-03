@@ -35,7 +35,7 @@ class Game {
         PiecePlacer placer = new ClassicPieceStartingPositionPlacer();
         placer.place(board);
 
-        moveGenerators.generateLegal(context);
+        moveGenerators.getOrGenerateLegal(context);
     }
 
     int getMaxFile() {
@@ -63,7 +63,7 @@ class Game {
     }
 
     Set<Move> findMovesStarting(Position clicked) {
-        return moveGenerators.generateLegal(context).getMovesStarting(clicked);
+        return moveGenerators.getOrGenerateLegal(context).getMovesStarting(clicked);
     }
 
     boolean isCurrentPlayerPiece(Position clicked) {
@@ -71,7 +71,7 @@ class Game {
     }
 
     void makeRandomMove() {
-        GeneratedMoves generatedMoves = moveGenerators.generateLegal(context);
+        GeneratedMoves generatedMoves = moveGenerators.getOrGenerateLegal(context);
         Optional<Move> optionalMove = generatedMoves.findRandom();
         if (optionalMove.isEmpty()) {
             log.warn("No moves generated");
@@ -83,6 +83,5 @@ class Game {
 
     void makeMove(Move move) {
         moveMaker.make(context, move);
-        moveGenerators.generateLegal(context);
     }
 }

@@ -2,6 +2,7 @@ package org.czareg;
 
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
+import org.czareg.game.StateValidator;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.pawn.PawnEnPassantMoveGenerator;
 import org.czareg.piece.Pawn;
@@ -17,13 +18,14 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class PawnEnPassantTests extends BaseTests {
+class PawnEnPassantTests extends ClassicContextTests {
 
     private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
         pieceMoveGenerator = new PawnEnPassantMoveGenerator();
+        context = context.withStateValidator(StateValidator.NOOP);
     }
 
     @Test

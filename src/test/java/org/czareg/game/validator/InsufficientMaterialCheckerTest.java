@@ -1,6 +1,6 @@
 package org.czareg.game.validator;
 
-import org.czareg.BaseTests;
+import org.czareg.ClassicContextTests;
 import org.czareg.piece.*;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class InsufficientMaterialCheckerTest extends BaseTests {
+class InsufficientMaterialCheckerTest extends ClassicContextTests {
 
     @Test
     void givenEmptyBoard_whenCheckingForInsufficientMaterial_returnsTrue() {

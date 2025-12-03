@@ -2,7 +2,6 @@ package org.czareg;
 
 import org.czareg.board.Board;
 import org.czareg.game.ClassicContext;
-import org.czareg.game.Context;
 import org.czareg.game.History;
 import org.czareg.game.MoveMaker;
 import org.czareg.move.MoveGenerators;
@@ -10,9 +9,9 @@ import org.czareg.move.piece.PieceMoveGeneratorFactory;
 import org.czareg.position.PositionFactory;
 import org.junit.jupiter.api.BeforeEach;
 
-public abstract class BaseTests {
+public abstract class ClassicContextTests {
 
-    protected Context context;
+    protected ClassicContext context;
     protected Board board;
     protected PositionFactory pf;
     protected MoveGenerators moveGenerators;

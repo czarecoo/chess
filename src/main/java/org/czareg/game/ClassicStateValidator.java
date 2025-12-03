@@ -1,17 +1,30 @@
 package org.czareg.game;
 
+import lombok.extern.slf4j.Slf4j;
+import org.czareg.board.Board;
 import org.czareg.game.validator.InsufficientMaterialChecker;
 import org.czareg.move.MoveGenerators;
+import org.czareg.piece.King;
 import org.czareg.piece.Pawn;
+import org.czareg.piece.Player;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
+@Slf4j
 public class ClassicStateValidator implements StateValidator {
 
     @Override
     public void validate(Context context) {
+        Board board = context.getBoard();
+        if (isEmptyBoard(board)) {
+            throw new IllegalStateException("Board is empty.");
+        } else if (hasIncorrectNumberOfKingsPerPlayer(board)) {
+            throw new IllegalStateException("Invalid number of kings on the board");
+        }
         History history = context.getHistory();
         if (isInsufficientMaterial(context)) {
             throw new IllegalStateException("Insufficient material.");
@@ -23,10 +36,25 @@ public class ClassicStateValidator implements StateValidator {
         }
     }
 
+    private boolean isEmptyBoard(Board board) {
+        return board.getAllPiecePositions().isEmpty();
+    }
+
+    private boolean hasIncorrectNumberOfKingsPerPlayer(Board board) {
+        Map<Player, Long> kingCounts = new EnumMap<>(Player.class);
+        for (Player player : Player.values()) {
+            long count = board.getAllPiecePositions(player, King.class).size();
+            kingCounts.put(player, count);
+        }
+        log.debug("King count per player: {}", kingCounts);
+        return kingCounts.values()
+                .stream()
+                .anyMatch(count -> count != 1);
+    }
+
     private boolean hasNoLegalMoves(Context context) {
         MoveGenerators moveGenerators = context.getMoveGenerators();
-        return moveGenerators.generateLegal(context)
-                .getMoves().isEmpty();
+        return moveGenerators.getOrGenerateLegal(context).isEmpty();
     }
 
     private boolean isDrawnBy50MoveRule(History history) {

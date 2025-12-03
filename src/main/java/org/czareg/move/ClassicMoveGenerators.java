@@ -28,14 +28,14 @@ public class ClassicMoveGenerators implements MoveGenerators {
     }
 
     @Override
-    public GeneratedMoves generateLegal(Context context) {
+    public GeneratedMoves getOrGenerateLegal(Context context) {
         Board board = context.getBoard();
         ZobristHasher zobristHasher = board.getZobristHasher();
         long currentHash = zobristHasher.computeHash(context);
         return legalMovesCache.computeIfAbsent(currentHash, hash -> {
             log.debug("Start generate legal moves, current hash={}", currentHash);
-            GeneratedMoves generatedMoves = generatePseudoLegal(context);
-            Set<Move> legalMoves = generatedMoves.getMoves()
+            GeneratedMoves generatedMoves = getOrGeneratePseudoLegal(context);
+            Set<Move> legalMoves = generatedMoves
                     .stream()
                     .filter(move -> legalMoveFilter.isLegal(context, move))
                     .collect(Collectors.toSet());
@@ -45,7 +45,7 @@ public class ClassicMoveGenerators implements MoveGenerators {
     }
 
     @Override
-    public GeneratedMoves generatePseudoLegal(Context context) {
+    public GeneratedMoves getOrGeneratePseudoLegal(Context context) {
         Board board = context.getBoard();
         ZobristHasher zobristHasher = board.getZobristHasher();
         long currentHash = zobristHasher.computeHash(context);

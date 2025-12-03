@@ -15,8 +15,6 @@ public interface Context extends Duplicatable<Context> {
 
     MoveGenerators getMoveGenerators();
 
-    PlayerTurnValidator getPlayerTurnValidator();
-
     MoveExecutor getMoveExecutor();
 
     PieceMoveGeneratorFactory getPieceMoveGeneratorFactory();
@@ -26,6 +24,4 @@ public interface Context extends Duplicatable<Context> {
     ThreatAnalyzer getThreatAnalyzer();
 
     StateValidator getStateValidator();
-
-    BoardValidator getBoardValidator();
 }

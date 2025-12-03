@@ -2,6 +2,7 @@ package org.czareg;
 
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
+import org.czareg.game.StateValidator;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.king.KingCastlingMoveGenerator;
 import org.czareg.piece.King;
@@ -19,13 +20,14 @@ import static org.czareg.piece.Player.BLACK;
 import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class KingCastlingTests extends BaseTests {
+class KingCastlingTests extends ClassicContextTests {
 
     private PieceMoveGenerator pieceMoveGenerator;
 
     @BeforeEach
     void setUp() {
         pieceMoveGenerator = new KingCastlingMoveGenerator();
+        context = context.withStateValidator(StateValidator.NOOP);
     }
 
     @Test

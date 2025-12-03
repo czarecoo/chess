@@ -17,27 +17,37 @@ import java.util.Random;
 public class ZobristHasher {
 
     private final long[][][] zobristTable; // [pieceType][color][squareIndex]
-    private final long sideToMoveKey;
+    private final long[] sideToMoveKeys; // one per player
     private final Map<Class<? extends Piece>, Integer> pieceTypeIndex;
+    private final Map<Player, Integer> playerIndexMap;
 
     public ZobristHasher(Board board) {
         Random rng = new Random(123456); // fixed seed for reproducibility
 
         PositionFactory pf = board.getPositionFactory();
         List<Class<? extends Piece>> pieceTypes = Piece.getAllPieceClasses();
-        zobristTable = new long[pieceTypes.size()][2][pf.getMaxFile() * pf.getMaxRank()];
+        zobristTable = new long[pieceTypes.size()][Player.values().length][pf.getMaxFile() * pf.getMaxRank()];
         for (int p = 0; p < pieceTypes.size(); p++) {
-            for (int c = 0; c < 2; c++) {
+            for (int c = 0; c < Player.values().length; c++) {
                 for (int sq = 0; sq < pf.getMaxFile() * pf.getMaxRank(); sq++) {
                     zobristTable[p][c][sq] = rng.nextLong();
                 }
             }
         }
-        sideToMoveKey = rng.nextLong();
-
         pieceTypeIndex = new HashMap<>();
         for (int i = 0; i < pieceTypes.size(); i++) {
             pieceTypeIndex.put(pieceTypes.get(i), i);
+        }
+
+        playerIndexMap = new HashMap<>();
+        Player[] players = Player.values();
+        for (int i = 0; i < players.length; i++) {
+            playerIndexMap.put(players[i], i);
+        }
+
+        sideToMoveKeys = new long[players.length];
+        for (int i = 0; i < players.length; i++) {
+            sideToMoveKeys[i] = rng.nextLong();
         }
     }
 
@@ -50,16 +60,14 @@ public class ZobristHasher {
         for (PiecePosition pp : board.getAllPiecePositions()) {
             Piece piece = pp.piece();
             int pieceIndex = pieceTypeIndex.get(piece.getClass());
-            int colorIndex = piece.getPlayer() == Player.WHITE ? 0 : 1;
+            int colorIndex = playerIndexMap.get(piece.getPlayer());
             int squareIndex = toIndex(pp.position(), pf);
 
             hash ^= zobristTable[pieceIndex][colorIndex][squareIndex];
         }
 
-        if (toMove == Player.BLACK) {
-            hash ^= sideToMoveKey;
-        }
-
+        int toMoveIdx = playerIndexMap.get(toMove);
+        hash ^= sideToMoveKeys[toMoveIdx];
         return hash;
     }
 

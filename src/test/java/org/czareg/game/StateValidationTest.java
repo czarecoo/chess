@@ -1,6 +1,6 @@
 package org.czareg.game;
 
-import org.czareg.BaseTests;
+import org.czareg.ClassicContextTests;
 import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
 import org.czareg.piece.King;
@@ -16,7 +16,7 @@ import static org.czareg.piece.Player.WHITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class StateValidationTest extends BaseTests {
+class StateValidationTest extends ClassicContextTests {
 
     @Test
     void givenBlackCheckmated_whenTryingToMoveAfter_thenValidationThrowsCheckMate() {
