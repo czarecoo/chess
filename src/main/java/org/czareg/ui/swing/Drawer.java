@@ -2,6 +2,7 @@ package org.czareg.ui.swing;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.game.Move;
+import org.czareg.game.state.State;
 import org.czareg.piece.Piece;
 import org.czareg.position.Index;
 import org.czareg.position.Position;
@@ -15,6 +16,7 @@ class Drawer {
     private static final Color DARK_SQUARE_COLOR = new Color(181, 136, 99);
     private static final Color SEMI_TRANSPARENT_YELLOW = new Color(255, 255, 0, 128);
     private static final Color SEMI_TRANSPARENT_GREEN = new Color(0, 255, 0, 128);
+    private static final Font FONT = new Font("Verdana", Font.BOLD, 20);
 
     private final Game game;
 
@@ -83,5 +85,18 @@ class Drawer {
         int x = file * cellSize;
         int y = (game.getMaxRank() - 1 - rank) * cellSize;
         return new Point(x, y);
+    }
+
+    public void drawText(Graphics2D g2d, int cellSize) {
+        float fontSize = cellSize * 0.18f;
+        String text = switch (game.checkState()) {
+            case State.Draw draw -> "Game Drawn!";
+            case State.InProgress inProgress -> "Now moving: %s.".formatted(inProgress.moving());
+            case State.Win win -> "%s won the game!".formatted(win.winner());
+        };
+        g2d.setFont(FONT.deriveFont(fontSize));
+        g2d.setColor(Color.BLACK);
+        int startingWidth = cellSize * game.getMaxFile();
+        g2d.drawString(text, startingWidth, fontSize);
     }
 }

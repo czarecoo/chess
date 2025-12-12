@@ -36,3 +36,13 @@ The project focuses on clear architecture, separation of UI and logic, and an ea
 or
 
 run SwingMain class manually through your IDE
+
+## Next features to implement
+
+- UI shows how to play instructions
+- UI new game on some button, maybe enter?
+- UI draws red circle under mated king
+- UI draws orange circle under mating pieces
+- UI drawing board 180 (white up, black down)
+- fivefold repetition rule -> zobristHasher needs castling and enpassant improvement + history improvements
+- sound on move

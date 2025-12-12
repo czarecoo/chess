@@ -5,6 +5,8 @@ import org.czareg.board.Board;
 import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
 import org.czareg.game.*;
+import org.czareg.game.state.State;
+import org.czareg.game.state.StateChecker;
 import org.czareg.move.MoveGenerators;
 import org.czareg.piece.Piece;
 import org.czareg.position.Index;
@@ -23,6 +25,7 @@ class Game {
     private final MoveGenerators moveGenerators;
     private final History history;
     private final MoveMaker moveMaker;
+    private final StateChecker stateChecker;
 
     Game() {
         context = ClassicContext.create();
@@ -31,6 +34,7 @@ class Game {
         moveGenerators = context.getMoveGenerators();
         history = context.getHistory();
         moveMaker = context.getMoveMaker();
+        stateChecker = context.getStateChecker();
 
         PiecePlacer placer = new ClassicPieceStartingPositionPlacer();
         placer.place(board);
@@ -83,5 +87,21 @@ class Game {
 
     void makeMove(Move move) {
         moveMaker.make(context, move);
+    }
+
+    public State checkState() {
+        return stateChecker.check(context);
+    }
+
+    public boolean isGameInProgress() {
+        return switch (checkState()) {
+            case State.Draw draw -> false;
+            case State.InProgress inProgress -> true;
+            case State.Win win -> false;
+        };
+    }
+
+    public boolean isGameOver() {
+        return !isGameInProgress();
     }
 }

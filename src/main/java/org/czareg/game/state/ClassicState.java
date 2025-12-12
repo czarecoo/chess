@@ -1,7 +1,8 @@
-package org.czareg.game;
+package org.czareg.game.state;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
+import org.czareg.game.*;
 import org.czareg.game.validator.InsufficientMaterialChecker;
 import org.czareg.move.MoveGenerators;
 import org.czareg.piece.King;
@@ -15,7 +16,26 @@ import java.util.Map;
 import static org.czareg.game.Metadata.Key.MOVE_TYPE;
 
 @Slf4j
-public class ClassicStateValidator implements StateValidator {
+public class ClassicState implements StateValidator, StateChecker {
+
+    @Override
+    public State check(Context context) {
+        if (isInsufficientMaterial(context)) {
+            return new State.Draw();
+        }
+        History history = context.getHistory();
+        if (isDrawnBy50MoveRule(history)) {
+            return new State.Draw();
+        }
+        ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
+        Player currentPlayer = history.getCurrentPlayer();
+        if (hasNoLegalMoves(context)) {
+            if (threatAnalyzer.isKingUnderAttack(context, currentPlayer)) {
+                return new State.Win(currentPlayer.getOpponent());
+            }
+        }
+        return new State.InProgress(currentPlayer);
+    }
 
     @Override
     public void validate(Context context) {

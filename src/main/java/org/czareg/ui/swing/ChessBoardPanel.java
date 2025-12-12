@@ -29,6 +29,9 @@ class ChessBoardPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (game.isGameOver()) {
+                    return;
+                }
                 Optional<Position> clickedPositionOptional = getClickedPosition(e.getX(), e.getY());
                 if (clickedPositionOptional.isEmpty()) {
                     return;
@@ -45,14 +48,17 @@ class ChessBoardPanel extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    log.info("Escape pressed. Exiting gracefully.");
+                    System.exit(0);
+                }
+                if (game.isGameOver()) {
+                    return;
+                }
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     game.makeRandomMove();
                     selection = Selection.EMPTY;
                     repaint();
-                }
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    log.info("Escape pressed. Exiting gracefully.");
-                    System.exit(0);
                 }
             }
         });
@@ -69,6 +75,7 @@ class ChessBoardPanel extends JPanel {
         drawer.drawBoard(g2d, cellSize);
         drawer.drawHighlights(g2d, cellSize, selection);
         drawer.drawPieces(g2d, cellSize);
+        drawer.drawText(g2d, cellSize);
     }
 
     private void handleClick(Position clickedPosition) {

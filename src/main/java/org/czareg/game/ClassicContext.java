@@ -5,6 +5,8 @@ import lombok.Value;
 import lombok.With;
 import org.czareg.board.Board;
 import org.czareg.board.ClassicBoard;
+import org.czareg.game.state.ClassicState;
+import org.czareg.game.state.StateChecker;
 import org.czareg.move.*;
 import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;
@@ -23,6 +25,7 @@ public class ClassicContext implements Context {
     MoveLegalityValidator moveLegalityValidator;
     ThreatAnalyzer threatAnalyzer;
     StateValidator stateValidator;
+    StateChecker stateChecker;
 
     @Override
     public ClassicContext duplicate() {
@@ -35,7 +38,8 @@ public class ClassicContext implements Context {
                 pieceMoveGeneratorFactory,
                 moveLegalityValidator,
                 threatAnalyzer,
-                stateValidator
+                stateValidator,
+                stateChecker
         );
     }
 
@@ -48,7 +52,8 @@ public class ClassicContext implements Context {
                 new ClassicPieceMoveGeneratorFactory(),
                 new ClassicMoveLegalityValidator(),
                 new ClassicThreatAnalyzer(),
-                new ClassicStateValidator()
+                new ClassicState(),
+                new ClassicState()
         );
     }
 }
