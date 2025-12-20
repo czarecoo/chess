@@ -2,6 +2,7 @@ package org.czareg.game;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.czareg.game.state.StateValidator;
 import org.czareg.move.MoveExecutor;
 import org.czareg.move.MoveGenerators;
 

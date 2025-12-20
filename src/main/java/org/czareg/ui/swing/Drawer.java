@@ -90,7 +90,7 @@ class Drawer {
     public void drawText(Graphics2D g2d, int cellSize) {
         float fontSize = cellSize * 0.18f;
         String text = switch (game.checkState()) {
-            case State.Draw draw -> "Game Drawn!";
+            case State.Draw draw -> "Draw! %s.".formatted(draw.reason());
             case State.InProgress inProgress -> "Now moving: %s.".formatted(inProgress.moving());
             case State.Win win -> "%s won the game!".formatted(win.winner());
         };

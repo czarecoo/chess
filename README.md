@@ -44,5 +44,5 @@ run SwingMain class manually through your IDE
 - UI draws red circle under mated king
 - UI draws orange circle under mating pieces
 - UI drawing board 180 (white up, black down)
-- fivefold repetition rule -> zobristHasher needs castling and enpassant improvement + history improvements
+- threefold repetition -> zobristHasher needs castling and enpassant improvement + history improvements
 - sound on move

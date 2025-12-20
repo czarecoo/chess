@@ -20,12 +20,13 @@ public class ClassicState implements StateValidator, StateChecker {
 
     @Override
     public State check(Context context) {
+        //TODO threefold repetition
         if (isInsufficientMaterial(context)) {
-            return new State.Draw();
+            return new State.Draw("Impossibility of checkmate");
         }
         History history = context.getHistory();
         if (isDrawnBy50MoveRule(history)) {
-            return new State.Draw();
+            return new State.Draw("Fifty-move rule");
         }
         ThreatAnalyzer threatAnalyzer = context.getThreatAnalyzer();
         Player currentPlayer = history.getCurrentPlayer();
@@ -33,6 +34,7 @@ public class ClassicState implements StateValidator, StateChecker {
             if (threatAnalyzer.isKingUnderAttack(context, currentPlayer)) {
                 return new State.Win(currentPlayer.getOpponent());
             }
+            return new State.Draw("Stalemate");
         }
         return new State.InProgress(currentPlayer);
     }

@@ -5,7 +5,7 @@ import org.czareg.board.PiecePlacer;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;
-import org.czareg.game.StateValidator;
+import org.czareg.game.state.StateValidator;
 import org.czareg.move.piece.PieceMoveGenerator;
 import org.czareg.move.piece.pawn.PawnCaptureMoveGenerator;
 import org.czareg.move.piece.pawn.PawnDoubleForwardMoveGenerator;

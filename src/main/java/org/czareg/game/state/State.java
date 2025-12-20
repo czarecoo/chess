@@ -10,6 +10,6 @@ public sealed interface State permits State.InProgress, State.Draw, State.Win {
     record InProgress(Player moving) implements State {
     }
 
-    record Draw() implements State {
+    record Draw(String reason) implements State {
     }
 }

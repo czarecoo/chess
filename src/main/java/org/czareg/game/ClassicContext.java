@@ -7,6 +7,7 @@ import org.czareg.board.Board;
 import org.czareg.board.ClassicBoard;
 import org.czareg.game.state.ClassicState;
 import org.czareg.game.state.StateChecker;
+import org.czareg.game.state.StateValidator;
 import org.czareg.move.*;
 import org.czareg.move.piece.ClassicPieceMoveGeneratorFactory;
 import org.czareg.move.piece.PieceMoveGeneratorFactory;

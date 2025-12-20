@@ -1,4 +1,6 @@
-package org.czareg.game;
+package org.czareg.game.state;
+
+import org.czareg.game.Context;
 
 public interface StateValidator {
 
