@@ -1,5 +1,7 @@
-package org.czareg.board;
+package org.czareg.board.placers;
 
+import org.czareg.board.Board;
+import org.czareg.board.PiecePlacer;
 import org.czareg.piece.*;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;

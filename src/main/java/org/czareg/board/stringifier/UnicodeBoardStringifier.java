@@ -1,5 +1,7 @@
-package org.czareg.board;
+package org.czareg.board.stringifier;
 
+import org.czareg.board.Board;
+import org.czareg.board.BoardStringifier;
 import org.czareg.piece.*;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;

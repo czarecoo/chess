@@ -1,6 +1,6 @@
 package org.czareg.game.hasher;
 
-import org.czareg.board.ClassicPieceStartingPositionPlacer;
+import org.czareg.board.placers.ClassicPieceStartingPositionPlacer;
 import org.czareg.game.*;
 import org.czareg.position.Position;
 import org.czareg.position.PositionFactory;

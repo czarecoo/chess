@@ -1,7 +1,7 @@
 package org.czareg;
 
-import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
+import org.czareg.board.placers.ClassicPieceStartingPositionPlacer;
 import org.czareg.game.Metadata;
 import org.czareg.game.Move;
 import org.czareg.game.MoveType;

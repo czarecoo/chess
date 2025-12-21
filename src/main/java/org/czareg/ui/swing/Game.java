@@ -2,8 +2,8 @@ package org.czareg.ui.swing;
 
 import lombok.extern.slf4j.Slf4j;
 import org.czareg.board.Board;
-import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
+import org.czareg.board.placers.ClassicPieceStartingPositionPlacer;
 import org.czareg.game.*;
 import org.czareg.game.state.State;
 import org.czareg.game.state.StateChecker;

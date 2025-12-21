@@ -1,8 +1,8 @@
 package org.czareg.game;
 
 import org.czareg.ClassicContextTests;
-import org.czareg.board.ClassicPieceStartingPositionPlacer;
 import org.czareg.board.PiecePlacer;
+import org.czareg.board.placers.ClassicPieceStartingPositionPlacer;
 import org.czareg.piece.King;
 import org.czareg.piece.Knight;
 import org.czareg.piece.Piece;
