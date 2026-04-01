@@ -15,6 +15,7 @@ import org.czareg.position.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -189,23 +190,34 @@ class PawnTests extends ClassicContextTests {
     }
 
     @Test
+    void givenPawnsNotOnStartingRanks_whenGeneratingMoves_thenThereIsNoDoubleForwardMove() {
+        Pawn firstPawn = new Pawn(WHITE);
+        board.placePiece(pf.create("C", 1), firstPawn);
+        Pawn secondPawn = new Pawn(WHITE);
+        board.placePiece(pf.create("D", 4), secondPawn);
+        Pawn thirdPawn = new Pawn(WHITE);
+        board.placePiece(pf.create("H", 6), thirdPawn);
+
+        Move illegalMove1 = new Move(firstPawn, pf.create("C", 1), pf.create("C", 3), new Metadata(INITIAL_DOUBLE_FORWARD));
+        assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, illegalMove1));
+        Move illegalMove2 = new Move(secondPawn, pf.create("D", 4), pf.create("D", 6), new Metadata(INITIAL_DOUBLE_FORWARD));
+        assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, illegalMove2));
+        Move illegalMove3 = new Move(secondPawn, pf.create("H", 6), pf.create("H", 8), new Metadata(INITIAL_DOUBLE_FORWARD));
+        assertThrows(IllegalArgumentException.class, () -> moveMaker.make(context, illegalMove3));
+    }
+
+    @Test
     void givenTwoPlayers_whenPlayersAreMovingTheirPawnsOnTheSameFileUntilTheyFaceEachOther_thenThereAreNoMoreMoves() {
         Pawn whitePawn = new Pawn(WHITE);
-        board.placePiece(pf.create("C", 1), whitePawn);
+        board.placePiece(pf.create("C", 2), whitePawn);
         Pawn blackPawn = new Pawn(BLACK);
-        board.placePiece(pf.create("C", 8), blackPawn);
+        board.placePiece(pf.create("C", 7), blackPawn);
 
-        moveMaker.make(context, new Move(whitePawn, pf.create("C", 1), pf.create("C", 3), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        moveMaker.make(context, new Move(blackPawn, pf.create("C", 8), pf.create("C", 6), new Metadata(INITIAL_DOUBLE_FORWARD)));
-        Position c4 = pf.create("C", 4);
-        moveMaker.make(context, new Move(whitePawn, pf.create("C", 3), c4, new Metadata(MOVE)));
-        Position c5 = pf.create("C", 5);
-        moveMaker.make(context, new Move(blackPawn, pf.create("C", 6), c5, new Metadata(MOVE)));
+        moveMaker.make(context, new Move(whitePawn, pf.create("C", 2), pf.create("C", 4), new Metadata(INITIAL_DOUBLE_FORWARD)));
+        moveMaker.make(context, new Move(blackPawn, pf.create("C", 7), pf.create("C", 5), new Metadata(INITIAL_DOUBLE_FORWARD)));
 
-        Set<Move> whiteMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(c4);
-        assertEquals(Set.of(), whiteMoves);
-        Set<Move> blackMoves = moveGenerators.getOrGenerateLegal(context).getMovesStarting(c5);
-        assertEquals(Set.of(), blackMoves);
+        var whiteMoves = moveGenerators.getOrGenerateLegal(context).stream().toList();
+        assertEquals(List.of(), whiteMoves);
     }
 
     @Test

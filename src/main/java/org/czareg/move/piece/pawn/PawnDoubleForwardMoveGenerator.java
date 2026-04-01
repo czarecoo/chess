@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
-public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, PromotionRankChecker {
+public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, PromotionRankChecker, StartingRankChecker {
 
     @Override
     public Stream<Move> generate(Context context, Piece piece, Position currentPosition) {
@@ -28,6 +28,11 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, Promo
     @Override
     public Optional<Move> generate(Context context, Piece piece, Position currentPosition, IndexChange endPositionIndexChange) {
         log.debug("Generating move for {} at {} and {}.", piece, currentPosition, endPositionIndexChange);
+        Player player = piece.getPlayer();
+        if (!isOnStartingRank(currentPosition, player)) {
+            log.debug("Rejecting move because it is not on starting rank.");
+            return Optional.empty();
+        }
         History history = context.getHistory();
         if (history.hasPieceMovedBefore(piece)) {
             log.debug("Rejecting move because it was already moved.");
@@ -47,7 +52,6 @@ public class PawnDoubleForwardMoveGenerator implements PieceMoveGenerator, Promo
             log.debug("Rejecting move because end {} is occupied by {}.", endPosition, endPositionOccupyingPiece);
             return Optional.empty();
         }
-        Player player = piece.getPlayer();
         if (isOnPromotionRank(endPosition, positionFactory, player)) {
             log.debug("Rejecting move because end {} is on promotion rank.", endPosition);
             return Optional.empty();
